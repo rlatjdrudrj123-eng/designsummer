@@ -1,0 +1,95 @@
+/* event (Aura 전용 / 메인 `/`) — 연계 이벤트 및 참가 혜택.
+   위 섹션 톤앤매너 통일: 소문자 섹션 라벨, 가로선·장식 아이콘 제거, 여백으로만
+   구역 구분. 혜택은 연사 카드와 동일 톤의 글래스 카드(제목+본문). */
+.benefits {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+.benefits:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* 섹션 라벨 — 소문자 "event"(섹션 표기 컨셉과 통일). */
+.heading {
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(30px, 4vw, 56px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  text-transform: lowercase;
+  line-height: 1;
+  color: var(--ink);
+  margin-bottom: clamp(30px, 5vh, 60px);
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(36px, 6vh, 64px);
+}
+/* 그룹 소제목 — 가로선 제거, 여백으로만 분리. */
+.groupHeading {
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.5vw, 20px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  color: var(--ink);
+  margin-bottom: clamp(14px, 2vh, 20px);
+}
+
+/* 카드 그리드 — 혜택 개수에 따라 3열(현장 혜택) / 단일 full-width(사전 이벤트). */
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(16px, 2vw, 24px);
+}
+.items:has(> .item:only-child) {
+  grid-template-columns: 1fr;
+}
+
+/* 글래스 카드 — 연사 카드와 동일한 프로스티드 화이트 + 따뜻한 헤어라인 엣지. */
+.item {
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.66);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  backdrop-filter: blur(20px) saturate(120%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 24px 60px -38px rgba(120, 50, 10, 0.35);
+  padding: clamp(20px, 2.4vw, 30px);
+  display: flex;
+  flex-direction: column;
+}
+
+.itemTitle {
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.4vw, 19px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  word-break: keep-all;
+  color: var(--ink);
+}
+.itemBody {
+  margin-top: 10px;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 400;
+  line-height: 1.65;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 72%, transparent);
+}
+
+@media (max-width: 760px) {
+  .items {
+    grid-template-columns: 1fr;
+  }
+}

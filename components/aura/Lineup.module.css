@@ -1,0 +1,605 @@
+/* ============================================================================
+   Aura Lineup — per-day speaker section, warm-aura tonal style.
+   (forked from components/aura1/Lineup.module.css — independent of /aura1.)
+
+   Keeps aura1's day-intro header + frosted glass card form. Cards carry a small
+   round speaker avatar (.portrait/.portraitPh, head-crop fix), the 대표작 works
+   thumbnail strip (.works/.workBtn/.work) whose thumbnails open a lib-free
+   lightbox (.scrim/.dialog/.lightboxImg/.closeBtn), AND a bottom-right
+   "더보기 →" homepage link (.moreRow/.moreLink).
+
+   The DayKV canvas heat-field KV is kept (it is a graphic, not a photo).
+   Day1 = clear RED / Day2 = clear GOLD coding + frosted glass cards.
+   ============================================================================ */
+
+.lineup {
+  /* Warm local palette — DAY1 clear RED / red-orange, DAY2 clear GOLD / amber. */
+  --ds-red-deep: #e03200;
+  --ds-red: #ff4d00;
+  --ds-gold: #f59e00;
+  --ds-gold-deep: #d99400;
+
+  /* Day-toned values; overridden per day in .d1 / .d2 below. */
+  --tonal-a: var(--ds-red-deep);
+  --tonal-b: var(--ds-red);
+  --accent: var(--ds-red-deep);
+  --ink-day: #9c2400;
+
+  /* Warm ink hierarchy — dark warm ink for legibility over the bright aura. */
+  --ink-warm: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --ink-soft: color-mix(in oklab, var(--ink-warm) 78%, transparent);
+  --ink-faint: color-mix(in oklab, var(--ink-warm) 56%, transparent);
+  --line: color-mix(in srgb, var(--heat-core) 18%, rgba(10, 10, 10, 0.12));
+
+  position: relative;
+  padding-block: clamp(48px, 8vh, 110px);
+}
+/* Full-bleed root (the aura ground sits behind); .cards carries the rails.
+   Neutralise the .shell padding-inline so .cards alone owns the gutters. */
+.lineup:global(.shell) {
+  padding-inline: 0;
+}
+
+/* DAY 1 = clear RED / red-orange. DAY 2 = clear GOLD / amber.
+   Hard-set per day (no blend) so the coding is unmistakable. */
+.d1 {
+  --tonal-a: var(--ds-red-deep);
+  --tonal-b: var(--ds-red);
+  --accent: var(--ds-red);
+  --ink-day: #9c2400; /* deep red ink — clearly legible */
+}
+.d2 {
+  --tonal-a: var(--ds-gold);
+  --tonal-b: var(--ds-gold-deep);
+  --accent: var(--ds-gold-deep);
+  --ink-day: #8a5500; /* deep amber/brown-gold ink — readable, not light gold */
+}
+
+/* ── Day intro header — the day THEME + 추천 대상 ──
+   Shares the canonical container rails (same max-width / padding-inline as
+   .cards) so it lines up flush above the speaker cards. */
+.dayIntro {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin-inline: auto;
+  margin-bottom: clamp(36px, 5vh, 64px);
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+/* 상단 가로 실선 제거(클라이언트 요청) — 여백만으로 안착. */
+.dayHead {
+  display: flex;
+  align-items: center;
+  gap: clamp(12px, 1.6vw, 18px);
+}
+.dayLabel {
+  font-family: "omnigothic", var(--font-kr);
+  /* "section A. creative" 헤드라인. 섹션 문자(A/B)는 대문자 유지(입력 대소문자 보존)
+     → text-transform 적용하지 않음. */
+  font-size: clamp(26px, 3.6vw, 46px);
+  font-weight: 500;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  color: var(--ink-day);
+}
+/* Theme title row — the per-day KEY VISUAL accent (DayKV) sits beside the
+   theme title. The KV provides the block's top spacing, so the title's own
+   margin-top is reset inside the row. */
+/* 라벨(day N) ↔ 타이틀 사이는 넉넉히, 타이틀 ↔ 본문은 타이트하게(클라이언트 요청). */
+.themeRow {
+  display: flex;
+  align-items: center;
+  margin-top: clamp(20px, 2.8vh, 34px);
+}
+.themeRow .dayTitle {
+  margin-top: 0;
+}
+
+/* ── 우측 대형 KV(공간감 블리드) ──
+   인트로 블록 오른쪽에 크게. 텍스트(z:1) 뒤(z:0), 클릭 비간섭. 오른쪽으로 살짝 블리드. */
+.dayHead,
+.themeRow,
+.dayBody,
+.audience {
+  position: relative;
+  z-index: 1;
+}
+.kvBleed {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  top: clamp(-36px, -2vw, -10px);
+  right: clamp(-36px, -2vw, 4px);
+  width: clamp(220px, 28vw, 380px);
+  height: clamp(220px, 28vw, 380px);
+}
+.dayTitle {
+  margin-top: clamp(16px, 2.2vh, 22px);
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(22px, 2.6vw, 34px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.16;
+  word-break: keep-all;
+  color: var(--ink-warm);
+}
+.dayBody {
+  margin-top: clamp(22px, 3.2vh, 38px);
+  max-width: 760px;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.7;
+  word-break: keep-all;
+  white-space: pre-line;
+  color: var(--ink-soft);
+}
+.audience {
+  margin-top: clamp(24px, 3.4vh, 38px);
+  /* 우측 대형 그래픽 자리를 비워 추천 대상이 아이콘과 겹치지 않게(왼쪽으로). */
+  max-width: calc(100% - clamp(240px, 28vw, 380px));
+}
+.audienceKicker {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--ink-day);
+  margin-bottom: 8px;
+}
+.audienceHeading {
+  font-family: var(--font-kr);
+  font-size: clamp(17px, 1.6vw, 21px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  word-break: keep-all;
+  color: var(--ink-warm);
+}
+.items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* 항목 사이 여백 축소(클라이언트 요청) — 더 모여서 아이콘과 안 겹치게. */
+  gap: clamp(10px, 1.2vw, 16px);
+}
+/* 기호(불릿·틱) 완전 제거(클라이언트 요청) — 폰트 대비만으로 구역 구분. */
+.item {
+  font-family: var(--font-kr);
+  font-size: 14px;
+  line-height: 1.6;
+  word-break: keep-all;
+}
+/* 직군명은 굵게(Bold), 설명은 얇게(Regular) — 대비만으로 위계. */
+.itemRole {
+  display: block;
+  font-weight: 700;
+  font-size: clamp(14px, 1.1vw, 15px);
+  letter-spacing: -0.01em;
+  color: var(--ink-warm);
+}
+.itemDesc {
+  display: block;
+  margin-top: 4px;
+  font-weight: 400;
+  white-space: pre-line;
+  color: var(--ink-soft);
+}
+
+/* ── Canonical container — identical left/right rails to every other section ── */
+.cards {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 30px);
+}
+
+/* Reveal wrapper around each card — make it a flex column that fills the grid
+   cell so the card stretches to equal heights (so "더보기" lines bottom-align). */
+.entry {
+  display: flex;
+}
+.entry > * {
+  flex: 1 1 auto;
+}
+
+/* ── Frosted glass card (Aura form), TEXT-ONLY ──
+   GLASS RECIPE: a frosted-WHITE fill (translucent, still backdrop-blurred so the
+   warm aura diffuses softly THROUGH the glass) so the card reads as a clean,
+   legible frosted surface and dark text stays crisp. The day tone survives only
+   as a faint warm hairline (--card-line), never as a solid fill. */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  padding: clamp(22px, 2.4vw, 32px);
+  border-radius: 22px;
+  --card-fill: rgba(255, 255, 255, 0.68);
+  --card-line: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--card-line);
+  background: var(--card-fill);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  backdrop-filter: blur(20px) saturate(120%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 30px 60px -34px rgba(70, 30, 0, 0.4);
+}
+/* Per-day glass edge — a faint warm hairline only (no warm fill). */
+.d1 .card {
+  --card-fill: rgba(255, 255, 255, 0.66);
+  --card-line: color-mix(in srgb, var(--ds-red-deep) 26%, rgba(255, 255, 255, 0.55));
+}
+.d2 .card {
+  --card-fill: rgba(255, 255, 255, 0.7);
+  --card-line: color-mix(in srgb, var(--ds-gold) 30%, rgba(255, 255, 255, 0.55));
+}
+
+/* Card header — 좌측 정렬 프로필: 원형 사진 + "이름 | 스튜디오 직책" 한 줄. */
+.cardHead {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ── Small round avatar (same small size as the shared card) ──
+   HEAD-CROP FIX: object-position:top center keeps faces/heads in frame
+   instead of slicing the tops off. */
+.portrait,
+.portraitPh {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  flex: none;
+}
+/* next/image fill — the round avatar wrapper must be a sized, clipped,
+   positioned box so the fill image fills it and the rounded crop holds.
+   연사 사진 뒤 흰색 채움(클라이언트 요청) — 투명/여백 영역이 흰 배경으로. */
+.portrait {
+  position: relative;
+  overflow: hidden;
+  background: #fff;
+}
+.portraitPh {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink-warm);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--tonal-a) 55%, transparent),
+    color-mix(in oklab, var(--tonal-b) 55%, transparent)
+  );
+  border: 1px solid var(--line);
+}
+
+/* 프로필 — 2줄: "이름"(굵게) / "소속 / studioEn 직급"(옅게). */
+.cardId {
+  margin: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-family: var(--font-kr);
+  word-break: keep-all;
+}
+.idName {
+  font-size: clamp(16px, 1.7vw, 19px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  color: var(--ink-warm);
+}
+.idMeta {
+  font-size: clamp(12px, 1.05vw, 13.5px);
+  font-weight: 500;
+  line-height: 1.35;
+  color: var(--ink-faint);
+}
+
+/* 세션 제목 — 카드에서 가장 크고 굵게. */
+.session {
+  margin-top: clamp(18px, 2.4vh, 26px);
+  font-family: var(--font-kr);
+  font-size: clamp(19px, 2.1vw, 24px);
+  font-weight: 800;
+  line-height: 1.32;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+  color: var(--ink-warm);
+  display: flex;
+  flex-direction: column;
+}
+.sessionDesc {
+  margin-top: 12px;
+  font-family: var(--font-kr);
+  font-size: 14px;
+  line-height: 1.65;
+  word-break: keep-all;
+  color: var(--ink-soft);
+}
+/* 약력 — 불릿·가로선 제거. 여백으로만 구분. */
+.creds {
+  margin-top: clamp(16px, 2.2vh, 22px);
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.creds li {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--ink-faint);
+  word-break: keep-all;
+}
+
+/* ── 포트폴리오 — 라벨 + (썸네일 … 더보기) 같은 줄. 카드 하단에 정렬. ── */
+.portfolio {
+  margin-top: auto;
+  padding-top: clamp(20px, 2.8vh, 30px);
+}
+.portfolioLabel {
+  display: block;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: lowercase;
+  font-weight: 600;
+  color: var(--ink-faint);
+  margin-bottom: 10px;
+}
+.portfolioRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ── 대표작 (works) thumbnail strip — click-to-enlarge buttons ── */
+.works {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.workBtn {
+  position: relative;
+  display: block;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  border-radius: 12px;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+.workBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.work {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  transition: transform 0.4s ease;
+}
+.workBtn:hover .work,
+.workBtn:focus-visible .work {
+  transform: scale(1.06);
+}
+
+/* ── Lightbox (lib-free) — enlarges the works (대표작) images ── */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 4vw, 48px);
+  background: rgba(28, 10, 0, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: scrimIn 0.22s ease both;
+}
+.dialog {
+  position: relative;
+  max-width: min(880px, 92vw);
+  max-height: 88vh;
+  animation: dialogIn 0.26s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.lightboxImg {
+  display: block;
+  max-width: 100%;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.7);
+  object-fit: contain;
+}
+.closeBtn {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--ink-warm, #1a0f08);
+  background: #fff;
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+.closeBtn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@keyframes scrimIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Per-card "더보기 →" homepage link (bottom-right) ──
+   The card is a flex column, so margin-top:auto floats this row to the bottom
+   edge so the links bottom-align across equal-height cards. */
+/* 더보기 — 썸네일과 같은 줄, 오른쪽 끝으로. [스타일③] heat 언더라인. */
+.moreLink {
+  position: relative;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  font-family: var(--font-kr);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--accent);
+}
+.moreLink:hover {
+  text-decoration: underline;
+}
+.moreLink:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ── 섹션 끝 per-day 신청 CTA ── */
+.dayCta {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: clamp(28px, 4vh, 52px) auto 0;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  justify-content: center;
+}
+.dayCtaBtn {
+  /* 레퍼런스 폼 — 채움 라운드 버튼, 텍스트 왼쪽 / ↗ 오른쪽(space-between). hover heat 블룸. */
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(28px, 4vw, 56px);
+  min-width: clamp(240px, 26vw, 320px);
+  padding: clamp(14px, 1.7vh, 18px) clamp(22px, 2.6vw, 30px);
+  border-radius: 12px;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.1vw, 16px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--white, #fff);
+  background: color-mix(in oklab, var(--ink) 86%, var(--heat-core) 14%);
+  box-shadow: 0 12px 28px -20px rgba(40, 16, 6, 0.7);
+  transition:
+    transform 0.22s var(--ease-heat, ease),
+    box-shadow 0.22s var(--ease-heat, ease);
+}
+.dayCtaBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(135deg, var(--heat-core), var(--heat-main));
+  transform: translateY(101%);
+  transition: transform 0.42s var(--ease-heat, ease);
+}
+.dayCtaBtn span {
+  position: relative;
+  z-index: 1;
+}
+.dayCtaBtn::after {
+  content: "↗";
+  position: relative;
+  z-index: 1;
+  font-weight: 500;
+  transition: transform 0.22s var(--ease-heat, ease);
+}
+.dayCtaBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 48px -18px rgba(200, 70, 20, 0.65);
+}
+.dayCtaBtn:hover::before {
+  transform: translateY(0);
+}
+.dayCtaBtn:hover::after {
+  transform: translate(3px, -3px);
+}
+
+/* ── Mobile 390px: single column ── */
+@media (max-width: 760px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  /* 추천 대상 항목 — 모바일에선 1열로 쌓되, 폭을 줄여 우측 그래픽과 안 겹치게. */
+  .items {
+    grid-template-columns: 1fr;
+    gap: clamp(12px, 2vh, 16px);
+  }
+  /* 추천 대상을 왼쪽으로(폭 제한) — 오른쪽에 그래픽 자리. */
+  .audience {
+    max-width: 62%;
+  }
+  /* 그래픽을 추천 대상 오른쪽(아래쪽)으로 내려 본문과 겹치지 않게. */
+  .kvBleed {
+    top: auto;
+    bottom: clamp(8px, 4vh, 48px);
+    right: -18%;
+    width: 54vw;
+    height: 54vw;
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .creds li::before,
+  .work {
+    transition: none;
+  }
+  .workBtn:hover .work,
+  .workBtn:focus-visible .work {
+    transform: none;
+  }
+  .scrim,
+  .dialog {
+    animation: none;
+  }
+}

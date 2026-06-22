@@ -1,0 +1,68 @@
+/* /develop 탭 바 — app/variants/variants.module.css 의 패턴을 그대로 미러.
+   두 버전(배경 있음 / 배경색 없음) 사이를 상단 고정 탭으로 전환. */
+
+.page {
+  position: relative;
+  min-height: 100svh;
+}
+
+/* 상단 고정 탭 바 — 스크롤해도 위에 붙어 버전 전환 */
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  height: 52px;
+  padding: 0 16px;
+  background: rgba(10, 10, 10, 0.92);
+  backdrop-filter: blur(8px);
+  color: #fff;
+}
+.brand {
+  font-family: var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+.tabList {
+  display: flex;
+  gap: 4px;
+}
+.tab {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 8px 16px;
+  border-radius: 999px;
+  transition: color 0.2s, background 0.2s;
+}
+.tab:hover {
+  color: #fff;
+}
+.tabOn {
+  color: #0a0a0a;
+  background: #fff;
+}
+
+.stage {
+  position: relative;
+}
+
+@media (max-width: 560px) {
+  .brand {
+    display: none;
+  }
+  .tabs {
+    justify-content: center;
+  }
+  .tab {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}

@@ -1,0 +1,28 @@
+/* [PROCESS 변형] 스코프 토큰 오버라이드 — 전 사이트 CMYK 잉크 팔레트.
+   원본의 열 액센트(--heat-core/main/mid/edge: cream→orange→red)를
+   CMYK 프로세스 컬러로 교체. + 변형 전용 토큰(--rgb-accent / --cmyk-accent / 4색)을 정의.
+   이 div 안의 모든 클론 섹션(버튼·룰·도트·틱·헤어라인)이 잉크 색으로 칠해진다.
+   레이아웃·타이포·간격 토큰은 globals 그대로 상속. 종이는 흰색, 타입은 먹.
+
+   RGB/가산은 전부 제거됨. 두 날 모두 CMYK 감산잉크.
+   - DAY 1: 시안(C) 강조 잉크 — 가독 위해 약간 진한 시안.
+   - DAY 2: 마젠타(M) 강조 잉크 — 인쇄 잉크. */
+.root {
+  /* CMYK 잉크 토큰. (--rgb-accent 이름은 호환 유지용, 값은 Day1 시안 잉크) */
+  --rgb-accent: #0093d0;  /* Day1 강조 = 시안 잉크 (흰 종이 위 가독) */
+  --cmyk-accent: #ec008c; /* Day2 강조 = 마젠타 잉크 */
+  --cmyk-c: #0093d0;
+  --cmyk-m: #ec008c;
+  --cmyk-y: #f5d800; /* 종이 위 가독 위해 살짝 진한 옐로 */
+  --cmyk-k: #0a0a0a;
+
+  /* 미변경 클론 조각(Footer/ScrollCue/Marquee 등)이 쓰는 --heat-* 를
+     CMYK 잉크 계열로 매핑 (주 액센트 = 마젠타) */
+  --heat-core: #b80070;
+  --heat-main: #ec008c; /* magenta */
+  --heat-mid: #0093d0;  /* cyan */
+  --heat-edge: #f5d800; /* yellow */
+
+  display: block;
+  position: relative;
+}

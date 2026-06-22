@@ -1,0 +1,37 @@
+/* [HEATMAP 변형] 스코프 토큰 오버라이드.
+   원본의 열 액센트 토큰(--heat-core/main/mid/edge: cream→orange→red 계열)을
+   진짜 분석 히트맵 팔레트(blue→cyan→green→yellow→orange→red)로 교체.
+   이 div 안의 모든 클론 섹션(버튼·룰·도트·틱·헤어라인)이 히트맵 색으로 칠해진다.
+   레이아웃·타이포·간격 토큰은 globals 그대로 상속. */
+.root {
+  /* hot → cool 순서로 매핑:
+     --heat-main(주 강조, 버튼/룰/프롬프트) = 핫 레드
+     --heat-core(가장 뜨거운 중심)        = 진한 레드
+     --heat-mid(중간)                     = 주황
+     --heat-edge(가장자리/번짐의 끝)        = 노랑 */
+  --heat-core: #c8201a; /* hottest core */
+  --heat-main: #e6281e; /* primary hot red accent */
+  --heat-mid: #f58c1e; /* orange */
+  --heat-edge: #f5dc32; /* yellow (edge of heat) */
+
+  display: block;
+  position: relative;
+}
+
+/* 선택: 분석 히트맵 텍스처용 미세 그레인 — 아주 옅게.
+   히어로/필드 위에 얹혀 "스캔된 히트맵" 느낌만 더한다. 인터랙션은 막지 않음. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .grain {
+    opacity: 0.04;
+  }
+}

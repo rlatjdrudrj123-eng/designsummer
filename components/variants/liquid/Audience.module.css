@@ -1,0 +1,88 @@
+.audience {
+  padding-block: clamp(72px, 11vh, 160px);
+  display: flex;
+  flex-direction: column;
+}
+
+.tag {
+  font-family: var(--font-kr);
+  font-size: clamp(22px, 2.6vw, 36px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  margin-bottom: clamp(28px, 5vh, 56px);
+  word-break: keep-all;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 5vw, 72px);
+}
+
+.col {
+  padding-top: 20px;
+  border-top: 2px solid var(--ink);
+}
+
+.dayLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.d1 .dayLabel {
+  color: var(--heat-main);
+}
+.d2 .dayLabel {
+  color: var(--heat-mid);
+}
+
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(18px, 1.8vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  word-break: keep-all;
+  margin-top: 8px;
+}
+
+.items {
+  list-style: none;
+  margin: clamp(18px, 3vh, 28px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.item {
+  position: relative;
+  padding-left: 22px;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  line-height: 1.65;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+.mark {
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+}
+.d1 .mark {
+  background: var(--heat-main);
+}
+.d2 .mark {
+  background: var(--heat-mid);
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+}

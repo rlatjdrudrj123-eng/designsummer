@@ -1,0 +1,394 @@
+.chapter {
+  /* 단일 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  min-height: 74vh;
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+  padding-block: clamp(96px, 14vh, 200px);
+}
+/* shell 의 padding-inline(--margin) 을 정규 컨테이너 값으로 덮어쓴다(복합 선택자로 우선). */
+.chapter:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* 텍스트 블록 (Reveal). D1 좌·D2 우 */
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.d2 .text {
+  order: 2;
+  align-items: flex-end;
+  text-align: right;
+}
+.d2 .graphic {
+  order: 1;
+}
+
+.sub {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.date {
+  letter-spacing: var(--tracking-meta);
+  opacity: 0.5;
+}
+.d1 .sub {
+  color: var(--heat-main);
+}
+.d2 .sub {
+  color: var(--heat-mid);
+}
+
+/* 대제목 — 한글 정제 카피. 오버사이즈/어색한 2줄 줄바꿈 금지(스탠딩 룰):
+   크기를 낮춰 가능한 한 줄에 들어오게 한다. balance 로 고아줄 방지. */
+.title {
+  font-family: var(--font-kr);
+  font-size: clamp(30px, 3.4vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+  word-break: keep-all;
+  text-wrap: balance;
+  margin-top: clamp(14px, 2.4vh, 28px);
+}
+
+/* 신청 CTA — 키워드 리스트 아래. 강조: 넓고 큼. 따뜻한 딥-잉크(열을 머금은 짙은 잉크)
+   채움으로 오라 톤과 어울리되 고대비/명확한 클릭 어포던스 유지. hover 시 열이 차오름. */
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: min(100%, 30ch);
+  margin-top: clamp(24px, 3.4vh, 40px);
+  /* 차가운 순검정 대신 열을 머금은 따뜻한 딥-잉크. */
+  background: color-mix(in oklab, var(--ink) 82%, var(--heat-core) 18%);
+  color: var(--white);
+  font-family: var(--font-kr);
+  font-size: clamp(17px, 1.4vw, 21px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  padding: 20px 30px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -22px rgba(120, 50, 10, 0.55);
+  transition:
+    color var(--dur-touch) var(--ease-heat),
+    box-shadow var(--dur-touch) var(--ease-heat),
+    transform var(--dur-touch) var(--ease-heat);
+}
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  /* 코어→메인 열 그라데이션이 아래에서 차오른다. */
+  background: linear-gradient(135deg, var(--heat-core), var(--heat-main));
+  transform: translateY(100%);
+  transition: transform var(--dur-bloom) var(--ease-heat);
+}
+.cta:hover,
+.cta:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 22px 48px -20px rgba(200, 70, 20, 0.6);
+}
+.cta:hover::before,
+.cta:focus-visible::before {
+  transform: translateY(0);
+}
+.cta span {
+  position: relative;
+  z-index: 1;
+}
+
+/* 본문 — 가독성 우선(적당한 크기·줄간·대비) */
+.body {
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.25vw, 19px);
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0.005em;
+  word-break: keep-all;
+  max-width: 34ch;
+  margin-top: clamp(18px, 3vh, 32px);
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+}
+.d2 .body {
+  margin-left: auto;
+}
+
+/* D2 키워드 — 타이틀 하단에 정리 (번호 + 헤어라인) */
+.keywords {
+  list-style: none;
+  margin: clamp(28px, 4vh, 48px) 0 0;
+  padding: 0;
+  width: min(100%, 30ch);
+}
+.d2 .keywords {
+  margin-left: auto;
+}
+.keyword {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 13px 0;
+  border-top: 1.5px solid
+    color-mix(in srgb, var(--heat-core) 18%, rgba(10, 10, 10, 0.16));
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+}
+.keyword:last-child {
+  border-bottom: 1.5px solid
+    color-mix(in srgb, var(--heat-core) 18%, rgba(10, 10, 10, 0.16));
+}
+.d2 .keyword {
+  flex-direction: row-reverse;
+}
+.kwNum {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  color: var(--heat-mid);
+}
+.d1 .kwNum {
+  color: var(--heat-main);
+}
+
+/* 정보성 그래픽 모듈 컨테이너 */
+.graphic {
+  justify-self: center;
+  width: min(100%, 560px);
+}
+
+/* D1 — 핵심 주제 플립 카드. 앞: 주제 / 뒤(hover): 담당 연사(열 색).
+   .cards 는 Reveal(.reveal) 이기도 해서 스크롤 진입 시 카드가 순차로 등장. */
+.cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 1.2vw, 16px);
+  text-align: left;
+}
+.cards .card:last-child {
+  grid-column: 1 / -1;
+}
+
+.card {
+  perspective: 1000px;
+  outline: none;
+  animation: cardIn 0.55s var(--ease-heat) both;
+}
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.flip {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  transform-style: preserve-3d;
+  transition: transform 0.7s var(--ease-heat);
+}
+.cardTheme .flip {
+  aspect-ratio: 16 / 5;
+}
+.card:hover .flip,
+.card:focus-visible .flip {
+  transform: rotateY(180deg);
+}
+
+.front,
+.back {
+  position: absolute;
+  inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+  border: 1.5px solid var(--ink);
+}
+
+/* 앞면 — 디자인된 카드: 큰 인덱스 + 열 틱 + 타이트한 주제 */
+.front {
+  background: var(--white);
+}
+.cardTick {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  width: 24px;
+  height: 3px;
+  background: var(--heat-main);
+}
+.cardIndex {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  font-family: var(--font-display);
+  font-size: clamp(40px, 4vw, 58px);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--heat-edge);
+  opacity: 0.32;
+}
+.cardTopic {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  font-family: var(--font-kr);
+  font-size: clamp(17px, 1.5vw, 23px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.18;
+  word-break: keep-all;
+}
+.cardTheme .cardIndex {
+  font-size: clamp(20px, 1.6vw, 26px);
+  letter-spacing: var(--tracking-meta);
+  opacity: 0.4;
+  font-weight: 700;
+}
+.cardTheme .cardTopic {
+  font-size: clamp(22px, 2vw, 34px);
+}
+
+/* 뒷면 — 연사 프로필: 사진 + 열 스크림 + 이름 */
+.back {
+  transform: rotateY(180deg);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.backPhoto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  filter: grayscale(1) contrast(1.05);
+}
+.backScrim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to top,
+    var(--heat-main) 0%,
+    color-mix(in srgb, var(--heat-main) 40%, transparent) 36%,
+    transparent 64%
+  );
+}
+.backInfo {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  color: var(--white);
+}
+.backStudio {
+  font-family: var(--font-kr);
+  font-size: clamp(18px, 1.6vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+  word-break: keep-all;
+}
+.backName {
+  font-family: var(--font-kr);
+  font-size: var(--type-meta);
+  opacity: 0.92;
+  margin-top: 3px;
+}
+
+/* 테마 카드(새로운 관점) — 풀폭 열 카드 */
+.cardTheme .front {
+  background: var(--heat-main);
+  border-color: var(--heat-main);
+}
+.cardTheme .cardTick {
+  background: var(--white);
+}
+.cardTheme .cardIndex,
+.cardTheme .cardTopic {
+  color: var(--white);
+}
+.cardTheme .cardIndex {
+  opacity: 0.7;
+}
+.cardTheme .back {
+  background: var(--ink);
+  border-color: var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.backTheme {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.4vw, 40px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--heat-edge);
+}
+
+/* D1/D2 — 컨셉 열 오브제 박스 */
+.graphicObject {
+  width: min(100%, 540px);
+}
+
+@media (max-width: 640px) {
+  .chapter {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 5vh, 48px);
+    min-height: auto;
+  }
+  .text,
+  .d2 .text {
+    order: 0;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .graphic,
+  .d2 .graphic {
+    order: 1;
+    width: 100%;
+    justify-self: stretch;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+  .flip {
+    transition: none;
+  }
+  .cta,
+  .cta::before {
+    transition: none;
+  }
+  .cta:hover,
+  .cta:focus-visible {
+    transform: none;
+  }
+}

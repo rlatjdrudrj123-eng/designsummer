@@ -1,0 +1,170 @@
+/* 플로팅바 — 히어로 통과 후 상단에 떠서 따라오는 글래스 바. */
+.bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  transform: translateY(-100%);
+  opacity: 0;
+  transition:
+    transform 0.42s var(--ease-heat),
+    opacity 0.42s var(--ease-heat);
+  pointer-events: none;
+}
+.show {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 풀폭 글래스 배경(중앙 정렬 inner 뒤). */
+.bar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: color-mix(in srgb, rgb(255, 249, 242) 80%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(120%);
+  backdrop-filter: blur(14px) saturate(120%);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent);
+}
+
+.inner {
+  width: min(1180px, 100%);
+  margin-inline: auto;
+  padding: clamp(10px, 1.4vh, 14px) clamp(20px, 5vw, 56px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+/* 브랜드 + 앵커를 좌측에 묶어 바를 꽉 채운다(가운데만 떠 옹졸해 보이던 문제 해결).
+   바로가기는 우측 끝(space-between). */
+.left {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 1.8vw, 26px);
+  min-width: 0;
+}
+.divider {
+  width: 1px;
+  height: 18px;
+  background: color-mix(in srgb, var(--ink) 16%, transparent);
+}
+
+.brand {
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(15px, 1.5vw, 19px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* 섹션 앵커 — Day 1 / Day 2 / FAQ. 바와 같은 톤의 잉크 텍스트 링크. */
+.nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 30px);
+}
+.navLink {
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1vw, 15px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--ink) 66%, transparent);
+  text-decoration: none;
+  position: relative;
+  padding: 2px 0;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+/* hover 시 열 색 + 짧은 밑줄 액센트 */
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1.5px;
+  background: var(--heat-main);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-touch) var(--ease-heat);
+}
+.navLink:hover,
+.navLink:focus-visible {
+  color: var(--ink);
+}
+.navLink:hover::after,
+.navLink:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* K-PRINT 바로가기 — 알약(999) 대신 바 톤에 맞춘 차분한 사각 라인 버튼.
+   잉크 아웃라인 + 투명 배경으로 글래스 바에 녹아들되, hover 에서 잉크로 채워
+   명확한 클릭 어포던스를 준다. */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.05vw, 15px);
+  font-weight: 600;
+  color: var(--ink);
+  background: transparent;
+  border: 1.5px solid color-mix(in srgb, var(--ink) 28%, transparent);
+  padding: 8px 15px;
+  border-radius: 9px;
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    color var(--dur-touch) var(--ease-heat),
+    border-color var(--dur-touch) var(--ease-heat),
+    background var(--dur-touch) var(--ease-heat);
+}
+.cta:hover,
+.cta:focus-visible {
+  color: var(--white);
+  border-color: transparent;
+  background: color-mix(in oklab, var(--ink) 86%, var(--heat-core) 14%);
+}
+.cta span {
+  font-size: 1.02em;
+}
+
+@media (max-width: 640px) {
+  /* 모바일: 브랜드·구분선 감추고 앵커 + 바로가기만(공간 확보). */
+  .brand,
+  .divider {
+    display: none;
+  }
+  .nav {
+    gap: 13px;
+  }
+  .navLink {
+    font-size: 13px;
+  }
+  .cta {
+    font-size: 12px;
+    padding: 7px 12px;
+  }
+  .inner {
+    padding-inline: clamp(14px, 4vw, 20px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bar {
+    transition: opacity 0.2s linear;
+  }
+  .cta {
+    transition: none;
+  }
+  .cta:hover,
+  .cta:focus-visible {
+    transform: none;
+  }
+}

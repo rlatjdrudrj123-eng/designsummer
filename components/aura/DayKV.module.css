@@ -1,0 +1,28 @@
+/* ============================================================================
+   Aura DayKV — per-day key-visual accent styles.
+   (forked from components/aura1/DayKV.module.css — independent of /aura1.)
+
+   The KV is a LIVING Canvas2D HEAT-FIELD (see DayKV.tsx) — the hero's effect
+   family, not a flat SVG. This module only sizes/positions it as a small header
+   accent and gives it the warm drop-glow so it sits on-tone with the aura +
+   glass aesthetic. Per-day color is baked into the canvas ramp (red for Day1 /
+   gold for Day2), so no currentColor coupling here.
+
+   Motion lives entirely in the canvas (rAF); DayKV.tsx renders a single static
+   frame under prefers-reduced-motion.
+   ============================================================================ */
+
+.kv {
+  /* 헤더 아이콘 — 더 크게(클라이언트 요청). */
+  width: clamp(104px, 13vw, 168px);
+  height: clamp(104px, 13vw, 168px);
+  flex: none;
+  /* 두 아이콘 모두 Heatwave(오렌지/레드) 톤으로 통일된 따뜻한 글로우. */
+  filter: drop-shadow(0 6px 16px rgba(255, 90, 20, 0.34));
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

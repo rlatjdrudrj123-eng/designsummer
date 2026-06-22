@@ -1,0 +1,314 @@
+/* ============================================================
+   ImmersivePanel — one near-full-viewport, full-bleed cinematic panel
+   per speaker. GIANT warm tonal studio name melts into the shared aura
+   ground; one large work image + legible copy composed dramatically.
+
+   Warm palette mirrors develop/Lineup.module.css so the tone & manner is
+   identical to the original develop page: DAY 1 deep red-orange → DAY 2
+   bright golden-yellow. No teal / cyan / green. The page-wide Day1→Day2
+   color drift is owned by PostHeroAura behind this; here the per-day tonal
+   text just lands in the right warm register.
+   ============================================================ */
+
+.panel {
+  /* fixed per-day warm tones (no scroll-driven --mood needed here — the panel
+     belongs to one day, and the AURA ground carries the page-wide drift). */
+  --ds-red-deep: #e03200;
+  --ds-red: #ff4d00;
+  --ds-gold: #f59e00;
+  --ds-yellow: #ffc400;
+
+  /* warm ink hierarchy — dark warm ink reads on the light warm aura. */
+  --ink-warm: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --ink-soft: color-mix(in oklab, var(--ink-warm) 78%, transparent);
+  --ink-faint: color-mix(in oklab, var(--ink-warm) 56%, transparent);
+  --line: color-mix(in srgb, var(--heat-core) 18%, rgba(10, 10, 10, 0.12));
+
+  /* per-day tonal gradient endpoints for the giant studio name. */
+  --tonal-a: var(--ds-red-deep);
+  --tonal-b: var(--ds-red);
+  --accent: var(--ds-red-deep);
+
+  --p: 0.5; /* travel through viewport (0..1), set by rAF */
+  --in: 1; /* reveal amount (0..1), set by rAF */
+
+  position: relative;
+  z-index: 1;
+  /* near-full-viewport, but never taller than its content needs. */
+  min-height: min(96vh, 920px);
+  display: grid;
+  align-items: center;
+  /* the PANEL itself stays full-bleed (giant type bleeds toward the edges);
+     horizontal alignment of the READABLE content is owned by .stageGrid's
+     canonical container below, so the panel carries no inline padding. */
+  padding-block: clamp(40px, 9vh, 120px);
+  overflow: clip; /* contain the oversized giant type — no horizontal clip of copy */
+}
+
+.d2.panel {
+  --tonal-a: var(--ds-gold);
+  --tonal-b: var(--ds-yellow);
+  --accent: var(--ds-gold);
+}
+
+/* ---- GIANT tonal studio name (big-type-on-aura) ---------------------------
+   Sized to dominate the panel and bleed toward the edges so it reads as part
+   of the warm field. Gradient text-clip in the day's tones keeps it legible
+   while letting it "melt" — a soft warm shadow lifts it just enough. */
+.bigType {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-inline: clamp(8px, 4vw, 64px);
+  pointer-events: none;
+  /* gentle parallax: drift slightly opposite the scroll travel. */
+  transform: translate3d(0, calc((var(--p) - 0.5) * -64px), 0);
+}
+.flip .bigType {
+  justify-content: flex-end;
+}
+.bigStudio {
+  font-family: var(--font-display);
+  font-weight: 800;
+  /* HUGE — clamps from comfortable mobile to dramatic desktop. */
+  font-size: clamp(64px, 19vw, 320px);
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  text-transform: lowercase;
+  white-space: nowrap;
+  background-image: linear-gradient(
+    100deg,
+    var(--tonal-a),
+    var(--tonal-b)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* melt into aura but stay readable: low-ish opacity + soft warm halo. */
+  opacity: calc(0.16 + var(--in) * 0.16);
+  filter: drop-shadow(0 2px 18px rgba(120, 40, 0, 0.18));
+}
+
+/* ---- stage grid: one large image + copy, alternating sides --------------- */
+.stageGrid {
+  position: relative;
+  z-index: 1;
+  /* canonical content container — same readable left/right line as About,
+     Audience, Benefits, FAQ and the other develop sections. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+}
+.flip .stageGrid {
+  grid-template-columns: 0.85fr 1.15fr;
+}
+.flip .media {
+  order: 2;
+}
+.flip .copy {
+  order: 1;
+}
+
+/* ---- ONE large work image, dramatically scaled --------------------------- */
+.media {
+  position: relative;
+  /* reveal + parallax: rise & sharpen as the panel enters. */
+  opacity: var(--in);
+  transform: translate3d(0, calc((1 - var(--in)) * 36px), 0)
+    scale(calc(0.98 + var(--in) * 0.02));
+  transition: none;
+}
+.mediaImg,
+.mediaPh {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.5),
+    0 40px 80px -40px rgba(70, 30, 0, 0.5);
+}
+.mediaPh {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(56px, 9vw, 120px);
+  color: transparent;
+  background-image: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--tonal-a) 60%, white 12%),
+    color-mix(in oklab, var(--tonal-b) 60%, white 12%)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+
+/* ---- copy block — faint frosted plate for legibility on the aura --------- */
+.copy {
+  position: relative;
+  padding: clamp(22px, 2.4vw, 36px);
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.42);
+  -webkit-backdrop-filter: blur(20px) saturate(132%);
+  backdrop-filter: blur(20px) saturate(132%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 30px 60px -36px rgba(70, 30, 0, 0.42);
+  /* reveal: ease in with a touch more travel than the image for depth. */
+  opacity: var(--in);
+  transform: translate3d(0, calc((1 - var(--in)) * 48px), 0);
+}
+
+.kicker {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  margin-bottom: 16px;
+}
+.idx {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: var(--accent);
+}
+.studioKo {
+  font-family: var(--font-kr);
+  font-weight: 800;
+  font-size: clamp(18px, 2vw, 24px);
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  background-image: linear-gradient(100deg, var(--tonal-a), var(--tonal-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.time {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--ink-soft);
+  white-space: nowrap;
+  margin-left: auto;
+}
+
+.session {
+  font-family: var(--font-kr);
+  font-size: clamp(20px, 2.6vw, 30px);
+  font-weight: 700;
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  color: var(--ink-warm);
+  display: flex;
+  flex-direction: column;
+}
+.sessionDesc {
+  margin-top: 14px;
+  font-family: var(--font-kr);
+  font-size: 14.5px;
+  line-height: 1.7;
+  word-break: keep-all;
+  color: var(--ink-soft);
+}
+.person {
+  margin-top: 18px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  word-break: keep-all;
+}
+.person b {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-warm);
+}
+.person span {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+.creds {
+  margin-top: 16px;
+  list-style: none;
+  padding: 14px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--line);
+}
+.creds li {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+  padding-left: 14px;
+  position: relative;
+  word-break: keep-all;
+}
+.creds li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ---- mobile (≤ 760px): stack image over copy, type shrinks gracefully ---- */
+@media (max-width: 760px) {
+  .panel {
+    min-height: auto;
+    padding-block: clamp(48px, 12vh, 96px);
+    /* inline alignment stays on .stageGrid's canonical container (clamp floors
+       at 20px), so the panel keeps no inline padding here either. */
+  }
+  .stageGrid,
+  .flip .stageGrid {
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+  .flip .media {
+    order: 1;
+  }
+  .flip .copy {
+    order: 2;
+  }
+  .bigType,
+  .flip .bigType {
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 8px;
+  }
+  .bigStudio {
+    font-size: clamp(52px, 22vw, 120px);
+  }
+}
+
+/* reduced motion: no parallax / reveal motion — rest in revealed state. */
+@media (prefers-reduced-motion: reduce) {
+  .bigType,
+  .flip .bigType {
+    transform: none;
+  }
+  .media,
+  .copy {
+    transform: none;
+    opacity: 1;
+  }
+  .bigStudio {
+    opacity: 0.28;
+  }
+}

@@ -1,0 +1,1245 @@
+/* ============================================================
+   AURA — frosted aura gradient + tonal type that melts into the ground
+   Signature: soft blurred multicolor aura ground (Canvas), huge translucent
+   floating shape, and GIANT tonal display type filled with a gradient near
+   the ground hue (low-contrast, luminous). Small crisp meta for legibility.
+   ============================================================ */
+
+.wrap {
+  --mood: 0; /* 0 = DAY 1 (green) mood · 1 = DAY 2 (magenta) mood — set in JS */
+
+  /* ground / ink */
+  --ink: #f4f7f5;
+  --ink-soft: rgba(244, 247, 245, 0.62);
+  --ink-faint: rgba(244, 247, 245, 0.38);
+  --line: rgba(244, 247, 245, 0.14);
+
+  /* tonal display stops — close to the ground hue so type half-melts in.
+     Mood blends green/lime → magenta via --mood (mixed per-stop below). */
+  --tonal-a: color-mix(in oklab, #d6ffb0 calc(100% - var(--mood) * 100%), #ffb0d8 calc(var(--mood) * 100%));
+  --tonal-b: color-mix(in oklab, #6fd08a calc(100% - var(--mood) * 100%), #ff7a8e calc(var(--mood) * 100%));
+  --tonal-c: color-mix(in oklab, #8f7ce0 calc(100% - var(--mood) * 100%), #ff9d5c calc(var(--mood) * 100%));
+
+  /* crisp accent for tiny labels (kept readable, not tonal) */
+  --accent: color-mix(in oklab, #b8f08a calc(100% - var(--mood) * 100%), #ff9ec4 calc(var(--mood) * 100%));
+
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #0a0f0c;
+  color: var(--ink);
+  font-family: var(--font-kr), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+  /* mood drift on DOM accents matches the canvas easing */
+  transition: none;
+}
+
+/* persistent aura ground behind all content */
+.auraLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.auraCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+/* frosted veil: a faint white wash + subtle vignette = glass, not raw blobs */
+.veil {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(120% 90% at 50% 0%, rgba(255, 255, 255, 0.05), transparent 60%),
+    radial-gradient(140% 120% at 50% 110%, rgba(0, 0, 0, 0.55), transparent 55%);
+  mix-blend-mode: screen;
+}
+
+/* every content block sits above the aura */
+.hero,
+.section,
+.footer {
+  position: relative;
+  z-index: 1;
+}
+
+/* ---------------- shared layout ---------------- */
+.inner {
+  width: min(1180px, 92vw);
+  margin: 0 auto;
+}
+.section {
+  padding: clamp(80px, 12vh, 160px) 0;
+}
+
+.kicker {
+  display: inline-block;
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 22px;
+  transition: color 0.6s ease;
+}
+
+/* tonal helpers — gradient fill clipped to text, near the ground hue */
+.tonalLine,
+.tonalInline {
+  background-image: linear-gradient(
+    100deg,
+    var(--tonal-a),
+    var(--tonal-b) 48%,
+    var(--tonal-c)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* very soft glow so it reads luminous, melting into the aura */
+  filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.06));
+  transition: filter 0.6s ease;
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: clamp(28px, 5vh, 56px) clamp(24px, 5vw, 72px);
+  overflow: hidden;
+}
+
+.floatShape {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(78vh, 70vw);
+  height: min(78vh, 70vw);
+  transform: translate(-50%, -52%);
+  z-index: -1;
+  display: grid;
+  place-items: center;
+  opacity: 0.9;
+  animation: floatDrift 22s ease-in-out infinite;
+}
+.floatShape svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  filter: blur(0.5px);
+}
+.floatGlyph {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  /* 4-digit edition year — sized to read as a faint translucent backdrop
+     numeral, not as copy. Much smaller per-glyph than the old single "5". */
+  font-size: min(20vh, 26vw);
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.05);
+  text-shadow: 0 0 60px rgba(255, 255, 255, 0.05);
+  user-select: none;
+}
+
+@keyframes floatDrift {
+  0%,
+  100% {
+    transform: translate(-50%, -52%) scale(1) rotate(0deg);
+  }
+  50% {
+    transform: translate(-48%, -50%) scale(1.06) rotate(8deg);
+  }
+}
+
+.heroTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.heroBrand {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+/* crisp edition label, top-right — reference: "L'inconnu / 5e Édition" */
+.editionLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 4px;
+}
+.editionK {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.editionV {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  transition: color 0.6s ease;
+}
+.wordmark {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 24px);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.wordmark em {
+  font-style: normal;
+  color: var(--accent);
+  margin: 0 0.05em;
+}
+.tagline {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: clamp(12px, 1.3vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink-soft);
+  text-transform: lowercase;
+}
+
+/* MID band — melt-in title block on the left, crisp blurb floating opposite */
+.heroMid {
+  margin: auto 0;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: clamp(28px, 5vw, 80px);
+  flex-wrap: wrap;
+}
+
+/* the left lockup: kicker → melt-in title → real name → concept line, all
+   sharing one left edge for clean alignment and consistent baselines. */
+.titleBlock {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.heroTitle {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+}
+/* small EN kicker that sits above the melt-in title */
+.titleEn {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: clamp(12px, 1.2vw, 15px);
+  font-weight: 600;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  margin-bottom: clamp(12px, 1.4vw, 20px);
+  -webkit-text-fill-color: currentColor;
+}
+/* the melt-in display lines — tasteful mixed-case English, set in the aura
+   display face at a sensible, readable size. line-height kept above 0.9 so
+   ascenders/descenders never collide; the tonal fill provides the "melt"
+   while the size + spacing keep it legible. */
+.titleLines {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 0.98;
+  font-size: clamp(52px, 8.4vw, 132px);
+}
+.tonalLineB {
+  background-image: linear-gradient(
+    260deg,
+    var(--tonal-c),
+    var(--tonal-b) 50%,
+    var(--tonal-a)
+  );
+}
+/* the REAL seminar name — crisp, legible, the actual title under the glow */
+.realTitle {
+  margin: clamp(16px, 1.8vw, 26px) 0 0;
+  font-family: var(--font-kr), system-ui, sans-serif;
+  font-size: clamp(22px, 2.6vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+  color: var(--ink);
+}
+/* Korean concept line — legible soft-ink support line to the glow */
+.heroKr {
+  margin: clamp(6px, 0.8vw, 12px) 0 0;
+  font-family: var(--font-kr), system-ui, sans-serif;
+  font-size: clamp(14px, 1.5vw, 18px);
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+/* crisp festival blurb block — small, high-legibility, opposite the type */
+.blurb {
+  max-width: 30ch;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-bottom: clamp(4px, 1vw, 14px);
+}
+.blurbKr {
+  font-size: clamp(14px, 1.5vw, 18px);
+  line-height: 1.55;
+  font-weight: 600;
+  color: var(--ink);
+}
+.blurbEn {
+  font-size: clamp(11px, 1.1vw, 13px);
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+  color: var(--ink-faint);
+}
+
+/* ---- bottom credit row: crisp labels + small partner marks ---- */
+.creditRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: clamp(18px, 3vw, 44px);
+  padding-top: clamp(16px, 2vw, 24px);
+  border-top: 1px solid var(--line);
+}
+.credit {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.creditK {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 9.5px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.creditV {
+  font-size: clamp(12px, 1.2vw, 14px);
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+/* small partner-mark strip, pushed to the right end of the row */
+.marks {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.mark {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.mark em {
+  font-style: normal;
+  color: var(--accent);
+  margin: 0 0.04em;
+  transition: color 0.6s ease;
+}
+.markDot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+}
+.markLabel {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   INTRO / CONCEPT
+   ============================================================ */
+.introLead {
+  font-size: clamp(26px, 4vw, 52px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  max-width: 20ch;
+  /* a faint tonal blend so the lead reads luminous but stays legible */
+  color: var(--ink);
+}
+.introBody {
+  margin-top: 22px;
+  max-width: 52ch;
+  font-size: clamp(15px, 1.5vw, 18px);
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+.conceptRow {
+  margin-top: clamp(40px, 6vw, 72px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 32px);
+}
+
+/* frosted-glass card */
+.concept,
+.card {
+  position: relative;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.045);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 30px 60px -30px rgba(0, 0, 0, 0.6);
+}
+.concept {
+  padding: clamp(24px, 3vw, 40px);
+}
+.concept[data-d="2"] {
+  background: rgba(255, 255, 255, 0.035);
+}
+.conceptEn {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  transition: color 0.6s ease;
+}
+.conceptTitle {
+  margin-top: 12px;
+  font-size: clamp(20px, 2.4vw, 30px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.conceptBody {
+  margin-top: 14px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.chips {
+  margin-top: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  list-style: none;
+  padding: 0;
+}
+.chips li {
+  font-size: 12.5px;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* ============================================================
+   LINEUP
+   ============================================================ */
+.lineupHead {
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+.dayTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 20px;
+  flex-wrap: wrap;
+  font-size: clamp(40px, 6.5vw, 88px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+.dayMeta {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: clamp(12px, 1.3vw, 15px);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 30px);
+}
+.card {
+  padding: clamp(22px, 2.4vw, 32px);
+  display: flex;
+  flex-direction: column;
+}
+.cardHead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+.portrait,
+.portraitPh {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+.portraitPh {
+  display: grid;
+  place-items: center;
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--tonal-a) 60%, transparent),
+    color-mix(in oklab, var(--tonal-c) 60%, transparent)
+  );
+  border: 1px solid var(--line);
+}
+.cardId {
+  min-width: 0;
+}
+.studioTonal {
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  background-image: linear-gradient(100deg, var(--tonal-a), var(--tonal-c));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.studioEn {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+.cardTime {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.cardBody {
+  margin-top: 22px;
+}
+.session {
+  font-size: clamp(17px, 1.9vw, 21px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  display: flex;
+  flex-direction: column;
+}
+.sessionDesc {
+  margin-top: 12px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+.person {
+  margin-top: 18px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.person b {
+  font-size: 15px;
+  font-weight: 700;
+}
+.person span {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+.creds {
+  margin-top: 14px;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.creds li {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+  padding-left: 14px;
+  position: relative;
+}
+.creds li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: background 0.6s ease;
+}
+
+.works {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.work {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+}
+
+/* ============================================================
+   HERO — per-day registration CTAs
+   ============================================================ */
+.heroRegister {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  padding: clamp(20px, 3vw, 32px) 0;
+}
+
+/* shared pill button for per-day registration + apply CTA */
+.regBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 26px;
+  border-radius: 999px;
+  font-family: var(--font-kr), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.005em;
+  text-decoration: none;
+  color: #0a0f0c;
+  background: linear-gradient(
+    100deg,
+    var(--tonal-a),
+    var(--tonal-b) 50%,
+    var(--tonal-c)
+  );
+  box-shadow: 0 16px 44px -18px rgba(255, 255, 255, 0.4);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.regBtn span {
+  transition: transform 0.2s ease;
+}
+.regBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 22px 56px -18px rgba(255, 255, 255, 0.5);
+}
+.regBtn:hover span {
+  transform: translateX(4px);
+}
+/* DAY 1 button: keeps the filled luminous gradient (base .regBtn) */
+.regBtnD1 {
+  /* intentionally inherits the filled gradient from .regBtn */
+}
+/* DAY 2 button: outline/glass variant so the two CTAs read as distinct days */
+.regBtnD2 {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid color-mix(in oklab, var(--accent) 55%, var(--line));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+.regBtnD2:hover {
+  background: rgba(255, 255, 255, 0.09);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+}
+
+/* ============================================================
+   AUDIENCE — 추천 대상
+   ============================================================ */
+.audGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 32px);
+}
+.audCard {
+  position: relative;
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.045);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+  backdrop-filter: blur(22px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  padding: clamp(24px, 3vw, 40px);
+}
+.audCard[data-d="2"] {
+  background: rgba(255, 255, 255, 0.035);
+}
+.audDay {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  transition: color 0.6s ease;
+}
+.audHeading {
+  margin-top: 12px;
+  font-size: clamp(18px, 2.1vw, 24px);
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.audList {
+  margin-top: 20px;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.audList li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.audList li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: background 0.6s ease;
+}
+
+/* ============================================================
+   TIMETABLE / PROGRAM
+   ============================================================ */
+.dayBlock {
+  margin-top: clamp(8px, 1.5vw, 16px);
+}
+.dayBlock + .dayBlock {
+  margin-top: clamp(48px, 7vw, 96px);
+}
+.dayRows {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 30px);
+}
+/* reg / break dividers span the row and read distinctly from session cards */
+.marker {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 14px 22px;
+  border-radius: 14px;
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.02);
+}
+.markerBreak {
+  border-style: solid;
+  background: rgba(255, 255, 255, 0.04);
+}
+.markerReg {
+  border-color: color-mix(in oklab, var(--accent) 40%, var(--line));
+}
+.markerTime {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.markerLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: -0.005em;
+}
+
+.sectionTitle {
+  font-size: clamp(40px, 6vw, 84px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: clamp(28px, 4vw, 48px);
+}
+.ttGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 32px);
+}
+.ttCol {
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  padding: clamp(22px, 2.4vw, 34px);
+}
+.ttHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+}
+.ttDay {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+.ttDate {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.ttMood {
+  margin-left: auto;
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  transition: color 0.6s ease;
+}
+.ttList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ttRow {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+.ttRow:last-child {
+  border-bottom: none;
+}
+.ttTime {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+.ttSession {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.ttSession b {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+.ttBy {
+  font-size: 12.5px;
+  color: var(--ink-faint);
+}
+
+/* ============================================================
+   VENUE
+   ============================================================ */
+.venueGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: clamp(28px, 5vw, 64px);
+  align-items: center;
+}
+.venueBig {
+  font-size: clamp(48px, 8vw, 116px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  display: flex;
+  flex-direction: column;
+}
+.venueYr {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: clamp(14px, 1.6vw, 20px);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--ink-soft);
+  margin-bottom: 8px;
+}
+.facts {
+  margin: 0;
+}
+.fact {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  gap: 16px;
+  padding: 16px 0;
+  border-top: 1px solid var(--line);
+}
+.fact dt {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.fact dd {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+
+/* ============================================================
+   APPLY CTA
+   ============================================================ */
+.applySection {
+  text-align: center;
+}
+.applyInner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.applyTitle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0.98;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  font-size: clamp(52px, 9vw, 132px);
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+}
+.applyTitle .tonalLine {
+  white-space: nowrap;
+}
+.applyTitle .tonalLineB {
+  align-self: center;
+}
+.applySub {
+  margin-top: 28px;
+  max-width: 44ch;
+  font-size: clamp(14px, 1.5vw, 17px);
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+.applyBtn {
+  margin-top: 34px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 32px;
+  border-radius: 999px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #0a0f0c;
+  text-decoration: none;
+  background: linear-gradient(
+    100deg,
+    var(--tonal-a),
+    var(--tonal-b) 50%,
+    var(--tonal-c)
+  );
+  box-shadow: 0 18px 50px -16px rgba(255, 255, 255, 0.35);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.applyBtn span {
+  transition: transform 0.2s ease;
+}
+.applyBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 24px 60px -16px rgba(255, 255, 255, 0.45);
+}
+.applyBtn:hover span {
+  transform: translateX(4px);
+}
+
+.applyBtns {
+  margin-top: 34px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+/* ============================================================
+   BENEFITS — 참가 혜택
+   ============================================================ */
+.benGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 32px);
+  align-items: start;
+}
+.benGroup {
+  border-radius: 22px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 30px 60px -30px rgba(0, 0, 0, 0.6);
+  padding: clamp(24px, 3vw, 38px);
+}
+.benHeading {
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: clamp(15px, 1.6vw, 18px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+  transition: color 0.6s ease;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--line);
+}
+.benList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.benItem {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--line);
+}
+.benItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+.benItem b {
+  display: block;
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.benItem p {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   FAQ
+   ============================================================ */
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.faqItem {
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.035);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  overflow: hidden;
+}
+.faqQ {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: clamp(18px, 2vw, 26px) clamp(20px, 2.4vw, 32px);
+  cursor: pointer;
+  list-style: none;
+  font-size: clamp(15px, 1.5vw, 18px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.faqQ::-webkit-details-marker {
+  display: none;
+}
+.faqMark {
+  flex: none;
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1;
+  color: var(--accent);
+  transition: transform 0.25s ease, color 0.6s ease;
+}
+.faqItem[open] .faqMark {
+  transform: rotate(45deg);
+}
+.faqA {
+  margin: 0;
+  padding: 0 clamp(20px, 2.4vw, 32px) clamp(20px, 2.4vw, 28px);
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.footer {
+  padding: clamp(48px, 7vw, 88px) 0 clamp(36px, 5vw, 56px);
+  border-top: 1px solid var(--line);
+}
+.footerInner {
+  width: min(1180px, 92vw);
+  margin: 0 auto;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.footerMark {
+  font-size: clamp(24px, 4vw, 44px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.footerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.footerMeta a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.6s ease;
+}
+.footerNote {
+  width: 100%;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+  font-family: var(--aura-display), var(--font-display), system-ui, sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ============================================================
+   RESPONSIVE — 390px mobile
+   ============================================================ */
+@media (max-width: 760px) {
+  .conceptRow,
+  .cards,
+  .ttGrid,
+  .audGrid,
+  .dayRows,
+  .benGrid {
+    grid-template-columns: 1fr;
+  }
+  .heroRegister,
+  .applyBtns,
+  .regBtn {
+    width: 100%;
+  }
+  .regBtn {
+    justify-content: center;
+  }
+  .venueGrid {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .heroTop {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .editionLabel {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .heroMid {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 24px;
+  }
+  .titleLines {
+    font-size: clamp(48px, 16vw, 96px);
+  }
+  .blurb {
+    max-width: 38ch;
+  }
+  .marks {
+    margin-left: 0;
+    width: 100%;
+    margin-top: 4px;
+  }
+  .dayTitle {
+    gap: 10px;
+  }
+  .ttRow {
+    grid-template-columns: 84px 1fr;
+    gap: 12px;
+  }
+  .fact {
+    grid-template-columns: 88px 1fr;
+    gap: 12px;
+  }
+  .cardHead {
+    grid-template-columns: auto 1fr;
+  }
+  .cardTime {
+    grid-column: 2;
+    margin-top: 4px;
+  }
+}
+
+/* ============================================================
+   REDUCED MOTION — static aura (canvas paints one frame in JS),
+   freeze the floating shape drift.
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .floatShape {
+    animation: none;
+  }
+  .applyBtn,
+  .applyBtn span,
+  .regBtn,
+  .regBtn span,
+  .faqMark {
+    transition: none;
+  }
+}

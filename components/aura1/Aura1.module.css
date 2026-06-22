@@ -1,0 +1,211 @@
+/* ============================================================================
+ * Aura1 — the full /aura page (DevelopSite aura) PLUS a sticky Day1/Day2 anchor
+ * nav bar. This module styles ONLY the new element (the sticky nav) and the day
+ * anchor wrappers (#day1 / #day2 scroll offset). All page sections come from the
+ * shared develop components and carry their own styles — nothing here overrides
+ * them. CSS Modules only; no Tailwind / UI / animation libs.
+ *
+ * Tokens from globals.css: --font-display, --heat-main/mid/core, --white,
+ * --ease-heat, --dur-touch.
+ * ========================================================================== */
+
+/* warm ink, derived from the aura family so nav text reads as part of the ground */
+.nav {
+  --a1-ink: #2a1606;
+  --a1-ink-soft: #5a4126;
+  --a1-line: rgba(70, 30, 0, 0.16);
+}
+
+/* sentinel sits between the hero and the content region; when it scrolls out of
+   the viewport top the (fixed) nav slides/fades in. It has no height so it never
+   creates a band between the hero and the first content section. */
+.navSentinel {
+  height: 0;
+}
+
+/* ── FIXED ANCHOR NAV ──────────────────────────────────────────────────────── */
+/* nav 는 position:fixed 라 문서 흐름에서 빠져 있다 → 히어로 아래에 어떤 밴드도
+   예약하지 않는다. 맨 위(히어로가 보일 때)엔 위로 숨겨두고(translateY(-100%) +
+   opacity:0) 클릭도 막는다. 히어로가 뷰포트 상단을 지나면(.navStuck) 프로스트
+   바로 슬라이드/페이드 인한다 → 히어로가 콘텐츠 첫 섹션과 곧장 맞붙는다. */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  background: rgba(255, 249, 243, 0.86);
+  -webkit-backdrop-filter: blur(12px) saturate(120%);
+  backdrop-filter: blur(12px) saturate(120%);
+  border-bottom: 1px solid var(--a1-line);
+  box-shadow: 0 6px 24px -18px rgba(70, 30, 0, 0.5);
+  /* hidden until the hero passes */
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform var(--dur-touch) var(--ease-heat),
+    opacity var(--dur-touch) var(--ease-heat);
+}
+
+/* slid in / visible once the hero has scrolled past */
+.navStuck {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.navInner {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  gap: clamp(16px, 4vw, 48px);
+  align-items: stretch;
+}
+
+.navLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 56px;
+  font-family: var(--font-display);
+  font-size: clamp(12px, 1.4vw, 14px);
+  letter-spacing: 0.01em;
+  font-weight: 500;
+  color: var(--a1-ink-soft);
+  border-bottom: 2px solid transparent;
+  transition:
+    color var(--dur-touch) var(--ease-heat),
+    border-color var(--dur-touch) var(--ease-heat);
+}
+
+.navLink:hover {
+  color: var(--heat-main);
+  border-bottom-color: var(--heat-mid);
+}
+
+.navDate {
+  font-size: 0.85em;
+  color: var(--heat-main);
+  white-space: nowrap;
+}
+
+/* ── CURSOR LIGHT-SPOT (역발상) ──────────────────────────────────────────────
+ * The below-hero wrapper. It scopes the cursor light-spot to the content region
+ * (the hero is outside it). It must establish a stacking context so the fixed
+ * spot's blend mode composites against the warm aura ground that lives inside
+ * PostHeroRegion — without it the soft-light blend would reach the white page.
+ *
+ * SEAM FIX (히어로↔콘텐츠 경계의 가로선 제거): the hero's bottom fades to a solid
+ * warm cream rgb(255,224,205); but the PostHeroAura layer's top is MASKED to
+ * transparent across its top --fade band, so right under the hero the aura canvas
+ * is invisible and the plain WHITE page showed through → a cream-vs-white tonal
+ * step read as a thin line at the hand-off. We give this wrapper the SAME warm
+ * cream ground so the masked-transparent top of the aura reveals that cream
+ * (identical to the hero's bottom color) instead of white. The aura canvas then
+ * feathers IN over this matching ground via its own top mask → one continuous
+ * warm gradient with no visible cut. Scoped to Aura1's .body, so shared
+ * PostHeroRegion / `/aura` / develop tabs are untouched.
+ * (--seam-cream must equal the hero's ::after end color in Hero.module.css.) */
+.body {
+  --seam-cream: rgb(255, 224, 205);
+  position: relative;
+  isolation: isolate;
+  background: var(--seam-cream);
+}
+
+/* The spot: a SUBTLE, SMALL light wash, fixed at the viewport and transform-
+ * translated to the cursor (JS sets translate3d to clientX/clientY; the margin
+ * offsets here re-centre it on the pointer). NOT a glow/glare — it does not use
+ * the bright soft-light bloom anymore. Instead a gentle low-opacity warm-cream
+ * radial on mix-blend-mode: normal gently LIGHTENS and calms the busy warm
+ * ground directly under the pointer so text reads a little cleaner, with no
+ * visible "a light is shining" hotspot. Radius ~160px with a soft falloff to
+ * transparent; fades in/out via data-on opacity. pointer-events:none so it never
+ * intercepts clicks; will-change:transform keeps the rAF move cheap. */
+.spot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 5; /* above the aura ground + content, below the fixed nav (z-index 30) */
+  width: 320px;
+  height: 320px;
+  margin: -160px 0 0 -160px; /* centre the 320px box (≈160px radius) on the origin */
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 252, 246, 0.34) 0%,
+    rgba(255, 252, 246, 0.2) 40%,
+    rgba(255, 252, 246, 0.07) 68%,
+    rgba(255, 252, 246, 0) 100%
+  );
+  mix-blend-mode: normal;
+  opacity: 0;
+  transition: opacity var(--dur-touch) var(--ease-heat);
+  will-change: transform;
+}
+.spot[data-on="1"] {
+  opacity: 1;
+}
+
+/* DISABLE on touch (no fine pointer) and reduced-motion — belt-and-suspenders
+   alongside the JS guard so the element never paints in those modes. */
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .spot {
+    display: none;
+  }
+}
+
+/* ── DAY ANCHOR WRAPPERS ───────────────────────────────────────────────────── */
+/* offset the scroll target so the pinned nav doesn't cover the day heading.
+   `display: contents` keeps the wrapper out of the layout so DayBlock renders
+   exactly as it does in DevelopSite — but `display: contents` drops
+   scroll-margin, so we keep it a plain block (which is layout-neutral here since
+   DayBlock fills the width and adds its own spacing). */
+.dayAnchor {
+  scroll-margin-top: 72px;
+}
+
+/* ── RESPONSIVE (mobile ≤ 720px, incl. 390px) ──────────────────────────────── */
+@media (max-width: 720px) {
+  .navInner {
+    gap: 14px;
+  }
+
+  .navLink {
+    min-height: 52px;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 2px;
+    line-height: 1.25;
+    flex: 1 1 0;
+  }
+
+  .navDate {
+    font-size: 0.8em;
+  }
+
+  .dayAnchor {
+    scroll-margin-top: 64px;
+  }
+}
+
+/* ── REDUCED MOTION ────────────────────────────────────────────────────────── */
+/* no slide — the nav simply appears/disappears (opacity + visibility), no
+   transform animation. */
+@media (prefers-reduced-motion: reduce) {
+  .nav {
+    transform: none;
+    transition: none;
+  }
+  .navStuck {
+    transform: none;
+  }
+  .navLink {
+    transition: none;
+  }
+}

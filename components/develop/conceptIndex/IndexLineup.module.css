@@ -1,0 +1,386 @@
+/* ============================================================
+   IndexLineup — MINIMAL TYPOGRAPHIC INDEX concept lineup.
+   No photo cards: 8 speakers as a numbered archive index (01..08), large
+   studio name + session title in a tidy tabular row, generous negative space.
+   The ONLY color is the warm continuous aura behind it + warm --mood tonal ink.
+   --mood (0..1) is eased by JS (useMood) from section scroll progress, so the
+   tonal accents drift red-orange (D1) -> gold (D2) inside the warm family,
+   matching the shared PostHeroAura field.
+   ============================================================ */
+
+.lineup {
+  /* warm two-endpoint palette — same journey as PostHeroAura / develop Lineup.
+     D1 = deep red-orange, D2 = bright golden-yellow. No teal/cyan/green. */
+  --mood: 0;
+  --ds-red-deep: #e03200;
+  --ds-red: #ff4d00;
+  --ds-gold: #f59e00;
+  --ds-yellow: #ffc400;
+
+  /* warm dark ink for legibility ON the bright warm aura ground (dark-on-light,
+     unlike the original Aura's light-on-dark). A touch of heat-core in the ink. */
+  --ink-warm: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --ink-soft: color-mix(in oklab, var(--ink-warm) 76%, transparent);
+  --ink-faint: color-mix(in oklab, var(--ink-warm) 54%, transparent);
+  --line: color-mix(in srgb, var(--heat-core) 16%, rgba(10, 10, 10, 0.14));
+
+  position: relative;
+  z-index: 1;
+  padding-block: clamp(48px, 9vh, 120px);
+}
+
+/* canonical develop content container — same edges as every shared section
+   (Timetable / Directions / Apply / Footer) so left/right lines align across
+   the whole develop page. */
+.indexHead,
+.dayGroup {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* --- index header ------------------------------------------------------- */
+.indexHead {
+  margin-bottom: clamp(32px, 6vh, 72px);
+}
+.kicker {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 10px;
+}
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--ink-warm);
+  margin: 0;
+  word-break: keep-all;
+}
+.note {
+  margin: 14px 0 0;
+  font-family: var(--font-kr);
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  word-break: keep-all;
+}
+
+/* --- day group + tonal marker ------------------------------------------ */
+.dayGroup {
+  /* per-day tonal accent (single rgb color, computed live from --mood). This
+     is read by JS for the canvas tiles AND used for the marker/number ink. */
+  --row-accent: rgb(224, 50, 0);
+}
+.d1 {
+  /* D1 sits in mood 0..0.5 -> accent leans deep red-orange */
+  --row-accent: color-mix(
+    in srgb,
+    var(--ds-red-deep) calc(100% - var(--mood) * 100%),
+    var(--ds-gold) calc(var(--mood) * 100%)
+  );
+}
+.d2 {
+  /* D2 sits in mood 0.5..1 -> accent leans gold */
+  --row-accent: color-mix(
+    in srgb,
+    var(--ds-red-deep) calc(100% - var(--mood) * 100%),
+    var(--ds-gold) calc(var(--mood) * 100%)
+  );
+}
+
+.dayGroup + .dayGroup {
+  margin-top: clamp(48px, 9vh, 110px);
+}
+
+.dayMarker {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-bottom: 18px;
+  margin-bottom: 6px;
+  border-bottom: 1.5px solid var(--row-accent);
+}
+.dayTag {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.4vw, 26px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  color: var(--row-accent);
+}
+.dayDate {
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+.dayConcept {
+  margin-left: auto;
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.6vw, 16px);
+  font-weight: 700;
+  color: var(--ink-warm);
+  word-break: keep-all;
+}
+
+/* --- the index rows ----------------------------------------------------- */
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  position: relative;
+  border-bottom: 1px solid var(--line);
+}
+
+/* the clickable head — a real button laid out as a tabular index row.
+   columns: number | studio | session title | time */
+.rowHead {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 3.2em minmax(0, 0.9fr) minmax(0, 1.5fr) auto;
+  align-items: baseline;
+  gap: clamp(14px, 2vw, 36px);
+  padding: clamp(18px, 2.6vw, 30px) 4px;
+  background: none;
+  border: 0;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+.rowHead:focus-visible {
+  outline: 2px solid var(--row-accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.num {
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1.5vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--row-accent);
+  padding-top: 0.25em;
+}
+
+.headMain {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+/* the BIG type-led studio name — the index's protagonist */
+.studio {
+  font-family: var(--font-kr);
+  font-size: clamp(24px, 3.6vw, 40px);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--ink-warm);
+  word-break: keep-all;
+  transition: color 0.4s ease;
+}
+.studioEn {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.session {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.7vw, 19px);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+  color: var(--ink-soft);
+  word-break: keep-all;
+  padding-top: 0.15em;
+}
+
+.time {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  padding-top: 0.35em;
+}
+
+/* hover / focus / open tonal lift on the studio name */
+.row:hover .studio,
+.rowOpen .studio {
+  color: var(--row-accent);
+}
+
+/* --- expandable panel (CSS grid-rows trick: 0fr -> 1fr) ----------------- */
+.panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.42s cubic-bezier(0.22, 0.61, 0.36, 1);
+}
+.rowOpen .panel {
+  grid-template-rows: 1fr;
+}
+.panelInner {
+  overflow: hidden;
+  min-height: 0;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.rowOpen .panelInner {
+  opacity: 1;
+  transform: none;
+}
+
+/* panel content: text block + the canvas works strip, aligned under the title */
+.panelInner {
+  display: grid;
+  grid-template-columns: 3.2em minmax(0, 1fr) auto;
+  gap: clamp(14px, 2vw, 36px);
+  /* fake the number column with empty first cell so text aligns under studio */
+  padding-bottom: clamp(20px, 2.4vw, 34px);
+}
+.panelText {
+  grid-column: 2;
+  min-width: 0;
+}
+.works {
+  grid-column: 3;
+  align-self: start;
+}
+.worksCanvas {
+  display: block;
+  max-width: 100%;
+}
+
+.person {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin: 0 0 12px;
+  word-break: keep-all;
+}
+.person b {
+  font-family: var(--font-kr);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-warm);
+}
+.person span {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+.desc {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ink-soft);
+  word-break: keep-all;
+  max-width: 56ch;
+}
+.creds {
+  list-style: none;
+  margin: 16px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.creds li {
+  position: relative;
+  padding-left: 14px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+  word-break: keep-all;
+}
+.creds li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--row-accent);
+}
+
+/* --- mobile (390px clean) ----------------------------------------------- */
+@media (max-width: 760px) {
+  .rowHead {
+    grid-template-columns: 2.4em 1fr;
+    grid-template-areas:
+      "num studio"
+      ". session";
+    row-gap: 8px;
+    column-gap: 14px;
+    align-items: baseline;
+  }
+  .num {
+    grid-area: num;
+  }
+  .headMain {
+    grid-area: studio;
+  }
+  .session {
+    grid-area: session;
+    padding-top: 0;
+  }
+  /* time is redundant on mobile (it lives in the timetable); hide to keep the
+     index calm. Kept aria-hidden in markup so nothing is lost for AT. */
+  .time {
+    display: none;
+  }
+  .studio {
+    font-size: clamp(22px, 7vw, 30px);
+  }
+
+  .panelInner {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  .panelText,
+  .works {
+    grid-column: 1;
+  }
+  /* let the canvas strip scroll horizontally if it overflows the narrow column */
+  .works {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dayConcept {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}
+
+/* --- reduced motion: no expand animation, no hover-driven color fade ----- */
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition: none;
+  }
+  .panelInner {
+    transition: none;
+    transform: none;
+  }
+  .studio {
+    transition: none;
+  }
+}

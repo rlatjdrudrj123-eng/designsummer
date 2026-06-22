@@ -1,0 +1,131 @@
+.faq {
+  /* 단일 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+.faq:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+.kicker {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--heat-main);
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  margin-bottom: clamp(24px, 4vh, 44px);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1.5px solid color-mix(in srgb, var(--heat-core) 26%, var(--ink));
+  max-width: 80ch;
+}
+.item {
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--heat-core) 14%, rgba(10, 10, 10, 0.14));
+}
+.qWrap {
+  margin: 0;
+}
+.q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: clamp(18px, 2.4vh, 26px) 0;
+  color: inherit;
+  font: inherit;
+}
+.qText {
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.4vw, 20px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+}
+.q:focus-visible {
+  outline: 2px solid var(--heat-main);
+  outline-offset: 4px;
+}
+.q:hover .qText {
+  color: var(--heat-main);
+}
+
+/* +/- 아이콘 — 두 선, 열림 시 가로선 회전(− 처럼). */
+.icon {
+  position: relative;
+  flex: none;
+  width: 18px;
+  height: 18px;
+}
+.icon::before,
+.icon::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: var(--heat-main);
+  transition: transform var(--dur-touch) var(--ease-heat);
+}
+.icon::before {
+  width: 16px;
+  height: 2px;
+  transform: translate(-50%, -50%);
+}
+.icon::after {
+  width: 2px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+}
+.q[aria-expanded="true"] .icon::after {
+  transform: translate(-50%, -50%) scaleY(0);
+}
+
+.panel {
+  padding-bottom: clamp(18px, 2.4vh, 26px);
+}
+.panel[hidden] {
+  display: none;
+}
+.a {
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.7;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 74%, transparent);
+  max-width: 70ch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .icon::before,
+  .icon::after {
+    transition: none;
+  }
+}

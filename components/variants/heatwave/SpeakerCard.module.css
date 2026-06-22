@@ -1,0 +1,345 @@
+.card {
+  position: relative;
+  padding: clamp(28px, 4vw, 56px) 0;
+  /* one subtle separator per card (a hairline), no per-card gradient rule */
+  border-top: 1px solid var(--hairline, rgba(10, 10, 10, 0.16));
+}
+
+/* head: index + time, no rule between them */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: clamp(18px, 2.5vw, 32px);
+}
+.index {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(13px, 1.4vw, 16px);
+  letter-spacing: 0.04em;
+  /* a touch of the heat palette so the index still carries the accent the
+     removed gradient rule used to provide. --day-accent is set by the lineup
+     column (cool DAY 1 / warm DAY 2); falls back to the shared heat color. */
+  color: var(--day-accent, var(--heat-main));
+}
+.time {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(13px, 1.4vw, 16px);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* body: text + media, alternating sides */
+.body {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(24px, 4vw, 64px);
+  align-items: start;
+}
+.flip .body {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr);
+}
+.flip .media {
+  order: -1;
+}
+
+.text {
+  min-width: 0;
+}
+
+.studio {
+  font-family: var(--font-kr);
+  font-weight: 800;
+  font-size: var(--type-h2);
+  letter-spacing: var(--tracking-display);
+  line-height: 0.95;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4em;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+/* on hover the studio title warms/cools into its day's accent */
+.card:hover .studio {
+  color: var(--day-accent, var(--heat-main));
+}
+.studioEn {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(13px, 1.4vw, 17px);
+  letter-spacing: 0.02em;
+  opacity: 0.7;
+}
+.sessionTitle {
+  margin-top: clamp(12px, 1.6vw, 20px);
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: var(--type-h3);
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+.titleLine {
+  display: block;
+}
+.who {
+  margin-top: 14px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+}
+.name {
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(15px, 1.6vw, 19px);
+}
+.role {
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.4vw, 15px);
+  opacity: 0.7;
+}
+.desc {
+  margin-top: 14px;
+  max-width: 52ch;
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+}
+.creds {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.creds li {
+  position: relative;
+  padding-left: 16px;
+  font-size: clamp(13px, 1.4vw, 15px);
+  line-height: 1.5;
+  opacity: 0.82;
+}
+.creds li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  /* per-day cred marker: cool DAY 1 / warm DAY 2 */
+  background: var(--day-accent, var(--heat-main));
+}
+
+/* media column */
+.media {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.profile {
+  position: relative;
+  width: 100%;
+  /* 키 큰 세로 인물 컷 — 높이 cap 제거(이전엔 사진이 눌려 보였음) */
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+.profileImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* 상단 정렬 — 인물 머리가 잘리지 않게 */
+  object-position: center top;
+  filter: grayscale(1) contrast(1.02);
+  transition: filter var(--dur-bloom) var(--ease-heat);
+}
+.card:hover .profileImg {
+  filter: grayscale(0) contrast(1);
+}
+.profilePlaceholder {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(
+    155deg,
+    rgba(46, 125, 246, 0.12),
+    rgba(227, 60, 154, 0.12),
+    rgba(237, 59, 47, 0.12)
+  );
+}
+.profilePlaceholder > span {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+}
+/* 대표작 reveal — 사진 위에 얹혀, hover 시 하단부에서 슬라이드업 되는 필름스트립.
+   미호버 시 완전히 가려져 있어 "작고 촌스러운 스트립" 느낌이 사라진다. */
+.worksReveal {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: clamp(28px, 4vw, 40px) clamp(10px, 1.4vw, 16px) clamp(10px, 1.4vw, 16px);
+  /* 사진 하단을 어둡게 깔아 흰 카드 위에서도 대표작이 또렷이 보이게 */
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.78) 0%,
+    rgba(10, 10, 10, 0.55) 45%,
+    rgba(10, 10, 10, 0) 100%
+  );
+  opacity: 0;
+  transform: translateY(12%);
+  transition:
+    opacity var(--dur-bloom) var(--ease-heat),
+    transform var(--dur-bloom) var(--ease-heat);
+  pointer-events: none;
+}
+.card:hover .worksReveal,
+.profile:focus-within .worksReveal {
+  opacity: 1;
+  transform: translateY(0);
+}
+.worksLabel {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(11px, 1.1vw, 13px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #fff;
+}
+.worksStrip {
+  display: flex;
+  gap: 8px;
+}
+.work {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 2px;
+}
+.workImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* hover: heat bleeds out behind the block (no scale, no shadow) */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: -2% -4%;
+  z-index: -1;
+  /* soft single-hue bloom in the day's accent (cool DAY 1 / warm DAY 2); the
+     low overall opacity below keeps it a faint premium glow, not a fill */
+  background: radial-gradient(
+    60% 50% at 50% 45%,
+    var(--day-accent, var(--heat-main)),
+    transparent 72%
+  );
+  opacity: 0;
+  filter: blur(10px);
+  transition: opacity var(--dur-bloom) var(--ease-heat);
+  pointer-events: none;
+}
+.card:hover::after {
+  /* faint — a whisper of heat behind the block, not a saturated fill */
+  opacity: 0.12;
+}
+
+/* ============================== compact (half-width column) =======
+   Used in the Day1/Day2 split lineup. Media sits on top, text below, in a
+   single column so the card reads cleanly inside a half-width track. Type
+   scales down a notch since it no longer spans the full page. */
+.compact {
+  padding: clamp(24px, 2.6vw, 40px) 0;
+}
+.compact .body,
+.compact.flip .body {
+  grid-template-columns: 1fr;
+  gap: clamp(16px, 1.8vw, 24px);
+}
+/* media always above text regardless of flip */
+.compact .media,
+.compact.flip .media {
+  order: -1;
+}
+/* keep the portrait from getting tall in a narrow column */
+.compact .profile {
+  aspect-ratio: 4 / 3;
+}
+.compact .studio {
+  font-size: clamp(22px, 2.6vw, 30px);
+}
+.compact .sessionTitle {
+  margin-top: 10px;
+  font-size: clamp(16px, 1.8vw, 20px);
+}
+.compact .desc {
+  margin-top: 12px;
+  max-width: none;
+  font-size: clamp(13px, 1.4vw, 15px);
+}
+/* keep only the top credentials so a half-card stays tidy */
+.compact .creds {
+  margin-top: 14px;
+}
+.compact .creds li:nth-child(n + 3) {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .body,
+  .flip .body {
+    grid-template-columns: 1fr;
+  }
+  .flip .media {
+    order: 0;
+  }
+  .media {
+    flex-direction: column;
+  }
+  /* 세로 인물 컷 유지 — 폭을 제한해 거대한 정사각형 줌이 되지 않게.
+     3/4 비율 + 좌측 정렬로 390px에서도 머리가 잘리지 않고 깔끔히 읽힘. */
+  .profile {
+    width: 100%;
+    max-width: 300px;
+    aspect-ratio: 3 / 4;
+  }
+  /* stacked compact cards read as full-width blocks on phones */
+  .compact .profile {
+    aspect-ratio: 3 / 4;
+  }
+  /* 모바일은 hover가 없으니 대표작을 항상 보이게(정적 노출) */
+  .worksReveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .profileImg {
+    transition: none;
+  }
+  .card::after {
+    transition: none;
+  }
+  /* 대표작 reveal: 큰 모션 없이 단순 페이드만(슬라이드 제거) */
+  .worksReveal {
+    transform: none;
+    transition: opacity var(--dur-touch) linear;
+  }
+  .card:hover .worksReveal,
+  .profile:focus-within .worksReveal {
+    transform: none;
+  }
+}

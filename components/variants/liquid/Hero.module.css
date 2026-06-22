@@ -1,0 +1,273 @@
+.hero {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  /* 히어로 안에서만 타입을 흰색으로 (포화 액상 무지개 위 가독성). */
+  --ink: #ffffff;
+}
+
+/* 콘텐츠는 캔버스(z-index:0) 위. 단일 흐름 컬럼으로 한 화면에 담는다.
+   좌우 거터는 .shell(globals: max-width var(--maxw), padding-inline var(--margin))
+   이 담당 — below-hero 섹션과 정확히 같은 라인에 정렬된다. */
+.inner {
+  position: relative;
+  z-index: 2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  /* 코너 날짜(상단)·세로 연사 밴드(하단)와 겹치지 않게 세로 패딩 확보 */
+  padding-block: clamp(96px, 16vh, 168px) clamp(72px, 12vh, 128px);
+}
+
+/* --- 본문 흐름 컬럼 (좌측 정렬, 위계) -------------------------- */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  max-width: 760px;
+  text-shadow: 0 2px 22px rgba(10, 10, 10, 0.5);
+}
+
+/* --- 배지 (K-PRINT 동시 개최 컨퍼런스) -------------------------- */
+.badge {
+  font-family: var(--font-display);
+  font-size: clamp(12px, 1.2vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.05;
+  color: var(--ink);
+  padding: 7px 14px;
+  border: 1.5px solid color-mix(in srgb, var(--ink) 42%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--white) 22%, transparent);
+  backdrop-filter: blur(2px);
+  text-shadow: 0 1px 12px rgba(10, 10, 10, 0.4);
+}
+
+/* --- 타이틀 + 부제 --------------------------------------------- */
+.title {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: clamp(18px, 3vh, 30px);
+}
+/* 디자인 썸머 — 한글 디스플레이, 한 화면 안에 들어오는 절제된 스케일 */
+.titleKr {
+  font-family: var(--font-kr);
+  font-size: clamp(44px, 7vw, 104px);
+  font-weight: 600;
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+.sup {
+  font-family: var(--font-display);
+  font-size: clamp(15px, 1.6vw, 22px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: #ff2a1a;
+  margin-top: clamp(12px, 1.6vh, 18px);
+  text-shadow: 0 1px 10px rgba(10, 10, 10, 0.55);
+}
+
+.desc {
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.3vw, 19px);
+  font-weight: 500;
+  line-height: 1.6;
+  word-break: keep-all;
+  margin-top: clamp(16px, 2.4vh, 24px);
+  max-width: 40ch;
+  color: color-mix(in srgb, var(--ink) 92%, transparent);
+}
+
+/* --- 일시 · 장소 ----------------------------------------------- */
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: clamp(18px, 2.6vh, 28px);
+}
+.metaRow {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--ink) 92%, transparent);
+}
+.metaRow dt {
+  flex: 0 0 auto;
+  font-family: var(--font-kr);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #ff2a1a;
+}
+.metaRow dd {
+  word-break: keep-all;
+}
+
+/* --- 일자별 사전등록 버튼 2개 ---------------------------------- */
+.cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: clamp(22px, 3.2vh, 36px);
+}
+.regBtn {
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.2vw, 17px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  background: var(--ink);
+  padding: 14px 22px;
+  position: relative;
+  overflow: hidden;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.regBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: #ff2a1a;
+  transform: translateY(100%);
+  transition: transform var(--dur-bloom) var(--ease-heat);
+}
+.regBtn:hover::before,
+.regBtn:focus-visible::before {
+  transform: translateY(0);
+}
+.regBtn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* --- 모서리 날짜 (좌 08.20 D1 · 우 08.21 D2) ------------------- */
+/* .inner(.shell) 안에 두어 좌우 거터를 섹션과 동일하게 정렬 */
+.date {
+  position: absolute;
+  z-index: 2;
+  top: clamp(28px, 5vh, 52px);
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.2vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+  color: var(--ink);
+  text-shadow: 0 1px 14px rgba(10, 10, 10, 0.45);
+}
+.dateTl {
+  left: 0;
+  text-align: left;
+}
+.dateTr {
+  right: 0;
+  text-align: right;
+}
+
+/* --- 연사: 세로쓰기 밴드 (아이덴티티), 데이별 묶음 -------------- */
+/* .inner(.shell) 의 우하단에 붙여 거터 안쪽에 정렬 */
+.studios {
+  position: absolute;
+  z-index: 2;
+  right: 0;
+  bottom: clamp(28px, 5vh, 52px);
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(18px, 2.2vw, 40px);
+}
+.dayGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(9px, 0.9vw, 15px);
+}
+.studioDay {
+  writing-mode: vertical-rl;
+  font-family: var(--font-display);
+  font-size: clamp(10px, 1.4vh, 12px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #ff2a1a;
+  text-shadow: 0 1px 8px rgba(10, 10, 10, 0.5);
+}
+.studio {
+  writing-mode: vertical-rl;
+  font-family: var(--font-kr);
+  /* 높이에 반응 — 세로 이름이 짧은 비율 모니터에서 히어로를 넘지 않게 */
+  font-size: clamp(10px, 1.5vh, 13px);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink);
+  text-shadow: 0 1px 8px rgba(10, 10, 10, 0.55);
+  position: relative;
+  padding-left: 8px;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.studio::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 100%;
+  width: 1.5px;
+  background: #ff2a1a;
+  transition: bottom var(--dur-bloom) var(--ease-heat);
+}
+.studio:hover,
+.studio:focus-visible {
+  color: #ffe01f;
+}
+.studio:hover::before,
+.studio:focus-visible::before {
+  bottom: 0;
+}
+
+/* --- 모바일 (390) ---------------------------------------------- */
+@media (max-width: 640px) {
+  .hero {
+    min-height: auto;
+  }
+  .inner {
+    padding-block: clamp(72px, 18vh, 120px) clamp(48px, 8vh, 72px);
+  }
+  .content {
+    max-width: 100%;
+  }
+  .titleKr {
+    font-size: clamp(34px, 11vw, 56px);
+    white-space: normal;
+  }
+  .desc {
+    max-width: 100%;
+  }
+  .cta {
+    width: 100%;
+  }
+  .regBtn {
+    flex: 1 1 auto;
+    text-align: center;
+  }
+  /* 세로쓰기 연사 밴드는 모바일에서 숨김(라인업 섹션에 전부 존재) */
+  .studios {
+    display: none;
+  }
+  /* 모서리 날짜도 모바일에선 흐름 헤더에 가려 숨김 */
+  .date {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio::before {
+    transition: bottom var(--dur-touch) linear;
+  }
+}

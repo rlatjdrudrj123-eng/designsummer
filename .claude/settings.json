@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node scripts/shot.mjs \"http://localhost:3000\" 1440 900 \".review/n-marquee.png\" 0 1 \"#apply\")",
+      "Bash(npm run *)",
+      "Bash(node scripts/shot.mjs \"http://localhost:3000\" 1440 900 \".review/scene1.png\" 0 1 \"#scene\")"
+    ]
+  }
+}

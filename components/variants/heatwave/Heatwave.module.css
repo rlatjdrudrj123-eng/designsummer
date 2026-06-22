@@ -1,0 +1,769 @@
+/* HEATWAVE — full-page theme. Scoped under .root.
+   Signature accent gradient as a local var. White ground throughout. */
+
+.root {
+  /* KV spectrum. The blue stop is lightened from #2E7DF6 → #3A86FF so dark ink
+     text laid over the highlight box (.kvHi) stays legible at the cool end; the
+     full structural bar/seams still read as blue→magenta→red. */
+  --hw-grad: linear-gradient(90deg, #3a86ff 0%, #e33c9a 52%, #ed3b2f 100%);
+  --hw-grad-v: linear-gradient(180deg, #3a86ff 0%, #e33c9a 52%, #ed3b2f 100%);
+  /* per-day accents derived from the heatwave spectrum: DAY 1 = cool blue end,
+     DAY 2 = warm red end. Center (magenta) is left to the seam/hero bar.
+     -soft = leaning toward the magenta meeting point; -deep = pushed to the
+     end of the spectrum for hairlines that want a touch more presence. */
+  --hw-d1: #2e7df6; /* cool · azure */
+  --hw-d1-soft: #5f7ef0; /* cool leaning toward magenta */
+  --hw-d1-deep: #1f63d8; /* cooler/deeper azure */
+  --hw-d2: #ed3b2f; /* warm · red */
+  --hw-d2-soft: #e7572f; /* warm leaning from magenta (orange-red) */
+  --hw-d2-deep: #d62a23; /* deeper hot red */
+  --hw-pad-x: var(--margin);
+  --hw-maxw: 1280px;
+  /* shared vertical rhythm so every section breathes on the same scale */
+  --hw-section: clamp(64px, 9vw, 120px);
+  /* consistent gap between a section head and its content */
+  --hw-head-gap: clamp(28px, 3.5vw, 48px);
+  position: relative;
+  width: 100%;
+  background: var(--white);
+  color: var(--ink);
+  font-family: var(--font-kr);
+}
+
+/* shared section frame */
+.intro,
+.audience,
+.timetable,
+.benefits,
+.venue,
+.faq,
+.apply {
+  width: 100%;
+  max-width: var(--hw-maxw);
+  margin-inline: auto;
+  padding-inline: var(--hw-pad-x);
+}
+
+/* ============================== intro ============================== */
+.intro {
+  /* a touch more air above the first section after the full-bleed hero */
+  padding-top: clamp(88px, 12vw, 170px);
+  padding-bottom: var(--hw-section);
+}
+.kicker {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+}
+.kickerBar {
+  width: 40px;
+  height: 3px;
+  background: var(--hw-grad);
+}
+.introLead {
+  margin-top: clamp(24px, 4vw, 48px);
+  max-width: 18ch;
+  font-family: var(--font-kr);
+  font-weight: 800;
+  font-size: clamp(30px, 4.6vw, 64px);
+  letter-spacing: var(--tracking-display);
+  line-height: 1.18;
+  word-break: keep-all;
+}
+.introBody {
+  margin-top: 24px;
+  max-width: 64ch;
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+  opacity: 0.85;
+}
+@media (max-width: 760px) {
+  .introLead {
+    font-size: clamp(26px, 7vw, 40px);
+    max-width: none;
+  }
+}
+
+.concepts {
+  margin-top: clamp(48px, 7vw, 96px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 64px);
+}
+.concept {
+  padding-top: 20px;
+  /* top rule reads in the block's day color (cool D1 / warm D2) */
+  border-top: 2px solid var(--day-accent, var(--ink));
+}
+.conceptDay {
+  display: block;
+  margin-top: 6px;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  /* the DAY 1 / DAY 2 label carries its day's accent */
+  color: var(--day-accent, var(--ink));
+  opacity: 0.85;
+}
+.conceptTitle {
+  margin-top: 18px;
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: var(--type-h3);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.conceptBody {
+  margin-top: 12px;
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+  opacity: 0.85;
+}
+
+/* ============================== section heads ===================== */
+.sectionHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.sectionTitle {
+  /* 한글 섹션 타이틀 — KV 그라데이션을 글자에 입힘(텍스트 필). 부분 박스 대신 감각적으로. */
+  font-family: var(--font-kr);
+  font-weight: 800;
+  font-size: var(--type-h2);
+  letter-spacing: -0.03em;
+  line-height: 0.95;
+  background: var(--hw-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  width: fit-content;
+}
+.sectionMeta {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  opacity: 0.75;
+}
+
+/* ============================== audience (Day1 | Day2 split) ====== */
+.audience {
+  padding-block: var(--hw-section);
+}
+
+/* two equal columns with a central seam between them */
+.split {
+  position: relative;
+  margin-top: var(--hw-head-gap);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: clamp(36px, 5vw, 80px);
+}
+/* the central seam — a thin vertical KV gradient echoing the hero bar */
+.splitSeam {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: var(--hw-grad-v);
+  pointer-events: none;
+}
+.splitCol {
+  min-width: 0;
+}
+
+/* per-day accent scoping. A column (or table column) tagged cool/warm exposes
+   --day-accent (+ soft/deep) to its own day header and every descendant — the
+   SpeakerCards read these via var() across the module boundary, so the whole
+   DAY 1 column reads cool and the DAY 2 column reads warm with one switch. */
+.dayCool {
+  --day-accent: var(--hw-d1);
+  --day-accent-soft: var(--hw-d1-soft);
+  --day-accent-deep: var(--hw-d1-deep);
+}
+.dayWarm {
+  --day-accent: var(--hw-d2);
+  --day-accent-soft: var(--hw-d2-soft);
+  --day-accent-deep: var(--hw-d2-deep);
+}
+
+/* per-column day header sitting atop its column */
+.dayHead {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  padding-bottom: clamp(12px, 1.4vw, 18px);
+  /* hairline reads in the day's color (cool D1 / warm D2); falls back to ink */
+  border-bottom: 1px solid var(--day-accent, var(--ink));
+}
+.dayHeadDay {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(20px, 2.4vw, 30px);
+  letter-spacing: 0.02em;
+  line-height: 1;
+  /* DAY 1 / DAY 2 label carries its day's accent */
+  color: var(--day-accent, var(--ink));
+}
+.dayHeadDate {
+  /* now carries each day's Korean theme title — use the KR face */
+  font-family: var(--font-kr);
+  font-weight: 600;
+  font-size: clamp(13px, 1.5vw, 17px);
+  letter-spacing: -0.01em;
+  opacity: 0.7;
+}
+
+/* ---- audience column content ---- */
+.audHeading {
+  margin-top: clamp(18px, 2.4vw, 30px);
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(17px, 2vw, 24px);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  color: var(--day-accent, var(--ink));
+  word-break: keep-all;
+}
+.audItems {
+  margin-top: clamp(16px, 2vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.audItems li {
+  position: relative;
+  padding-left: 20px;
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+  word-break: keep-all;
+}
+.audItems li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  background: var(--day-accent, var(--heat-main));
+}
+
+/* ============================== timetable (Day1 | Day2 split) ===== */
+.timetable {
+  padding-block: var(--hw-section);
+}
+.tableSplit {
+  position: relative;
+  margin-top: var(--hw-head-gap);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: clamp(36px, 5vw, 80px);
+}
+.tableCol {
+  min-width: 0;
+}
+
+/* detailed program list — one column per day */
+.program {
+  margin-top: clamp(12px, 1.6vw, 20px);
+  display: flex;
+  flex-direction: column;
+}
+.progRow {
+  border-bottom: 1px solid var(--hairline, rgba(10, 10, 10, 0.16));
+}
+/* shared time stamp on every row */
+.progTime {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(12px, 1.3vw, 14px);
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.heatDot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 8px;
+  /* per-day marker: cool on DAY 1, warm on DAY 2 */
+  background: var(--day-accent, var(--heat-main));
+  vertical-align: middle;
+}
+
+/* registration / break rows — quiet single line, visually distinct */
+.progMeta {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 14px 0;
+}
+.progMeta[data-kind="reg"] {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--day-accent, var(--heat-main)) 7%, transparent),
+    transparent 60%
+  );
+}
+.progMetaLabel {
+  font-family: var(--font-kr);
+  font-weight: 600;
+  font-size: clamp(13px, 1.4vw, 15px);
+  letter-spacing: -0.01em;
+  opacity: 0.78;
+}
+
+/* session rows — time + main (studio/speaker/title/desc/creds) + portrait */
+.progSession {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) clamp(72px, 9vw, 104px);
+  gap: clamp(12px, 1.8vw, 22px);
+  padding: clamp(18px, 2.4vw, 28px) 0;
+  scroll-margin-top: 24px;
+}
+.progSession .progTime {
+  padding-top: 0.2em;
+}
+.progMain {
+  min-width: 0;
+}
+.progHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+}
+.progStudio {
+  font-family: var(--font-kr);
+  font-weight: 800;
+  font-size: clamp(17px, 2vw, 24px);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4em;
+}
+.progStudioEn {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: clamp(11px, 1.2vw, 14px);
+  letter-spacing: 0.02em;
+  opacity: 0.6;
+}
+.progSpeaker {
+  font-family: var(--font-kr);
+  font-weight: 600;
+  font-size: clamp(12px, 1.3vw, 14px);
+  opacity: 0.7;
+}
+.progTitle {
+  margin-top: 8px;
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(15px, 1.7vw, 19px);
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+.progDesc {
+  margin-top: 8px;
+  font-size: clamp(13px, 1.4vw, 15px);
+  line-height: var(--leading-body);
+  opacity: 0.85;
+  word-break: keep-all;
+}
+.progCreds {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.progCreds li {
+  position: relative;
+  padding-left: 14px;
+  font-size: clamp(12px, 1.3vw, 13px);
+  line-height: 1.45;
+  opacity: 0.7;
+}
+.progCreds li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.58em;
+  width: 5px;
+  height: 5px;
+  background: var(--day-accent, var(--heat-main));
+}
+.progMedia {
+  min-width: 0;
+}
+.progProfile {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+}
+.progProfilePh {
+  display: grid;
+  place-items: center;
+  background: linear-gradient(
+    155deg,
+    rgba(46, 125, 246, 0.12),
+    rgba(227, 60, 154, 0.12),
+    rgba(237, 59, 47, 0.12)
+  );
+}
+.progProfilePh > span {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-align: center;
+  padding: 0 4px;
+  opacity: 0.55;
+}
+.progProfileImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  filter: grayscale(1) contrast(1.02);
+  transition: filter var(--dur-bloom) var(--ease-heat);
+}
+.progSession:hover .progProfileImg {
+  filter: grayscale(0) contrast(1);
+}
+
+/* ============================== benefits ========================= */
+.benefits {
+  padding-block: var(--hw-section);
+}
+.benefitsBar {
+  margin-top: var(--hw-head-gap);
+  height: 6px;
+  width: 100%;
+  background: var(--hw-grad);
+}
+.benefitGroups {
+  margin-top: clamp(28px, 4vw, 48px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 4vw, 64px);
+}
+.benefitHeading {
+  font-family: var(--font-kr);
+  font-weight: 800;
+  font-size: clamp(18px, 2.2vw, 26px);
+  letter-spacing: -0.02em;
+  padding-bottom: 12px;
+  border-bottom: 2px solid var(--ink);
+}
+.benefitItems {
+  margin-top: clamp(18px, 2.4vw, 28px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.4vw, 28px);
+}
+.benefitTitle {
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(15px, 1.7vw, 19px);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  word-break: keep-all;
+}
+.benefitBody {
+  margin-top: 8px;
+  font-size: clamp(13px, 1.4vw, 15px);
+  line-height: var(--leading-body);
+  opacity: 0.85;
+  word-break: keep-all;
+}
+
+/* ============================== venue ============================= */
+.venue {
+  padding-block: var(--hw-section);
+}
+.venueBar {
+  margin-top: var(--hw-head-gap);
+  height: 6px;
+  width: 100%;
+  background: var(--hw-grad);
+}
+.venueGrid {
+  margin-top: clamp(28px, 4vw, 48px);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(20px, 3vw, 48px);
+}
+.venueItem {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.venueLabel {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  opacity: 0.7;
+}
+.venueValue {
+  font-family: var(--font-kr);
+  font-weight: 800;
+  font-size: clamp(20px, 2.6vw, 34px);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  word-break: keep-all;
+}
+.venueSub {
+  font-family: var(--font-kr);
+  font-size: clamp(12px, 1.3vw, 14px);
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  opacity: 0.6;
+  word-break: keep-all;
+}
+/* ADDRESS / PARKING — span the full row as plain prose, not a big numeral */
+.venueWide {
+  grid-column: 1 / -1;
+}
+.venueAddr {
+  font-family: var(--font-kr);
+  font-weight: 500;
+  font-size: clamp(14px, 1.6vw, 18px);
+  letter-spacing: -0.01em;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+/* ============================== apply ============================= */
+.apply {
+  max-width: none;
+  padding-inline: 0;
+  padding-bottom: var(--hw-section);
+}
+.applyMarquee {
+  overflow: hidden;
+  white-space: nowrap;
+  border-top: 1px solid var(--hairline, rgba(10, 10, 10, 0.16));
+  padding-block: 12px;
+}
+.marqueeTrack {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 28px);
+  white-space: nowrap;
+  animation: hw-marquee 30s linear infinite;
+  will-change: transform;
+}
+.marqueeGroup {
+  display: inline-flex;
+  align-items: center;
+  gap: clamp(10px, 1.4vw, 18px);
+}
+/* "디자인썸머일산" — 애플식 드래그 선택 하이라이트(KV 그라데이션 박스 · 흰 글씨) */
+.marqueeTitle {
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(18px, 2.4vw, 32px);
+  letter-spacing: -0.03em;
+  color: #fff;
+  background: var(--hw-grad);
+  padding: 0.08em 0.42em;
+  border-radius: 3px;
+}
+.marqueeStudio {
+  font-family: var(--font-kr);
+  font-weight: 600;
+  font-size: clamp(18px, 2.4vw, 32px);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+@keyframes hw-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.applyInner {
+  max-width: var(--hw-maxw);
+  margin-inline: auto;
+  padding: clamp(48px, 7vw, 96px) var(--hw-pad-x) 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(18px, 2.4vw, 28px);
+}
+.applyTitle {
+  font-family: var(--font-kr);
+  font-weight: 800;
+  /* dialed back from --type-hero so it reads as a section CTA, not a 2nd hero —
+     in scale with the intro lead and harmonized with the rest of the page */
+  font-size: clamp(34px, 5.2vw, 76px);
+  letter-spacing: var(--tracking-display);
+  line-height: 1.1;
+  word-break: keep-all;
+}
+.applyNote {
+  max-width: 70ch;
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+  opacity: 0.85;
+  word-break: keep-all;
+}
+/* two per-day registration buttons (Day 1 cool / Day 2 warm) */
+.applyBtns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(12px, 1.6vw, 20px);
+}
+.applyBtn {
+  flex: 0 1 auto;
+  display: inline-block;
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(15px, 1.7vw, 21px);
+  letter-spacing: -0.01em;
+  padding: 18px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.applyBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* the button warms/cools into its own day's accent on hover */
+  background: var(--day-accent, var(--heat-main));
+  opacity: 0;
+  transition: opacity var(--dur-touch) var(--ease-heat);
+  z-index: 0;
+}
+.applyBtn:hover::before,
+.applyBtn:focus-visible::before {
+  opacity: 1;
+}
+.applyBtnLabel {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================== faq ============================== */
+.faq {
+  padding-bottom: var(--hw-section);
+}
+.faqList {
+  margin-top: var(--hw-head-gap);
+  display: flex;
+  flex-direction: column;
+}
+.faqItem {
+  padding: clamp(20px, 2.6vw, 32px) 0;
+  border-top: 1px solid var(--hairline, rgba(10, 10, 10, 0.16));
+}
+.faqList > :last-child {
+  border-bottom: 1px solid var(--hairline, rgba(10, 10, 10, 0.16));
+}
+.faqQ {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(16px, 1.9vw, 22px);
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  word-break: keep-all;
+}
+.faqMark {
+  flex: none;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(15px, 1.7vw, 20px);
+  /* gradient-filled Q so the FAQ inherits the KV throughline */
+  background: var(--hw-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.faqA {
+  margin-top: 12px;
+  padding-left: 24px;
+  max-width: 80ch;
+  font-size: var(--type-body);
+  line-height: var(--leading-body);
+  opacity: 0.85;
+  word-break: keep-all;
+}
+
+/* ============================== responsive ======================== */
+/* below ~860px the two columns can't sit side by side — stack Day 1 then
+   Day 2 as full-width blocks and drop the central seam */
+@media (max-width: 860px) {
+  .split,
+  .tableSplit {
+    grid-template-columns: 1fr;
+    row-gap: clamp(44px, 8vw, 72px);
+  }
+  /* the vertical KV seam can't sit between stacked columns — hide it and let
+     each stacked column carry its own day accent (the day head already does)
+     so the cool/warm split still reads clearly when stacked. */
+  .splitSeam {
+    display: none;
+  }
+  .benefitGroups {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 760px) {
+  .concepts {
+    grid-template-columns: 1fr;
+  }
+  .venueGrid {
+    grid-template-columns: 1fr;
+  }
+  /* venue items get a per-row hairline so the stacked list stays structured */
+  .venueItem {
+    padding-top: 18px;
+    border-top: 1px solid var(--hairline, rgba(10, 10, 10, 0.16));
+  }
+  /* program rows reflow: time + text on a row, portrait drops below.
+     The narrow portrait column would crush the title/desc otherwise. */
+  .progSession {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .progMedia {
+    grid-column: 1 / -1;
+  }
+  .progProfile {
+    max-width: 220px;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marqueeTrack {
+    animation: none;
+  }
+  .applyBtn::before {
+    transition: none;
+  }
+}

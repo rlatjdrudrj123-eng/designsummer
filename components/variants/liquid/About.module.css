@@ -1,0 +1,107 @@
+.about {
+  padding-block: clamp(72px, 12vh, 180px);
+  display: flex;
+  flex-direction: column;
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  margin-bottom: clamp(16px, 3vh, 28px);
+}
+
+.intro {
+  font-family: var(--font-kr);
+  font-size: clamp(19px, 2.2vw, 30px);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: -0.015em;
+  word-break: keep-all;
+  text-wrap: balance;
+  max-width: 30ch;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 64px);
+  margin-top: clamp(40px, 6vh, 88px);
+}
+
+.card {
+  padding: clamp(24px, 3vw, 44px);
+  border: 1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  position: relative;
+  overflow: hidden;
+}
+/* 좌측 액상 열 띠로 D1/D2 구분 */
+.card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+.d1.card::before {
+  background: linear-gradient(180deg, var(--heat-core), var(--heat-mid));
+}
+.d2.card::before {
+  background: linear-gradient(180deg, var(--heat-mid), var(--heat-edge));
+}
+
+.dayHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.dayLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-body);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.d1 .dayLabel {
+  color: var(--heat-main);
+}
+.d2 .dayLabel {
+  color: var(--heat-mid);
+}
+.dayDate {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  opacity: 0.6;
+}
+
+.title {
+  font-family: var(--font-kr);
+  font-size: clamp(26px, 3vw, 40px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.06;
+  word-break: keep-all;
+  margin-top: clamp(12px, 2vh, 20px);
+}
+
+.body {
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 400;
+  line-height: 1.75;
+  word-break: keep-all;
+  margin-top: clamp(14px, 2.4vh, 22px);
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .intro {
+    max-width: 100%;
+  }
+}

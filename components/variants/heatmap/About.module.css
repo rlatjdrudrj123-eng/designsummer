@@ -1,0 +1,85 @@
+.about {
+  padding-block: clamp(72px, 11vh, 160px);
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  margin-bottom: clamp(20px, 3vh, 36px);
+}
+
+.intro {
+  font-family: var(--font-kr);
+  font-size: clamp(20px, 2.2vw, 30px);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  max-width: 30ch;
+  word-break: keep-all;
+}
+
+.days {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(20px, 3vw, 48px);
+  margin-top: clamp(40px, 6vh, 80px);
+}
+
+.day {
+  border: 1.5px solid var(--ink);
+  padding: clamp(24px, 3vw, 40px);
+  display: flex;
+  flex-direction: column;
+}
+.dayHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid currentColor;
+}
+.d1 .dayHead {
+  color: var(--heat-main);
+}
+.d2 .dayHead {
+  color: var(--heat-mid);
+}
+.dayLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-body);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.dayDate {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+}
+.dayTitle {
+  font-family: var(--font-kr);
+  font-size: clamp(24px, 2.6vw, 38px);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  margin-top: clamp(16px, 2.4vh, 26px);
+  color: var(--ink);
+  word-break: keep-all;
+}
+.dayBody {
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.15vw, 18px);
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: 0.005em;
+  margin-top: clamp(14px, 2vh, 20px);
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+  word-break: keep-all;
+}
+
+@media (max-width: 640px) {
+  .days {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,100 @@
+.venue {
+  /* 단일 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  min-height: 54vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+/* shell 의 padding-inline 을 정규 컨테이너 값으로 덮어쓴다(복합 선택자로 우선). */
+.venue:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* 공통 섹션 헤더 — 작은 따뜻한 키커 + 톤 헤딩 (전 섹션 동일 리듬). */
+.kicker {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--heat-main);
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+/* 장소 헤딩 — 헤더 리듬은 통일하되, 장소명은 절제된 크기로(큰 디스플레이 금지). */
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(24px, 2.8vw, 40px);
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+  line-height: 1.12;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+}
+
+.meta {
+  margin-top: clamp(24px, 4vh, 44px);
+  border-top: 1.5px solid color-mix(in srgb, var(--heat-core) 26%, var(--ink));
+  max-width: 720px;
+}
+.metaRow {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 24px;
+  align-items: baseline;
+  padding-block: 16px;
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--heat-core) 14%, rgba(10, 10, 10, 0.16));
+}
+.metaRow dt {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  font-weight: 600;
+  color: var(--heat-main);
+}
+.metaRow dd {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.6;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+
+@media (max-width: 640px) {
+  .metaRow {
+    grid-template-columns: 64px 1fr;
+    gap: 14px;
+  }
+}
+
+/* 안내 도면 — 풀폭 */
+.mapWrap {
+  margin-top: clamp(28px, 4vh, 48px);
+  width: 100%;
+}
+/* 안내 도면 — Aura 시안의 프로스티드 카드처럼 반투명 유리 패널 위에 얹는다.
+   따뜻한 오라가 카드 너머로 은은히 비치되, 도면(잉크 선·301호 강조)은 또렷이 읽힌다. */
+.map {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1px solid color-mix(in srgb, var(--heat-core) 22%, rgba(10, 10, 10, 0.12));
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(14px) saturate(118%);
+  backdrop-filter: blur(14px) saturate(118%);
+  box-shadow: 0 24px 60px -34px rgba(120, 50, 10, 0.45);
+}
+.mapNote {
+  margin-top: 10px;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+}

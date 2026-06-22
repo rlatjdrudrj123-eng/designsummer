@@ -1,0 +1,58 @@
+/* Phase 1 골격 공유 스타일.
+   빈 섹션의 구조·앵커·여백 리듬만 보이게 한다.
+   실제 콘텐츠·모션은 Phase 2~ 에서 채운다. */
+
+.section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+/* 6장 밀도 곡선: 섹션별 호흡을 다르게.
+   히어로(광활) → 씬(꽉 참) → 챕터(광활) → 라인업(리듬) → 타임테이블(조밀) → 신청·푸터(광활) */
+.airy {
+  min-height: 88vh;
+  padding-block: clamp(96px, 14vh, 200px);
+}
+.full {
+  min-height: 100vh;
+  padding-block: 0;
+}
+.rhythm {
+  min-height: 70vh;
+  padding-block: clamp(72px, 10vh, 140px);
+}
+.dense {
+  min-height: 60vh;
+  padding-block: clamp(56px, 7vh, 96px);
+}
+.tight {
+  min-height: auto;
+  padding-block: clamp(48px, 6vh, 80px);
+}
+
+/* 모서리 meta 라벨 (KV 모서리 날짜 배치 상속) */
+.tag {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+/* Phase 1 placeholder 타이틀 — 골격 식별용 */
+.skeletonHead {
+  font-family: var(--font-display);
+  font-size: var(--type-h2);
+  letter-spacing: var(--tracking-display);
+  line-height: 1;
+}
+
+.skeletonNote {
+  margin-top: 16px;
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  /* 골격 단계 표식. Phase 진행 시 제거 */
+  opacity: 0.4;
+}

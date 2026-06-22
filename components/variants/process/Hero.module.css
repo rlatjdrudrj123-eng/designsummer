@@ -1,0 +1,270 @@
+.hero {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: var(--margin);
+  isolation: isolate;
+  /* 전 화면 흰 종이 — 캔버스가 못 그린 영역 대비 베이스 */
+  background: #ffffff;
+}
+
+/* --- 모서리 날짜 (좌 08.20 · 우 08.21, 둘 다 종이 위 먹글자) --- */
+.date {
+  position: absolute;
+  z-index: 2;
+  top: var(--margin);
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+}
+.dateTl {
+  left: var(--margin);
+  text-align: left;
+  color: var(--ink);
+}
+.dateTr {
+  right: var(--margin);
+  text-align: right;
+  color: var(--ink);
+}
+
+/* --- 배지: K-PRINT 동시 개최 (종이 위, 시안 잉크) --- */
+.badge {
+  position: absolute;
+  z-index: 2;
+  left: var(--margin);
+  top: 38%;
+  font-family: var(--font-display);
+  font-size: clamp(12px, 1.2vw, 15px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  color: var(--cmyk-c);
+  padding: 7px 12px;
+  border: 1.5px solid color-mix(in srgb, var(--cmyk-c) 55%, transparent);
+  background: color-mix(in srgb, #fff 78%, transparent);
+}
+
+/* --- 타이틀 클러스터 (우측 = 종이면, 먹 글자) --- */
+.titleBlock {
+  position: absolute;
+  z-index: 2;
+  right: var(--margin);
+  top: 46%;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  max-width: calc(100vw - 2 * var(--margin));
+  color: var(--ink);
+}
+.sup {
+  font-family: var(--font-display);
+  font-size: clamp(14px, 1.1vw, 17px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--cmyk-accent);
+  margin-bottom: 10px;
+}
+.title {
+  font-family: var(--font-kr);
+  font-size: clamp(46px, 8vw, 112px);
+  font-weight: 600;
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.subtitle {
+  font-family: var(--font-kr);
+  font-size: clamp(18px, 2vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  color: var(--cmyk-accent);
+  margin-top: 14px;
+}
+.desc {
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.1vw, 17px);
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: 0.005em;
+  word-break: keep-all;
+  max-width: 32ch;
+  color: color-mix(in srgb, var(--ink) 80%, transparent);
+  margin-top: 12px;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: 4px 10px;
+  font-family: var(--font-display);
+  font-size: clamp(12px, 1vw, 14px);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--ink) 70%, transparent);
+  margin-top: 16px;
+}
+.metaSep {
+  color: var(--cmyk-c);
+  font-weight: 700;
+}
+
+/* --- 일자별 사전등록 버튼 2개 (Day1 시안 / Day2 마젠타 잉크) --- */
+.regRow {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: clamp(18px, 2.4vh, 28px);
+}
+.reg {
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.05vw, 16px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #fff;
+  background: var(--ink);
+  padding: 13px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.reg span {
+  position: relative;
+  z-index: 1;
+}
+.reg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  transform: translateY(100%);
+  transition: transform var(--dur-bloom) var(--ease-heat);
+}
+.reg1::before {
+  background: var(--cmyk-c);
+}
+.reg2::before {
+  background: var(--cmyk-m);
+}
+.reg:hover::before,
+.reg:focus-visible::before {
+  transform: translateY(0);
+}
+
+/* --- 좌하단 연사: 세로쓰기 밴드 (종이, 먹 글자) --- */
+.studios {
+  position: absolute;
+  z-index: 2;
+  left: var(--margin);
+  bottom: var(--margin);
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(20px, 2.4vw, 44px);
+}
+.dayGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(9px, 0.9vw, 15px);
+}
+.studioDay {
+  writing-mode: vertical-rl;
+  font-family: var(--font-display);
+  font-size: clamp(10px, 1.4vh, 12px);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+/* Day1 그룹 = 시안 잉크 / Day2 그룹 = 마젠타 잉크 (둘 다 종이 위) */
+.dayGroup:first-child .studioDay {
+  color: var(--rgb-accent);
+}
+.dayGroup:last-child .studioDay {
+  color: var(--cmyk-accent);
+}
+.studio {
+  writing-mode: vertical-rl;
+  font-family: var(--font-kr);
+  font-size: clamp(10px, 1.55vh, 13px);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink);
+  position: relative;
+  padding-left: 8px;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.studio::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 100%;
+  width: 1.5px;
+  background: var(--rgb-accent);
+  transition: bottom var(--dur-bloom) var(--ease-heat);
+}
+.dayGroup:last-child .studio::before {
+  background: var(--cmyk-accent);
+}
+.studio:hover,
+.studio:focus-visible {
+  color: var(--rgb-accent);
+}
+.dayGroup:last-child .studio:hover,
+.dayGroup:last-child .studio:focus-visible {
+  color: var(--cmyk-accent);
+}
+.studio:hover::before,
+.studio:focus-visible::before {
+  bottom: 0;
+}
+
+@media (max-width: 640px) {
+  /* 모바일: portrait 필드도 흰 종이 위 CMYK 잉크. 타이포는 먹. */
+  .hero {
+    background: #fff;
+  }
+  .title {
+    font-size: clamp(34px, 11vw, 56px);
+  }
+  .hero {
+    min-height: 116svh;
+  }
+  .titleBlock {
+    top: 30%;
+    max-width: calc(100vw - 2 * var(--margin));
+  }
+  .badge {
+    top: 19%;
+    font-size: 11px;
+  }
+  .desc {
+    max-width: 26ch;
+  }
+  .desc {
+    font-size: 13px;
+  }
+  .regRow {
+    justify-content: flex-end;
+  }
+  .reg {
+    font-size: 12px;
+    padding: 11px 14px;
+  }
+  .studios {
+    gap: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio::before {
+    transition: bottom var(--dur-touch) linear;
+  }
+}

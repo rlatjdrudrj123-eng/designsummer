@@ -1,0 +1,88 @@
+/* ============================================================
+   PostHeroAura — ONE continuous warm aura ground (orange → amber →
+   gold → yellow) behind the ENTIRE below-hero region. A single canvas
+   field, NOT one per section, so the whole rest of the page reads as
+   one dreamy Aura gradient with the warmth drifting as you scroll.
+   ============================================================ */
+
+/* (주: 블롭 팔레트는 PostHeroAura.tsx 의 BLOBS 배열에서 관리) */
+
+/* the layer fills the whole below-hero wrapper (its positioned parent).
+   overflow:clip confines the sticky canvas to the region bounds, so the
+   aura begins right below the hero and ends at the footer.
+
+   TOP + BOTTOM FADE — the warm field must EMERGE from the hero's bottom and
+   DISSOLVE at the foot of the region, never end on a hard horizontal seam
+   ("딱 일자로 짤린다"). A vertical mask fades the whole layer from fully
+   transparent at the very TOP of the region to fully opaque a little way down,
+   AND symmetrically back to transparent across the BOTTOM band, so the aura
+   eases in below the hero and feathers out into the footer/page ground with no
+   visible straight cut at either boundary. Each fade height is the smaller of a
+   viewport share and a fixed cap so it reads as a soft hand-off on any page
+   length. The bottom fade is expressed from the END of the gradient (`100% -
+   var(--fade)`) so it tracks the region's actual bottom regardless of height. */
+.layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: clip;
+  --fade: min(56vh, 520px);
+  /* bottom fade can be a touch shorter than the top hand-off so the warm ground
+     still carries through most of the page before dissolving at the foot. */
+  --fade-bottom: min(40vh, 360px);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 0, 0, 0.35) calc(var(--fade) * 0.5),
+    #000 var(--fade),
+    #000 calc(100% - var(--fade-bottom)),
+    rgba(0, 0, 0, 0.35) calc(100% - var(--fade-bottom) * 0.5),
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0,
+    rgba(0, 0, 0, 0.35) calc(var(--fade) * 0.5),
+    #000 var(--fade),
+    #000 calc(100% - var(--fade-bottom)),
+    rgba(0, 0, 0, 0.35) calc(100% - var(--fade-bottom) * 0.5),
+    transparent 100%
+  );
+}
+
+/* the stage is sticky-pinned to the viewport while scrolling through the
+   region: this keeps ONE viewport-sized (cheap, low-res) buffer continuously
+   covering the region instead of a buffer as tall as the whole document.
+   As the page scrolls, PostHeroAura re-derives the hue from scroll position,
+   so the warmth visibly drifts orange → golden-yellow down the page. */
+.stage {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* extra softening on top of the canvas blur — keeps the upscaled low-res
+     buffer perfectly smooth and dreamy. */
+  filter: blur(8px) saturate(124%);
+}
+
+/* a faint center-light veil lifts legibility under content without breaking
+   the continuity — NO top/bottom white band (that would chop the field into
+   a strip); the field runs edge-to-edge through every section. */
+.veil {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 78% at 50% 44%,
+    rgba(255, 255, 255, 0.34),
+    rgba(255, 255, 255, 0) 64%
+  );
+}

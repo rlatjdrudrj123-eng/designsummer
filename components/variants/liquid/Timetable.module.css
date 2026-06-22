@@ -1,0 +1,178 @@
+.timetable {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  margin-bottom: clamp(24px, 4vh, 48px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 5vw, 80px);
+}
+
+.dayHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--ink);
+}
+.dayLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-body);
+  font-weight: 600;
+}
+.dayDate {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+}
+.day {
+  display: flex;
+  flex-direction: column;
+}
+.dayTitle {
+  font-family: var(--font-kr);
+  font-size: var(--type-h3);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  word-break: keep-all;
+  margin-top: 14px;
+  margin-bottom: 4px;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+}
+.row {
+  display: grid;
+  grid-template-columns: 6.4em 1fr;
+  column-gap: 16px;
+  align-items: baseline;
+  padding: 16px 12px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.time {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--heat-main);
+}
+.studio {
+  grid-column: 2;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 64%, transparent);
+}
+.speaker {
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0.01em;
+  color: var(--heat-main);
+}
+/* 세션 제목 — 본문 강조 */
+.title {
+  grid-column: 2;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.35;
+  word-break: keep-all;
+  margin-top: 4px;
+}
+/* 세션 설명 */
+.desc {
+  grid-column: 2;
+  font-family: var(--font-kr);
+  font-size: var(--type-meta);
+  line-height: 1.6;
+  opacity: 0.7;
+  word-break: keep-all;
+  margin-top: 6px;
+}
+/* 등록 / 휴식 라벨 (단일 라벨 행) */
+.label {
+  grid-column: 2;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 72%, transparent);
+}
+/* 등록 행 — 절제된 강조 */
+.reg .time,
+.break .time {
+  color: var(--ink);
+  opacity: 0.55;
+}
+.reg,
+.break {
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+.break .label {
+  font-style: italic;
+}
+
+/* 데이별 신청 CTA */
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: clamp(20px, 3vh, 32px);
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 700;
+  padding: 16px 28px;
+  position: relative;
+  overflow: hidden;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--heat-main);
+  transform: translateY(100%);
+  transition: transform var(--dur-bloom) var(--ease-heat);
+}
+.cta:hover::before,
+.cta:focus-visible::before {
+  transform: translateY(0);
+}
+.cta span {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 7vh, 48px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta::before {
+    transition: none;
+  }
+}

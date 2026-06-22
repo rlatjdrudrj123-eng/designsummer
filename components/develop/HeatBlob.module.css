@@ -1,0 +1,9 @@
+.canvas {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  /* 링크·텍스트 선택을 막지 않게. 커서 추적은 window 리스너로. */
+  pointer-events: none;
+}

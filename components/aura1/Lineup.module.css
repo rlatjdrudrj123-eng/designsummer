@@ -1,0 +1,563 @@
+/* ============================================================================
+   Aura1 Lineup — forked speaker lineup, warm-aura tonal style.
+   Forked from components/develop/Lineup.module.css (NOT shared).
+
+   This fork keeps the EXISTING Aura card FORM: small round avatar + tonal
+   studio name + studioEn + session + desc + person + credentials + the
+   대표작 (works) thumbnail strip. It is NOT a big full-card portrait.
+
+   Fork-specific changes vs the shared module:
+   - HEAD-CROP FIX: the small round avatar uses object-position:top center so
+     heads/faces are not sliced off (same small size as the shared card).
+   - WORKS LIGHTBOX: the works thumbnails are buttons; clicking opens a
+     lib-free lightbox (scrim + dialog + close button styles below).
+   ============================================================================ */
+
+.lineup {
+  /* Warm local palette — DAY1 clear RED / red-orange, DAY2 clear GOLD / amber.
+     No teal/cyan/green. The two days are now hard-set per .d1/.d2 (no blended
+     --mood interpolation) so the day coding is OBVIOUSLY distinct. */
+  --ds-red-deep: #e03200;
+  --ds-red: #ff4d00;
+  --ds-gold: #f59e00;
+  --ds-gold-deep: #d99400;
+
+  /* Day-toned values; overridden per day in .d1 / .d2 below.
+     --tonal-a/-b drive accent gradients (ticks, hairlines, glass edge).
+     --ink-day is the READABLE text tone for the day label/title (deep enough
+     to stay legible on the light glass over the vivid aura). */
+  --tonal-a: var(--ds-red-deep);
+  --tonal-b: var(--ds-red);
+  --accent: var(--ds-red-deep);
+  --ink-day: #9c2400;
+
+  /* Warm ink hierarchy — dark warm ink for legibility over the bright aura. */
+  --ink-warm: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --ink-soft: color-mix(in oklab, var(--ink-warm) 78%, transparent);
+  --ink-faint: color-mix(in oklab, var(--ink-warm) 56%, transparent);
+  --line: color-mix(in srgb, var(--heat-core) 18%, rgba(10, 10, 10, 0.12));
+
+  position: relative;
+  padding-block: clamp(48px, 8vh, 110px);
+}
+/* Full-bleed root (the aura ground sits behind); .cards carries the rails.
+   Neutralise the .shell padding-inline so .cards alone owns the gutters. */
+.lineup:global(.shell) {
+  padding-inline: 0;
+}
+
+/* DAY 1 = clear RED / red-orange. DAY 2 = clear GOLD / amber.
+   Hard-set per day (no blend) so the coding is unmistakable. The day TITLE
+   and day LABEL use --ink-day (a deep, readable warm tone), NOT a light
+   gradient, so they stay legible on the glass over the vivid aura. */
+.d1 {
+  --tonal-a: var(--ds-red-deep);
+  --tonal-b: var(--ds-red);
+  --accent: var(--ds-red);
+  --ink-day: #9c2400; /* deep red ink — clearly legible */
+}
+.d2 {
+  --tonal-a: var(--ds-gold);
+  --tonal-b: var(--ds-gold-deep);
+  --accent: var(--ds-gold-deep);
+  --ink-day: #8a5500; /* deep amber/brown-gold ink — readable, not light gold */
+}
+
+/* ── Day intro header — the day THEME + 추천 대상, moved here from the Overview ──
+   Shares the canonical container rails (same max-width / padding-inline as
+   .cards) so it lines up flush above the speaker cards. Tidy, box-free: a
+   warm hairline tick under the day label, then theme title/body, then the
+   추천 대상 list. Identical structure for Day1/Day2; only the day tone differs
+   via the existing --accent / --tonal-* variables. */
+.dayIntro {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin-inline: auto;
+  margin-bottom: clamp(36px, 5vh, 64px);
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+.dayHead {
+  display: flex;
+  align-items: baseline;
+  gap: clamp(12px, 1.6vw, 18px);
+  padding-bottom: clamp(12px, 1.6vh, 16px);
+  /* Stronger, fully-opaque day-toned hairline so the day color reads. */
+  border-bottom: 2px solid var(--accent);
+}
+.dayLabel {
+  font-family: var(--font-display);
+  /* BIG, prominent day anchor — much larger than before (was --type-body) so
+     "Day 1 / Day 2" reads as the headline of the whole day section. */
+  font-size: clamp(34px, 5vw, 60px);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+  /* Solid deep day-ink (not a light gradient) so the day label is legible
+     and the day's color is obvious. */
+  color: var(--ink-day);
+}
+.dayDate {
+  font-family: var(--font-display);
+  /* Slightly up-sized to balance the now-large day label. */
+  font-size: clamp(14px, 1.4vw, 18px);
+  font-weight: 600;
+  letter-spacing: var(--tracking-meta);
+  color: var(--ink-faint);
+}
+/* Theme title row — the per-day KEY VISUAL accent sits beside the theme
+   title (DayKV: Day1 ripple / Day2 arrow expansion). The KV provides the
+   block's top spacing, so the title's own margin-top is reset inside the row. */
+.themeRow {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 2vw, 24px);
+  margin-top: clamp(16px, 2.2vh, 22px);
+}
+.themeRow .dayTitle {
+  margin-top: 0;
+}
+.dayTitle {
+  margin-top: clamp(16px, 2.2vh, 22px);
+  font-family: var(--font-kr);
+  font-size: clamp(22px, 2.6vw, 34px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.16;
+  word-break: keep-all;
+  color: var(--ink-warm);
+}
+.dayBody {
+  margin-top: clamp(10px, 1.5vh, 16px);
+  max-width: 760px;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.7;
+  word-break: keep-all;
+  color: var(--ink-soft);
+}
+.audience {
+  margin-top: clamp(24px, 3.4vh, 38px);
+}
+.audienceKicker {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  font-weight: 700;
+  /* Deep day-ink (not the brighter --accent) so the kicker stays readable,
+     esp. Day 2 gold which is too light at small uppercase sizes. */
+  color: var(--ink-day);
+  margin-bottom: 8px;
+}
+.audienceHeading {
+  font-family: var(--font-kr);
+  font-size: clamp(17px, 1.6vw, 21px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  word-break: keep-all;
+  color: var(--ink-warm);
+}
+.items {
+  list-style: none;
+  margin: clamp(14px, 2vh, 20px) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(14px, 1.8vw, 24px);
+}
+.item {
+  position: relative;
+  padding: 0 0 0 22px;
+  font-family: var(--font-kr);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.6;
+  word-break: keep-all;
+  color: var(--ink-soft);
+}
+/* Heat tick marker, day-toned. */
+.item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 12px;
+  height: 2px;
+  background: var(--accent);
+}
+
+/* ── Canonical container — identical left/right rails to every other section ── */
+.cards {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 30px);
+}
+
+/* ── Per-day 신청하기 CTA — sits BELOW the speaker cards, day-toned ──
+   Shares the canonical container rails (same max-width / padding-inline as
+   .cards) so it lines up flush under the grid. A clear filled CTA in the
+   day's accent gradient (Day1 red / Day2 gold), centered, with comfortable
+   spacing below the cards. */
+.applyWrap {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin-inline: auto;
+  margin-top: clamp(32px, 5vh, 56px);
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  justify-content: center;
+}
+.applyBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-width: min(420px, 100%);
+  padding: clamp(15px, 1.8vh, 19px) clamp(28px, 4vw, 44px);
+  border-radius: 999px;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  text-align: center;
+  text-decoration: none;
+  color: #fff;
+  background-image: linear-gradient(100deg, var(--tonal-a), var(--tonal-b));
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    0 22px 44px -22px color-mix(in srgb, var(--accent) 80%, transparent);
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.applyBtn:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 28px 54px -22px color-mix(in srgb, var(--accent) 88%, transparent);
+}
+.applyBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* ── Frosted glass card (Aura form) ──
+   GLASS RECIPE: a frosted-WHITE fill (translucent, still backdrop-blurred so the
+   warm aura diffuses softly THROUGH the glass) raised to a higher white opacity
+   so the card reads as a clean, legible frosted surface and dark text stays
+   crisp. The day tone survives only as a faint warm hairline (--card-line),
+   never as a solid fill. */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: clamp(22px, 2.4vw, 32px);
+  border-radius: 22px;
+  --card-fill: rgba(255, 255, 255, 0.68);
+  --card-line: rgba(255, 255, 255, 0.55);
+  border: 1px solid var(--card-line);
+  background: var(--card-fill);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  backdrop-filter: blur(20px) saturate(120%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 30px 60px -34px rgba(70, 30, 0, 0.4);
+}
+/* Per-day glass edge — a faint warm hairline only (no warm fill). */
+.d1 .card {
+  --card-fill: rgba(255, 255, 255, 0.66);
+  --card-line: color-mix(in srgb, var(--ds-red-deep) 26%, rgba(255, 255, 255, 0.55));
+}
+.d2 .card {
+  --card-fill: rgba(255, 255, 255, 0.7);
+  --card-line: color-mix(in srgb, var(--ds-gold) 30%, rgba(255, 255, 255, 0.55));
+}
+
+.cardHead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
+}
+
+/* ── Small round avatar (same small size as the shared card) ──
+   HEAD-CROP FIX: object-position:top center keeps faces/heads in frame
+   instead of slicing the tops off. */
+.portrait,
+.portraitPh {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  flex: none;
+}
+/* next/image fill — the round avatar wrapper must be a sized, clipped,
+   positioned box so the fill image fills it and the rounded crop holds. */
+.portrait {
+  position: relative;
+  overflow: hidden;
+}
+.portraitPh {
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink-warm);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--tonal-a) 55%, transparent),
+    color-mix(in oklab, var(--tonal-b) 55%, transparent)
+  );
+  border: 1px solid var(--line);
+}
+
+.cardId {
+  min-width: 0;
+}
+.studioTonal {
+  font-family: var(--font-kr);
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  background-image: linear-gradient(100deg, var(--tonal-a), var(--tonal-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cardTime {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+.cardBody {
+  margin-top: 22px;
+}
+.session {
+  font-family: var(--font-kr);
+  font-size: clamp(17px, 1.9vw, 21px);
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  color: var(--ink-warm);
+  display: flex;
+  flex-direction: column;
+}
+.sessionDesc {
+  margin-top: 12px;
+  font-family: var(--font-kr);
+  font-size: 14px;
+  line-height: 1.65;
+  word-break: keep-all;
+  color: var(--ink-soft);
+}
+.person {
+  margin-top: 18px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  word-break: keep-all;
+}
+.person b {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink-warm);
+}
+.person span {
+  font-size: 13px;
+  color: var(--ink-faint);
+}
+.creds {
+  margin-top: 14px;
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+}
+.creds li {
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+  padding-left: 14px;
+  position: relative;
+  word-break: keep-all;
+}
+.creds li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: background var(--dur-bloom, 0.6s) ease;
+}
+
+/* ── 대표작 (works) thumbnail strip — click-to-enlarge buttons ── */
+.works {
+  margin-top: 20px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.workBtn {
+  position: relative;
+  display: block;
+  width: 64px;
+  height: 64px;
+  padding: 0;
+  margin: 0;
+  border: 0;
+  background: none;
+  border-radius: 12px;
+  cursor: zoom-in;
+  overflow: hidden;
+}
+.workBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+.work {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  transition: transform 0.4s ease;
+}
+.workBtn:hover .work,
+.workBtn:focus-visible .work {
+  transform: scale(1.06);
+}
+
+/* ── Lightbox (lib-free) — enlarges the works (대표작) images ── */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 4vw, 48px);
+  background: rgba(28, 10, 0, 0.72);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  animation: scrimIn 0.22s ease both;
+}
+.dialog {
+  position: relative;
+  max-width: min(880px, 92vw);
+  max-height: 88vh;
+  animation: dialogIn 0.26s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.lightboxImg {
+  display: block;
+  max-width: 100%;
+  max-height: 88vh;
+  width: auto;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 40px 90px -30px rgba(0, 0, 0, 0.7);
+  object-fit: contain;
+}
+.closeBtn {
+  position: absolute;
+  top: -14px;
+  right: -14px;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  font-size: 24px;
+  line-height: 1;
+  color: var(--ink-warm, #1a0f08);
+  background: #fff;
+  box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+.closeBtn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+@keyframes scrimIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ── Mobile 390px: single column ── */
+@media (max-width: 760px) {
+  .cards {
+    grid-template-columns: 1fr;
+  }
+  .cardHead {
+    grid-template-columns: auto 1fr;
+  }
+  .cardTime {
+    grid-column: 2;
+    margin-top: 4px;
+  }
+  /* 추천 대상 항목 — 모바일에선 3열이 비좁으므로 세로로 쌓는다. */
+  .items {
+    grid-template-columns: 1fr;
+    gap: clamp(12px, 2vh, 16px);
+  }
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .creds li::before,
+  .work {
+    transition: none;
+  }
+  .workBtn:hover .work,
+  .workBtn:focus-visible .work {
+    transform: none;
+  }
+  .scrim,
+  .dialog {
+    animation: none;
+  }
+  .applyBtn {
+    transition: none;
+  }
+  .applyBtn:hover {
+    transform: none;
+  }
+}

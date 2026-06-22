@@ -1,0 +1,61 @@
+.wrap {
+  position: relative;
+  isolation: isolate;
+}
+
+/* 콘텐츠는 글로우 위 */
+.wrap > :not(.glow) {
+  position: relative;
+  z-index: 1;
+}
+
+/* 커서 주변 매질 발광. 평소 숨김, 진입 시 표기.
+   ★ 두 날 모두 CMYK 잉크 번짐(multiply) — 커서가 흰 종이 위에 잉크를 찍는다.
+     Day1 = 시안 강조, Day2 = 마젠타 강조. C/M/Y 가 겹치면 K 로 어두워진다. */
+.glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 460px;
+  height: 460px;
+  margin: -230px 0 0 -230px;
+  transform: translate(var(--mx, -9999px), var(--my, -9999px));
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 300ms var(--ease-heat);
+}
+
+/* Day1 (잉크) — CMYK 감산, 시안 강조: C/M/Y 잉크가 겹쳐 어두워짐(K). multiply.
+   ★ 쨍하게: 알파를 풀강도로 올려 커서가 또렷한 C/M/Y 잉크를 찍고
+     겹침에서 진한 K 로 섞이게. (하드 링 없음 유지) */
+.wrap[data-day="1"] .glow {
+  mix-blend-mode: multiply;
+  background:
+    radial-gradient(circle at 42% 44%, rgba(0, 147, 208, 0.78) 0%, rgba(0, 147, 208, 0) 72%),
+    radial-gradient(circle at 58% 44%, rgba(236, 0, 140, 0.5) 0%, rgba(236, 0, 140, 0) 72%),
+    radial-gradient(circle at 50% 60%, rgba(245, 216, 0, 0.5) 0%, rgba(245, 216, 0, 0) 72%);
+}
+/* Day2 (잉크) — CMYK 감산, 마젠타 강조: 세 잉크가 겹쳐 어두워짐. multiply 로 종이를 물들임. */
+.wrap[data-day="2"] .glow {
+  mix-blend-mode: multiply;
+  background:
+    radial-gradient(circle at 42% 44%, rgba(0, 147, 208, 0.5) 0%, rgba(0, 147, 208, 0) 72%),
+    radial-gradient(circle at 58% 44%, rgba(236, 0, 140, 0.78) 0%, rgba(236, 0, 140, 0) 72%),
+    radial-gradient(circle at 50% 60%, rgba(245, 216, 0, 0.5) 0%, rgba(245, 216, 0, 0) 72%);
+}
+.wrap.on .glow {
+  opacity: 0.92;
+}
+
+@media (hover: none) {
+  .glow {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow {
+    transition: none;
+  }
+}

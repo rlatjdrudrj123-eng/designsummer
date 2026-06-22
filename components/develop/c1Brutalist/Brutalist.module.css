@@ -1,0 +1,717 @@
+/* ──────────────────────────────────────────────────────────────────────────
+ * Concept 01 — Brutalist Grid, laid OVER the warm Aura ground.
+ *
+ * The KV (<Hero/>) and the continuous warm Aura field (<PostHeroRegion/>) are
+ * reused verbatim — this stylesheet must NOT paint any opaque/off-white page
+ * background, or it would hide that field. Instead the brutalist signature is
+ * a TRANSPARENT structure: a strict Swiss modular grid drawn with visible
+ * HAIRLINE rules, heavy grotesque display + monospace meta, hard hierarchy,
+ * numbered tabular rows — all in dark warm INK on the luminous aura.
+ *
+ * Only the CONCEPT block + LINEUP are styled here; SCHEDULE/VENUE/APPLY/FOOTER
+ * come from the shared develop sections and keep their own warm tonal styling.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.page {
+  /* dark WARM ink (not pure black) so the type reads as warm structure on the
+     orange→gold field rather than a cold print layer. */
+  --ink: #221308;
+  --ink-soft: #5a3a22;
+  /* hairline rules: a warm dark, kept TRANSLUCENT so the aura glows through the
+     grid lines (the structure overlays the field, never masks it). */
+  --line: rgba(60, 28, 6, 0.42);
+  --line-strong: rgba(40, 18, 4, 0.6);
+  --accent: #d83a12; /* warm red-orange from the heat identity */
+  --hair: 1px;
+
+  --sans: var(--bru-sans), "Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono: var(--bru-mono), "Space Mono", ui-monospace, "SFMono-Regular", monospace;
+
+  /* ride the SHARED gutter (min(1100px,94%)) via the global .shell on each
+     section; .page itself paints nothing. */
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--sans);
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  /* AURA FIX — must mirror the sibling KV-preserving pages (c3 Riso / c4 Serif):
+     position:relative + overflow-x:CLIP, never overflow-x:hidden.
+     `overflow-x: hidden` forces the computed `overflow-y` to `auto`, which turns
+     this <main> into a SCROLL CONTAINER. The warm PostHeroAura field paints into
+     a `position: sticky` stage that is meant to pin to the viewport across the
+     whole document scroll; once an ancestor becomes a scroll container that
+     sticky re-roots to THIS box (a static, content-tall <main>) instead of the
+     viewport, so the fixed/pinned warm field collapses and the white body ground
+     shows through every below-hero section. `overflow-x: clip` clips horizontal
+     bleed WITHOUT creating a scroll container (it does not force overflow-y:auto),
+     so the aura stays pinned to the viewport and glows continuously behind the
+     transparent brutalist grid — exactly how c3/c4 keep the field visible. */
+  position: relative;
+  overflow-x: clip;
+}
+
+.page *,
+.page *::before,
+.page *::after {
+  box-sizing: border-box;
+}
+
+/* ── concept chip (required) ── */
+.chip {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 50;
+  max-width: 280px;
+  padding: 10px 12px;
+  background: var(--ink);
+  color: #fff4e8;
+  border: var(--hair) solid var(--ink);
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.45;
+}
+.chipNo {
+  color: #ffae7a;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+.chipName {
+  display: inline;
+  margin-left: 6px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.chipDesc {
+  display: block;
+  margin-top: 4px;
+  opacity: 0.85;
+}
+
+/* ── shared section frame (transparent on the aura) ── */
+.section {
+  /* .shell supplies the gutter; add the brutalist vertical rhythm + top rule. */
+  padding-top: clamp(48px, 8vw, 110px);
+  padding-bottom: clamp(48px, 8vw, 110px);
+  border-top: 2px solid var(--line-strong);
+}
+/* CONTAINER ALIGN — every brutalist section we render here also carries the
+   global .shell. Its default gutter (max-width 1680px / padding-inline
+   max(40px,4vw)) does NOT match the canonical develop content container, so the
+   brutalist section edges drift from the shared Hero/Timetable/Directions/Apply
+   sections ("컨테이너 안맞음"). Neutralize .shell and re-apply the SINGLE
+   canonical container so content edges align with every other section. The
+   hairline grid/rules ride this same wrapper, so they align too. Complex
+   selector (.section.shell) wins over the global .shell alone. */
+.section:global(.shell) {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+.sectionHead {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: baseline;
+  gap: 18px;
+  padding-bottom: 22px;
+  margin-bottom: 40px;
+  border-bottom: var(--hair) solid var(--line);
+}
+.sectionIndex {
+  font-family: var(--mono);
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 700;
+  color: var(--accent);
+}
+.sectionTitle {
+  margin: 0;
+  font-size: clamp(34px, 7vw, 92px);
+  font-weight: 900;
+  line-height: 0.92;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+.sectionMeta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  text-align: right;
+}
+
+/* ── SYSTEM ── numbered theses, transparent on the aura ── */
+.theses {
+  list-style: none;
+  margin: 0 0 clamp(36px, 5vw, 64px);
+  padding: 0;
+  border-top: var(--hair) solid var(--line);
+}
+.thesis {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: clamp(16px, 3vw, 40px);
+  padding: clamp(20px, 3vw, 34px) 0;
+  border-bottom: var(--hair) solid var(--line);
+}
+.thesisNo {
+  font-family: var(--mono);
+  font-size: clamp(16px, 2vw, 22px);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.thesisBody {
+  max-width: 70ch;
+}
+.thesisTitle {
+  margin: 0 0 10px;
+  font-size: clamp(20px, 2.6vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.thesisDesc {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+/* ── fact ledger ── monospace data rows, hairline-ruled, transparent ── */
+.ledger {
+  margin: 0;
+  border: var(--hair) solid var(--line);
+}
+.ledgerRow {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: clamp(14px, 2vw, 28px);
+  padding: 14px clamp(16px, 2.4vw, 26px);
+  border-bottom: var(--hair) solid var(--line);
+}
+.ledgerRow:last-child {
+  border-bottom: 0;
+}
+.ledgerKey {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+.ledgerVal {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.01em;
+  color: var(--ink);
+}
+
+/* ── CONCEPT ── modular two-cell grid, hairline ruled, transparent ── */
+.conceptGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: var(--hair) solid var(--line);
+}
+.conceptCol {
+  padding: clamp(20px, 3vw, 40px);
+}
+.conceptCol + .conceptCol {
+  border-left: var(--hair) solid var(--line);
+}
+.conceptDay {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+  border-bottom: var(--hair) solid var(--line);
+}
+.conceptDayNo {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: var(--ink-soft);
+}
+.conceptEn {
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--accent);
+  line-height: 0.95;
+}
+.conceptKo {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.conceptTitle {
+  margin: 0 0 12px;
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.conceptBody {
+  margin: 0 0 22px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+.tagList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.tag {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  padding: 5px 9px;
+  border: var(--hair) solid var(--line);
+}
+
+/* ── LINEUP rows ── numbered tabular grid, hairline-separated ── */
+.dayHeader {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  padding: 10px 0;
+  margin-top: 36px;
+  border-bottom: 2px solid var(--line-strong);
+}
+.dayHeader:first-of-type {
+  margin-top: 0;
+}
+.dayHeaderNo {
+  font-weight: 900;
+  font-size: clamp(20px, 3vw, 34px);
+  letter-spacing: -0.03em;
+}
+.dayHeaderEn {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.dayHeaderDate {
+  margin-left: auto;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+}
+
+.rows {
+  border-top: 0;
+}
+.row {
+  display: grid;
+  grid-template-columns: 86px 110px 92px 1fr 180px;
+  gap: clamp(14px, 2vw, 28px);
+  padding: 26px 0;
+  border-bottom: var(--hair) solid var(--line);
+}
+.rowNum {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.04em;
+}
+.rowTime {
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.rowPortrait {
+  align-self: start;
+}
+.portrait {
+  aspect-ratio: 1 / 1;
+}
+.rowStudio {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.studioEn {
+  font-size: clamp(18px, 2.2vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.studioKo {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.rowTitle {
+  margin: 0 0 10px;
+  font-size: clamp(17px, 1.8vw, 21px);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
+}
+.rowTitleLine {
+  display: block;
+}
+.rowDesc {
+  margin: 0 0 14px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  max-width: 56ch;
+}
+.creds {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.cred {
+  font-family: var(--mono);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--ink-soft);
+  padding-left: 14px;
+  position: relative;
+}
+.cred::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+.rowPerson {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  text-align: right;
+}
+.personName {
+  font-size: 18px;
+  font-weight: 800;
+}
+.personRole {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+/* ── ABOUT ── intro lede + note, transparent on the aura ── */
+.aboutIntro {
+  margin: 0 0 clamp(28px, 4vw, 48px);
+  max-width: 72ch;
+  font-size: clamp(17px, 1.9vw, 22px);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.aboutNote {
+  margin: clamp(20px, 3vw, 32px) 0 0;
+  padding: 16px clamp(16px, 2.4vw, 26px);
+  border: var(--hair) solid var(--line);
+  border-left: 3px solid var(--accent);
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ── AUDIENCE ── two numbered/tabular per-day columns ── */
+.audGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border: var(--hair) solid var(--line);
+}
+.audCol {
+  padding: clamp(20px, 3vw, 40px);
+}
+.audCol + .audCol {
+  border-left: var(--hair) solid var(--line);
+}
+.audColHead {
+  padding-bottom: 18px;
+  margin-bottom: 22px;
+  border-bottom: var(--hair) solid var(--line);
+}
+.audColNo {
+  display: block;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.audHeading {
+  margin: 0;
+  font-size: clamp(18px, 2.2vw, 26px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.audList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.audItem {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 14px;
+  padding: 16px 0;
+  border-bottom: var(--hair) solid var(--line);
+}
+.audItem:last-child {
+  border-bottom: 0;
+}
+.audItemNo {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent);
+}
+.audItemText {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ── BENEFITS ── grouped brutalist list, hairline-ruled ── */
+.benGroups {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(32px, 4vw, 56px);
+}
+.benGroupHead {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 10px 0;
+  margin-bottom: 4px;
+  border-bottom: 2px solid var(--line-strong);
+}
+.benGroupNo {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+.benGroupHeading {
+  margin: 0;
+  font-size: clamp(18px, 2.4vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.benList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.benItem {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: clamp(14px, 2vw, 28px);
+  padding: 22px 0;
+  border-bottom: var(--hair) solid var(--line);
+}
+.benItem:last-child {
+  border-bottom: 0;
+}
+.benItemNo {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--accent);
+}
+.benItemBody {
+  max-width: 64ch;
+}
+.benItemTitle {
+  margin: 0 0 8px;
+  font-size: clamp(16px, 1.8vw, 20px);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+.benItemDesc {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+}
+
+/* ── FAQ ── numbered Q/A rows, hairline-ruled ── */
+.faqList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: var(--hair) solid var(--line);
+}
+.faqItem {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: clamp(14px, 2vw, 32px);
+  padding: clamp(22px, 3vw, 32px) 0;
+  border-bottom: var(--hair) solid var(--line);
+}
+.faqNo {
+  font-family: var(--mono);
+  font-size: clamp(14px, 1.8vw, 18px);
+  font-weight: 700;
+  color: var(--accent);
+  letter-spacing: 0.02em;
+}
+.faqBody {
+  max-width: 74ch;
+}
+.faqQ {
+  margin: 0 0 10px;
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+.faqA {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+}
+
+/* ── photo ── kept hard-edged + monochrome to read as brutalist plate; a warm
+      hairline frame, transparent empty cell so the aura shows in the hatch. ── */
+.photo {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border: var(--hair) solid var(--line);
+  background: transparent;
+}
+.photoImg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.05);
+}
+.photoEmpty {
+  background-image: repeating-linear-gradient(
+    45deg,
+    transparent,
+    transparent 6px,
+    rgba(60, 28, 6, 0.18) 6px,
+    rgba(60, 28, 6, 0.18) 7px
+  );
+}
+
+/* ── responsive: tablet ── */
+@media (max-width: 900px) {
+  .conceptGrid {
+    grid-template-columns: 1fr;
+  }
+  .conceptCol + .conceptCol {
+    border-left: 0;
+    border-top: var(--hair) solid var(--line);
+  }
+  .audGrid {
+    grid-template-columns: 1fr;
+  }
+  .audCol + .audCol {
+    border-left: 0;
+    border-top: var(--hair) solid var(--line);
+  }
+  .row {
+    grid-template-columns: 70px 1fr;
+    grid-template-areas:
+      "num time"
+      "portrait portrait"
+      "body body"
+      "person person";
+    row-gap: 14px;
+  }
+  .rowNum {
+    grid-area: num;
+  }
+  .rowTime {
+    grid-area: time;
+    text-align: right;
+  }
+  .rowPortrait {
+    grid-area: portrait;
+    max-width: 160px;
+  }
+  .rowBody {
+    grid-area: body;
+  }
+  .rowPerson {
+    grid-area: person;
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+    align-items: baseline;
+    padding-top: 10px;
+    border-top: var(--hair) solid var(--line);
+  }
+}
+
+/* ── responsive: mobile 390px ── */
+@media (max-width: 560px) {
+  .sectionHead {
+    grid-template-columns: auto 1fr;
+    gap: 10px 14px;
+  }
+  .sectionMeta {
+    grid-column: 1 / -1;
+    text-align: left;
+  }
+  .chip {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    max-width: none;
+    font-size: 10px;
+  }
+  .thesis {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .ledgerRow {
+    grid-template-columns: 110px 1fr;
+    gap: 12px;
+  }
+  .benItem {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .faqItem {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .audItem {
+    grid-template-columns: 32px 1fr;
+    gap: 10px;
+  }
+}
+
+/* ── motion: minimal; honor reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .page * {
+    transition: none !important;
+    animation: none !important;
+  }
+}

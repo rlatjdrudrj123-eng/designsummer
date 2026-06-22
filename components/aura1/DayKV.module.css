@@ -1,0 +1,28 @@
+/* ============================================================================
+   Aura1 DayKV — per-day key-visual accent styles.
+
+   The KV is now a LIVING Canvas2D HEAT-FIELD (see DayKV.tsx) — the hero's
+   effect family, not a flat SVG. This module only sizes/positions it as a
+   small header accent and gives it the warm drop-glow so it sits on-tone with
+   the aura + glass aesthetic. Per-day color is baked into the canvas ramp
+   (red for Day1 / gold for Day2), so no currentColor coupling here.
+
+   Motion lives entirely in the canvas (rAF), and DayKV.tsx renders a single
+   static frame under prefers-reduced-motion.
+   ============================================================================ */
+
+.kv {
+  width: clamp(56px, 7vw, 84px);
+  height: clamp(56px, 7vw, 84px);
+  flex: none;
+  /* Soft warm glow, day-toned via the inherited --accent. */
+  filter: drop-shadow(
+    0 6px 16px color-mix(in srgb, var(--accent) 38%, transparent)
+  );
+}
+
+.canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}

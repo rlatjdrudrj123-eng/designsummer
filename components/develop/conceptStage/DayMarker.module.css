@@ -1,0 +1,95 @@
+/* ============================================================
+   DayMarker — bold tonal chapter-break panel between the days.
+   Big tonal English concept word on the warm aura, Korean title + date.
+   DAY 1 deep red-orange · DAY 2 bright golden-yellow (same warm family
+   as the rest of the develop tone & manner). No teal / cyan / green.
+   ============================================================ */
+
+.marker {
+  --ds-red-deep: #e03200;
+  --ds-red: #ff4d00;
+  --ds-gold: #f59e00;
+  --ds-yellow: #ffc400;
+  --ink-warm: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --ink-soft: color-mix(in oklab, var(--ink-warm) 78%, transparent);
+
+  --tonal-a: var(--ds-red-deep);
+  --tonal-b: var(--ds-red);
+  --accent: var(--ds-red-deep);
+
+  position: relative;
+  z-index: 1;
+  min-height: min(72vh, 640px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding-block: clamp(48px, 10vh, 140px);
+  /* canonical content container — the readable marker copy aligns to the same
+     left/right line as About, Audience, Benefits, FAQ and the other sections.
+     The panel still reads full-bleed: the warm aura ground is behind it. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  overflow: clip;
+}
+.d2 {
+  --tonal-a: var(--ds-gold);
+  --tonal-b: var(--ds-yellow);
+  --accent: var(--ds-gold);
+}
+
+.day {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+.date {
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+}
+
+.en {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(56px, 13vw, 200px);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  background-image: linear-gradient(100deg, var(--tonal-a), var(--tonal-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 2px 22px rgba(120, 40, 0, 0.18));
+  word-break: keep-all;
+}
+
+.title {
+  margin-top: 18px;
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(18px, 2.4vw, 28px);
+  letter-spacing: -0.01em;
+  color: var(--ink-warm);
+  word-break: keep-all;
+}
+
+@media (max-width: 760px) {
+  .marker {
+    min-height: auto;
+    padding-block: clamp(56px, 14vh, 120px);
+    /* inline alignment kept on the canonical container above (clamp floors at
+       20px), so no inline-padding override is needed at mobile. */
+  }
+  .en {
+    font-size: clamp(48px, 17vw, 120px);
+  }
+}

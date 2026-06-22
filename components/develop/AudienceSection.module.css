@@ -1,0 +1,99 @@
+.audience {
+  /* 단일 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+.audience:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+.kicker {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--heat-main);
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  margin-bottom: clamp(28px, 4.5vh, 56px);
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 5vw, 72px);
+}
+.col {
+  display: flex;
+  flex-direction: column;
+}
+.dayHead {
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--heat-core) 26%, var(--ink));
+}
+.dayLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-body);
+  font-weight: 700;
+  color: var(--heat-main);
+}
+.colHeading {
+  margin-top: clamp(16px, 2.4vh, 24px);
+  font-family: var(--font-kr);
+  font-size: clamp(18px, 1.8vw, 24px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 92%, var(--heat-core) 8%);
+}
+.items {
+  list-style: none;
+  margin: clamp(16px, 2.4vh, 24px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.item {
+  position: relative;
+  padding: 14px 0 14px 26px;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.6;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+  border-bottom: 1px solid
+    color-mix(in srgb, var(--heat-core) 14%, rgba(10, 10, 10, 0.12));
+}
+/* 열 틱 마커 (가이드 톤). */
+.item::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 1.5em;
+  width: 12px;
+  height: 2px;
+  background: var(--heat-main);
+}
+
+@media (max-width: 640px) {
+  .cols {
+    grid-template-columns: 1fr;
+    gap: clamp(32px, 6vh, 48px);
+  }
+}

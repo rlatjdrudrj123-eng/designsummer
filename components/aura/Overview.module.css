@@ -1,0 +1,194 @@
+/* Overview (Aura 전용 / 메인 `/`) — 개요 섹션.
+   [헤딩 + 슬로건(콜론, 동일 폰트·굵기)] → 인트로 2단락 → Day(Day N. Concept)
+   → 마무리 → Information(균형 그리드). 콘텐츠 = conference.overview. */
+
+.overview {
+  /* 전 섹션·히어로 거터와 동일한 1180(정렬 일관성). */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  /* 하단 패딩을 줄여 바로 아래 타임테이블 표가 자연스럽게 붙도록(상단은 유지). */
+  padding-block: clamp(72px, 11vh, 160px) clamp(36px, 5vh, 64px);
+}
+.overview:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* 헤딩 + 슬로건(콜론) — 슬로건은 타이틀과 동일 폰트(옴니고딕)·동일 굵기(500),
+   소문자, 열 색. 한 줄에 "디자인 썸머 일산 : the creative heatwave". */
+.heading {
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  margin: 0;
+}
+.slogan {
+  font-family: "omnigothic", var(--font-kr);
+  font-weight: 500;
+  font-size: clamp(16px, 1.9vw, 28px);
+  letter-spacing: -0.01em;
+  text-transform: lowercase;
+  color: var(--ink);
+  white-space: nowrap;
+}
+
+/* 인트로 2단락 — 줄바꿈(\n) 유지(pre-line). 폭 제한 없이 컨테이너 전체 사용. */
+.lead {
+  margin-top: clamp(18px, 2.6vh, 28px);
+  /* 본문 = Pretendard(또렷). */
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.3vw, 19px);
+  font-weight: 400;
+  line-height: 1.75;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+.lead p {
+  margin: 0;
+  white-space: pre-line;
+}
+.lead p + p {
+  margin-top: clamp(12px, 1.6vh, 18px);
+}
+
+/* Day 1 / Day 2 — "Day N. Creative Day / Craft Day". 2열(데스크톱), 모바일 1열.
+   컬러 박스줄/딤 없이 타이포·색으로만 구분. */
+.days {
+  /* 인트로 ↔ Day 설명 사이 여백 더 넉넉히. */
+  margin-top: clamp(52px, 7.5vh, 92px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 3.6vw, 56px);
+}
+/* 각 day 블록 — 본문 → 하단 뱃지 정렬을 위해 flex 컬럼(높이 채움). */
+.dayBlock {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.dayConcept {
+  margin: 0;
+  font-family: "omnigothic", var(--font-display);
+  font-size: clamp(20px, 2.2vw, 30px);
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.05;
+}
+/* 개요 내 모든 텍스트를 다크 잉크로 통일(클라이언트 요청) — 데이별 색 구분 제거. */
+.d1 .dayConcept,
+.d2 .dayConcept {
+  color: var(--ink);
+}
+.dayBody {
+  margin: clamp(12px, 1.8vh, 18px) 0 0;
+  /* 인트로 본문(.lead)과 동일한 폰트 treatment — 본문 = Pretendard. */
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.3vw, 19px);
+  font-weight: 400;
+  line-height: 1.75;
+  word-break: keep-all;
+  white-space: pre-line;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+
+/* 추천 대상 — 하단 뱃지(태그). 해시태그/필터처럼 곡선 칩으로 화면 밀도↑.
+   본문이 길이가 달라도 두 컬럼의 뱃지 줄이 바닥에 정렬되도록 margin-top:auto. */
+.tags {
+  list-style: none;
+  margin: clamp(18px, 2.6vh, 28px) 0 0;
+  margin-top: auto;
+  padding: clamp(18px, 2.6vh, 28px) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.tag {
+  font-family: var(--font-kr);
+  font-size: clamp(12px, 1vw, 13.5px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 74%, transparent);
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ink) 13%, transparent);
+  padding: 0.46em 0.92em;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* 타임테이블 아래로 분리된 EventInfo 섹션(Information) 전용 패딩 오버라이드.
+   상단 여백 축소 — 타임테이블 하단 패딩이 이미 분리를 주므로 위는 타이트하게. */
+.afterTable {
+  padding-block: clamp(12px, 2vh, 28px) clamp(72px, 11vh, 150px);
+}
+/* Information 이 첫 요소 — 원래 개요용 margin-top 을 제거(윗공백 과다 방지). */
+.afterTable .facts {
+  margin-top: 0;
+}
+
+/* 마무리 문장 — 한 줄로 들어가도록 폭 제한 없이 컨테이너 전체 사용. */
+.closing {
+  margin: clamp(30px, 4.4vh, 52px) 0 0;
+  /* 인트로 본문(.lead)과 동일한 폰트 treatment — 본문 = Pretendard. */
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.3vw, 19px);
+  font-weight: 400;
+  line-height: 1.75;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+
+/* Information — flex-wrap 으로 마지막 항목이 외톨이로 떨어지던 문제 → 균형 그리드로.
+   6항목을 3열×2행으로 가지런히(Host·Partner·Date / Venue·Pass·Seats). */
+/* 가로 구분선 제거(클라이언트 요청) — 위아래 구역은 오직 여백으로만 분리. */
+.facts {
+  margin: clamp(48px, 6.5vh, 88px) 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: clamp(20px, 2.8vh, 32px) clamp(28px, 3vw, 48px);
+}
+.fact {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.factLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  /* 풀 소문자 컨셉 — 라벨도 소문자(host/partner/date…). 값의 KINTEX·K-PRINT 같은
+     고유명사는 원문 그대로 대문자 유지(텍스트 자체라 transform 영향 없음). 라벨도 본문군 — Pretendard. */
+  text-transform: lowercase;
+  font-weight: 500;
+  color: var(--ink);
+}
+.factValue {
+  margin: 0;
+  /* 위 본문(.lead)과 동일 — 본문 = Pretendard. */
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 400;
+  line-height: 1.55;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+}
+
+@media (max-width: 760px) {
+  .days {
+    grid-template-columns: 1fr;
+    gap: clamp(24px, 4vh, 36px);
+  }
+  .facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .slogan {
+    white-space: normal;
+  }
+}

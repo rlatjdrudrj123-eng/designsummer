@@ -1,0 +1,18 @@
+/* ============================================================
+   PanelRegion — positioned container for the single continuous warm
+   Aura ground behind ALL below-hero content of the immersive concept.
+   Mirrors develop/PostHeroRegion.module.css: the aura layer is z-index 0
+   (rendered by the reused PostHeroAura), the content wrapper is z-index 1
+   so every transparent panel/section floats on the one shared field.
+   ============================================================ */
+
+.region {
+  position: relative;
+  /* the warm field is the page ground here; the body white only shows up at
+     the hero above. A transparent region lets the fixed aura canvas show. */
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}

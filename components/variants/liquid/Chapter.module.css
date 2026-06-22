@@ -1,0 +1,177 @@
+.chapter {
+  min-height: 74vh;
+  display: grid;
+  grid-template-columns: 0.92fr 1.08fr;
+  align-items: center;
+  gap: clamp(24px, 4vw, 72px);
+  padding-block: clamp(96px, 14vh, 200px);
+}
+
+/* 텍스트 블록 (Reveal). D1 좌·D2 우 */
+.text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.d2 .text {
+  order: 2;
+  align-items: flex-end;
+  text-align: right;
+}
+.d2 .graphic {
+  order: 1;
+}
+
+.sub {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.date {
+  letter-spacing: var(--tracking-meta);
+  opacity: 0.5;
+}
+.d1 .sub {
+  color: var(--heat-main);
+}
+.d2 .sub {
+  color: var(--heat-mid);
+}
+
+/* 대제목 — 한글 정제 카피. balance 로 고아줄 방지 */
+.title {
+  font-family: var(--font-kr);
+  font-size: clamp(38px, 5.4vw, 82px);
+  font-weight: 800;
+  letter-spacing: -0.045em;
+  line-height: 1;
+  word-break: keep-all;
+  text-wrap: balance;
+  margin-top: clamp(14px, 2.4vh, 28px);
+}
+
+/* 신청 CTA — 키워드 리스트 아래. 강조: 넓고 큼. hover 시 뒤에서 열이 차오름 */
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: min(100%, 30ch);
+  margin-top: clamp(24px, 3.4vh, 40px);
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-kr);
+  font-size: clamp(17px, 1.4vw, 21px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  padding: 20px 30px;
+  border-radius: 0;
+  position: relative;
+  overflow: hidden;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--heat-main);
+  transform: translateY(100%);
+  transition: transform var(--dur-bloom) var(--ease-heat);
+}
+.cta:hover::before,
+.cta:focus-visible::before {
+  transform: translateY(0);
+}
+.cta span {
+  position: relative;
+  z-index: 1;
+}
+
+/* 본문 — 가독성 우선(적당한 크기·줄간·대비) */
+.body {
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.25vw, 19px);
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0.005em;
+  word-break: keep-all;
+  max-width: 34ch;
+  margin-top: clamp(18px, 3vh, 32px);
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+}
+.d2 .body {
+  margin-left: auto;
+}
+
+/* D2 키워드 — 타이틀 하단에 정리 (번호 + 헤어라인) */
+.keywords {
+  list-style: none;
+  margin: clamp(28px, 4vh, 48px) 0 0;
+  padding: 0;
+  width: min(100%, 30ch);
+}
+.d2 .keywords {
+  margin-left: auto;
+}
+.keyword {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  padding: 13px 0;
+  border-top: 1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+}
+.keyword:last-child {
+  border-bottom: 1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+}
+.d2 .keyword {
+  flex-direction: row-reverse;
+}
+.kwNum {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  color: var(--heat-mid);
+}
+.d1 .kwNum {
+  color: var(--heat-main);
+}
+
+/* 정보성 그래픽 모듈 컨테이너 */
+.graphic {
+  justify-self: center;
+  width: min(100%, 560px);
+}
+
+/* D1/D2 — 컨셉 열 오브제 박스 */
+.graphicObject {
+  width: min(100%, 540px);
+}
+
+@media (max-width: 640px) {
+  .chapter {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 5vh, 48px);
+    min-height: auto;
+  }
+  .text,
+  .d2 .text {
+    order: 0;
+    align-items: flex-start;
+    text-align: left;
+  }
+  .graphic,
+  .d2 .graphic {
+    order: 1;
+    width: 100%;
+    justify-self: stretch;
+  }
+}

@@ -1,0 +1,38 @@
+/* [LIQUID 변형] 스코프 토큰 오버라이드.
+   원본의 열 액센트 토큰(--heat-core/main/mid/edge: cream→orange→red 계열)을
+   액상 무지개 스펙트럼(밝은 빨강 → 주황 → 노랑)으로 교체.
+   이 div 안의 모든 클론 섹션(버튼·룰·도트·틱·헤어라인)이 스펙트럼 색으로 칠해진다.
+   레이아웃·타이포·간격 토큰은 globals 그대로 상속. */
+.root {
+  /* 액상 무지개 핫 측 매핑:
+     --heat-main(주 강조, 버튼/룰/프롬프트) = 밝은 선홍 레드(핫 코어와 같은 색)
+     --heat-core(가장 뜨거운 중심)         = 진한 레드
+     --heat-mid(중간)                      = 주황
+     --heat-edge(가장자리/번짐의 끝)         = 노랑 */
+  --heat-core: #e01408; /* hottest core */
+  --heat-main: #ff2a1a; /* primary hot red accent (= isotherm contour) */
+  --heat-mid: #ff8a0f; /* orange */
+  --heat-edge: #ffe01f; /* yellow (edge of heat) */
+
+  display: block;
+  position: relative;
+}
+
+/* 액상 광택 시트(GLOSS) — 레퍼런스의 촉촉한 기름막 느낌만 아주 옅게.
+   heatmap 의 그레인과 동일한 톤다운 접근: 미세 노이즈 + 낮은 불투명도 + multiply.
+   포화 무지개를 거칠게 덮지 않고, 표면에 부드러운 윤기만 더한다. 인터랙션 막지 않음. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .grain {
+    opacity: 0.04;
+  }
+}

@@ -1,0 +1,1264 @@
+/* =============================================================
+   Variant: SPARK  (reference poster #1 — blue & yellow sparkle)
+   Fully scoped via CSS Modules. Local theme tokens live on .root.
+   ============================================================= */
+
+.root {
+  --sp-blue: #2ba7e2;
+  --sp-blue-deep: #1f8fc6;
+  --sp-blue-ink: #0d5b86;
+  --sp-yellow: #f4f125;
+  --sp-white: #ffffff;
+  --sp-shell: min(1280px, 100%);
+  --sp-pad: clamp(20px, 5vw, 72px);
+  /* Fontdiner Swanky is THE identity face of SPARK (quirky vintage spurred serif).
+     Drives every English display heading; Georgia is the fallback while it loads. */
+  --sp-serif: var(--sp-swanky), Georgia, "Times New Roman", serif;
+
+  background: var(--sp-blue);
+  color: var(--sp-white);
+  font-family: var(--font-kr);
+  line-height: 1.5;
+  width: 100%;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+.root :is(h1, h2, h3) {
+  line-height: 1;
+}
+
+/* ── sparkle primitive (used everywhere) ───────────────────── */
+.sparkle {
+  position: absolute;
+  display: inline-block;
+  pointer-events: none;
+  transform-origin: 50% 50%;
+  animation: sp-twinkle 4.5s ease-in-out infinite both;
+  filter: drop-shadow(0 2px 0 rgba(13, 91, 134, 0.18));
+}
+@keyframes sp-twinkle {
+  0%,
+  100% {
+    transform: scale(0.86) rotate(-6deg);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.05) rotate(8deg);
+    opacity: 1;
+  }
+}
+
+/* inline stars sit in text flow */
+.inlineStar,
+.cardFallbackStar,
+.applyStar {
+  position: relative;
+  top: auto;
+  left: auto;
+}
+
+/* =============================================================
+   HERO — poster recreation
+   ============================================================= */
+.hero {
+  position: relative;
+  /* one viewport, never taller than the screen (no bottom overflow at 1440×900) */
+  min-height: 100svh;
+  max-height: 100svh;
+  padding-block: clamp(18px, 2.6vh, 40px);
+  padding-inline: var(--sp-pad);
+  display: flex;
+  flex-direction: column;
+  background:
+    radial-gradient(
+      120% 90% at 50% 0%,
+      #38b4ec 0%,
+      var(--sp-blue) 45%,
+      var(--sp-blue-deep) 100%
+    );
+  overflow: hidden;
+}
+/* centered shell so the hero's left/right edge aligns with every section below
+   (sections use max-width:var(--sp-shell) + padding-inline:var(--sp-pad)). */
+.heroShell {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: var(--sp-shell);
+  margin-inline: auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.starfield {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+/* each curated hero star is an absolutely-placed wrapper; the inner <Sparkle>
+   keeps its own idle twinkle, while the wrapper layers a cursor-reactive
+   "energize" on top (driven by --sp-energy in [0..1] from the rAF loop). */
+.heroStar {
+  position: absolute;
+  display: inline-block;
+  pointer-events: none;
+  --sp-energy: 0;
+  transform: scale(calc(1 + 0.35 * var(--sp-energy)))
+    rotate(calc(var(--sp-energy) * 26deg));
+  transition: filter 120ms linear;
+  filter: drop-shadow(
+    0 0 calc(var(--sp-energy) * 16px)
+      rgba(244, 241, 37, calc(var(--sp-energy) * 0.85))
+  );
+}
+/* the inner sparkle stays a static, fully-positioned child of the wrapper */
+.heroStarInner {
+  position: relative;
+  top: auto;
+  left: auto;
+  right: auto;
+  bottom: auto;
+}
+
+/* ── cursor sparkle-trail layer (pooled nodes injected by rAF) ── */
+.trailLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 3; /* above the title type, but pointer-events:none so type stays usable */
+  pointer-events: none;
+  overflow: hidden;
+}
+.trailSpark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 0 5px rgba(244, 241, 37, 0.6));
+}
+
+.heroTopBar,
+.heroMain,
+.heroFoot {
+  position: relative;
+  z-index: 2;
+}
+
+.heroTopBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.tagline {
+  font-family: var(--sp-serif);
+  font-weight: 400; /* Swanky ships weight 400 only */
+  letter-spacing: 0.02em;
+  font-size: clamp(13px, 2.4vw, 22px);
+  color: var(--sp-white);
+  text-transform: uppercase;
+}
+.taglineHot {
+  color: var(--sp-yellow);
+}
+
+.wordmark {
+  font-family: var(--sp-serif);
+  font-weight: 400; /* Swanky ships weight 400 only — no synthetic bold/italic */
+  font-size: clamp(18px, 2.6vw, 28px);
+  color: var(--sp-white);
+  letter-spacing: 0.01em;
+}
+
+.heroMain {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: clamp(10px, 1.6vh, 20px);
+  padding-block: clamp(8px, 1.6vh, 24px);
+  max-width: 62ch;
+}
+
+.heroBadge {
+  align-self: flex-start;
+  font-family: var(--font-display);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-size: clamp(11px, 1.3vw, 14px);
+  color: var(--sp-blue-ink);
+  background: var(--sp-yellow);
+  padding: 7px 14px;
+  border: 2px solid var(--sp-blue-ink);
+}
+
+.heroTitle {
+  display: flex;
+  flex-direction: column;
+  /* Title is now Korean (디자인 썸머 일산) — Swanky is Latin-only, so the
+     Korean glyphs render in --font-kr. Keep heavy weight + the poster scale. */
+  font-family: var(--font-kr);
+  font-weight: 900;
+  /* vh-aware cap keeps the 3-line title from eating the whole viewport at 1440×900 */
+  font-size: clamp(46px, min(10vw, 13vh), 104px);
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+  margin: 0;
+}
+.titleYellow {
+  color: var(--sp-yellow);
+}
+.titleWhite {
+  color: var(--sp-white);
+}
+/* quirky display distortion — slight skew per line keeps the Spark energy */
+.heroTitle > span {
+  display: block;
+  transform-origin: left center;
+  text-shadow: 0 4px 0 rgba(13, 91, 134, 0.16);
+}
+.heroTitle > span:nth-child(1) {
+  transform: skewX(-3deg);
+}
+.heroTitle > span:nth-child(2) {
+  transform: skewX(2deg);
+  margin-left: clamp(0px, 1vw, 18px);
+}
+.heroTitle > span:nth-child(3) {
+  transform: skewX(-2deg);
+}
+
+/* ── hero copy block ── */
+.heroSubtitle {
+  font-family: var(--sp-serif);
+  font-weight: 400;
+  font-size: clamp(20px, 3vw, 34px);
+  letter-spacing: 0.01em;
+  color: var(--sp-yellow);
+}
+.heroDesc {
+  max-width: 48ch;
+  font-size: clamp(15px, 1.7vw, 19px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.heroFacts {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+.heroFacts li {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.heroFactLabel {
+  flex: none;
+  width: 44px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--sp-yellow);
+}
+.heroFactValue {
+  font-size: clamp(14px, 1.6vw, 17px);
+  font-weight: 600;
+  color: var(--sp-white);
+}
+
+.heroCtas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-top: 6px;
+}
+.heroCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(14px, 1.6vw, 17px);
+  letter-spacing: 0.01em;
+  padding: 13px 22px;
+  background: var(--sp-yellow);
+  color: var(--sp-blue-ink);
+  border: 3px solid var(--sp-blue-ink);
+  box-shadow: 5px 5px 0 var(--sp-blue-ink);
+  transition: transform var(--dur-touch, 240ms)
+      var(--ease-heat, cubic-bezier(0.16, 1, 0.3, 1)),
+    box-shadow var(--dur-touch, 240ms)
+      var(--ease-heat, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.heroCta:nth-child(2) {
+  background: var(--sp-white);
+}
+.heroCta:hover,
+.heroCta:focus-visible {
+  transform: translate(-2px, -2px);
+  box-shadow: 7px 7px 0 var(--sp-blue-ink);
+  outline: none;
+}
+.heroCta:focus-visible {
+  box-shadow: 7px 7px 0 var(--sp-blue-ink), 0 0 0 3px var(--sp-yellow);
+}
+.heroCtaStar {
+  position: relative;
+  top: auto;
+  left: auto;
+  flex: none;
+}
+
+.heroFoot {
+  display: flex;
+  /* 날짜 + KINTEX 를 우측에 붙여 한 묶음으로 (포스터 우하단) */
+  justify-content: flex-end;
+  align-items: baseline;
+  gap: clamp(10px, 1.4vw, 20px);
+  /* 포스터처럼 날짜·장소도 Swanky(아이덴티티 세리프). Swanky는 400만 제공 */
+  font-family: var(--sp-serif);
+  font-weight: 400;
+  flex-wrap: wrap;
+  text-align: right;
+}
+.heroDates {
+  font-family: var(--sp-serif);
+  font-weight: 400;
+  font-size: clamp(18px, 3vw, 38px);
+  letter-spacing: 0.01em;
+  color: var(--sp-yellow);
+}
+.heroVenue {
+  font-family: var(--sp-serif);
+  font-weight: 400;
+  font-size: clamp(18px, 3vw, 38px);
+  letter-spacing: 0.02em;
+  color: var(--sp-white);
+}
+
+/* =============================================================
+   SECTION SHELL helpers
+   ============================================================= */
+.intro,
+.audience,
+.timetable,
+.benefits,
+.venue,
+.faq {
+  padding-inline: var(--sp-pad);
+}
+.intro {
+  padding-block: clamp(56px, 9vw, 130px);
+  background: var(--sp-blue);
+  border-top: 3px solid var(--sp-yellow);
+}
+.introInner {
+  max-width: var(--sp-shell);
+  margin-inline: auto;
+}
+.kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--sp-yellow);
+}
+.introLead {
+  margin-top: 18px;
+  /* SPARKLING IDEA 컨셉을 크게: Swanky 아이덴티티 세리프로 */
+  font-family: var(--sp-serif);
+  font-weight: 400; /* Swanky ships weight 400 only */
+  text-transform: uppercase;
+  font-size: clamp(30px, 6vw, 76px);
+  letter-spacing: 0;
+  line-height: 1.02;
+  color: var(--sp-white);
+  max-width: 12ch;
+}
+.introLeadHot {
+  color: var(--sp-yellow);
+}
+.introBody {
+  margin-top: 18px;
+  max-width: 56ch;
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.conceptRow {
+  margin-top: clamp(36px, 5vw, 64px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+}
+.conceptCard {
+  background: var(--sp-white);
+  color: var(--sp-blue-ink);
+  padding: clamp(20px, 2.4vw, 32px);
+  border: 3px solid var(--sp-blue-ink);
+  box-shadow: 8px 8px 0 var(--sp-yellow);
+}
+.conceptEn {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 13px;
+  color: var(--sp-blue-deep);
+}
+.conceptTitle {
+  margin-top: 8px;
+  font-size: clamp(20px, 2.6vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--sp-blue-ink);
+}
+.conceptBody {
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.65;
+  color: #2c5a76;
+}
+/* =============================================================
+   AUDIENCE (추천 대상)
+   ============================================================= */
+.audience {
+  padding-block: clamp(56px, 9vw, 130px);
+  background: var(--sp-blue-deep);
+}
+.audienceGrid {
+  max-width: var(--sp-shell);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+}
+.audienceCard {
+  background: var(--sp-white);
+  color: var(--sp-blue-ink);
+  border: 3px solid var(--sp-blue-ink);
+  box-shadow: 8px 8px 0 var(--sp-yellow);
+  padding: clamp(22px, 2.6vw, 34px);
+}
+.audienceDay {
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  font-size: 13px;
+  color: var(--sp-blue-deep);
+}
+.audienceHeading {
+  margin-top: 8px;
+  font-size: clamp(18px, 2.2vw, 24px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: var(--sp-blue-ink);
+}
+.audienceList {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.audienceList li {
+  position: relative;
+  padding-left: 22px;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: #2c5a76;
+}
+.audienceList li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  top: 1px;
+  color: var(--sp-blue-deep);
+}
+
+/* =============================================================
+   SECTION HEAD (shared title block)
+   ============================================================= */
+.sectionHead {
+  max-width: var(--sp-shell);
+  margin-inline: auto;
+  margin-bottom: clamp(28px, 4vw, 56px);
+}
+.sectionTitle {
+  /* Latin headings (TIME/TABLE, FAQ) render in Swanky; Korean ones
+     (추천 대상, 참가 혜택) fall through to the brand KR face, not a stray serif. */
+  font-family: var(--sp-swanky), var(--font-kr), Georgia, serif;
+  font-weight: 400; /* Swanky ships weight 400 only */
+  font-size: clamp(46px, 10vw, 132px);
+  letter-spacing: 0;
+  line-height: 0.96;
+  text-transform: uppercase;
+  display: flex;
+  gap: 0.16em;
+  flex-wrap: wrap;
+}
+.sectionSub {
+  margin-top: 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: clamp(13px, 1.5vw, 16px);
+  color: var(--sp-yellow);
+}
+
+/* =============================================================
+   SHARED card-ish bits reused by the enriched timetable rows
+   ============================================================= */
+.cardStudioEn {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  color: var(--sp-blue-deep);
+  text-transform: capitalize;
+}
+.cardRole {
+  font-weight: 500;
+  color: #4d7e98;
+}
+
+/* ── hover sparkle burst — bright yellow stars BEHIND the portrait ── */
+.cardSparks {
+  position: absolute;
+  inset: 0;
+  z-index: 0; /* behind the portrait img (z-index:1) */
+  pointer-events: none;
+}
+.cardSpark {
+  position: absolute;
+  display: inline-block;
+  /* ignite on hover, settle back when not */
+  opacity: 0;
+  transform: scale(0.3) rotate(-20deg);
+  transition: opacity 360ms var(--ease-heat, cubic-bezier(0.16, 1, 0.3, 1)),
+    transform 420ms var(--ease-heat, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.cardSparksOn .cardSpark {
+  opacity: 1;
+  transform: scale(1) rotate(0deg);
+}
+/* the inner <Sparkle> sits statically inside our animated wrapper */
+.cardSparkStar {
+  position: relative;
+  top: auto;
+  left: auto;
+  animation: none;
+  filter: drop-shadow(0 0 8px rgba(244, 241, 37, 0.7));
+}
+
+/* =============================================================
+   SPEAKER MODAL (expanded view — works + desc + creds + link)
+   ============================================================= */
+.modalScrim {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: grid;
+  place-items: center;
+  padding: clamp(16px, 4vw, 48px);
+  background: rgba(13, 91, 134, 0.62);
+  backdrop-filter: blur(2px);
+  animation: sp-scrim-in 200ms ease-out both;
+}
+@keyframes sp-scrim-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.modal {
+  position: relative;
+  width: min(680px, 100%);
+  max-height: 88svh;
+  overflow-y: auto;
+  background: var(--sp-white);
+  color: var(--sp-blue-ink);
+  border: 3px solid var(--sp-blue-ink);
+  box-shadow: 12px 12px 0 var(--sp-yellow);
+  padding: clamp(20px, 3vw, 36px);
+  animation: sp-modal-in 260ms var(--ease-heat, cubic-bezier(0.16, 1, 0.3, 1))
+    both;
+}
+@keyframes sp-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.modalClose {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  background: var(--sp-blue-ink);
+  color: var(--sp-yellow);
+  border: none;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.modalClose:focus-visible {
+  outline: 3px solid var(--sp-yellow);
+  outline-offset: 2px;
+}
+.modalHead {
+  display: flex;
+  gap: clamp(14px, 2vw, 22px);
+  align-items: flex-start;
+  padding-right: 44px;
+}
+.modalPortrait {
+  flex: none;
+  width: clamp(96px, 22vw, 140px);
+  aspect-ratio: 4 / 5;
+  object-fit: contain;
+  object-position: center bottom;
+  background: var(--sp-blue);
+  border: 3px solid var(--sp-blue-ink);
+}
+.modalKicker {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--sp-blue-deep);
+}
+.modalStudio {
+  margin-top: 6px;
+  font-size: clamp(20px, 2.6vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  color: var(--sp-blue-ink);
+}
+.modalName {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--sp-blue-deep);
+}
+.modalTitle {
+  margin-top: 8px;
+  font-size: clamp(15px, 1.8vw, 18px);
+  font-weight: 800;
+  line-height: 1.35;
+  color: var(--sp-blue-ink);
+}
+.modalWorks {
+  margin-top: clamp(18px, 2.4vw, 28px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.modalWork {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border: 2px solid var(--sp-blue-ink);
+  background: var(--sp-blue);
+}
+.modalDesc {
+  margin-top: clamp(18px, 2.4vw, 26px);
+  font-size: 15px;
+  line-height: 1.7;
+  color: #2c5a76;
+}
+.modalCreds {
+  margin-top: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(13, 91, 134, 0.18);
+}
+.modalCreds li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #335d77;
+}
+.modalCreds li::before {
+  content: "✦";
+  position: absolute;
+  left: 0;
+  color: var(--sp-blue-deep);
+}
+.modalLink {
+  margin-top: 22px;
+  display: inline-block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0.03em;
+  padding: 12px 22px;
+  background: var(--sp-yellow);
+  color: var(--sp-blue-ink);
+  border: 3px solid var(--sp-blue-ink);
+}
+.modalLink:focus-visible {
+  outline: 3px solid var(--sp-blue-ink);
+  outline-offset: 2px;
+}
+
+/* =============================================================
+   TIMETABLE
+   ============================================================= */
+.timetable {
+  padding-block: clamp(56px, 9vw, 130px);
+  background: var(--sp-blue);
+  border-top: 3px solid var(--sp-yellow);
+}
+.timeCols {
+  max-width: var(--sp-shell);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(24px, 4vw, 56px);
+}
+.timeColHead {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  font-size: clamp(15px, 1.8vw, 18px);
+  color: var(--sp-yellow);
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+  border-bottom: 2px solid var(--sp-yellow);
+}
+.timeColTheme {
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.85);
+}
+.timeList {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── base row ── */
+.timeRow {
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+.timeSlot {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(13px, 1.5vw, 16px);
+  letter-spacing: 0.02em;
+  color: var(--sp-yellow);
+  white-space: nowrap;
+}
+
+/* ── registration / coffee-break rows: muted, single line ── */
+.timeRowMuted {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  opacity: 0.6;
+}
+.timeRowMuted .timeSlot {
+  color: rgba(255, 255, 255, 0.7);
+}
+.timeMutedLabel {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: rgba(255, 255, 255, 0.8);
+}
+.timeMutedTitle {
+  font-size: 13.5px;
+  font-style: italic;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* ── session rows: portrait + studio·speaker·title·desc ── */
+.timeRowSession {
+  display: grid;
+  grid-template-columns: 86px 56px 1fr;
+  align-items: start;
+  gap: 0 16px;
+}
+.timeRowSession .timeSlot {
+  align-self: start;
+  padding-top: 2px;
+}
+.timeRowInteractive {
+  cursor: pointer;
+  transition: background var(--dur-touch, 240ms)
+    var(--ease-heat, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.timeRowInteractive:hover,
+.timeRowInteractive:focus-visible {
+  outline: none;
+  background: rgba(255, 255, 255, 0.07);
+}
+.timeRowInteractive:focus-visible {
+  outline: 3px solid var(--sp-yellow);
+  outline-offset: -3px;
+}
+
+.timeMedia {
+  position: relative;
+  width: 56px;
+  height: 70px;
+  flex: none;
+  overflow: hidden;
+  background: var(--sp-blue-deep);
+  border: 2px solid var(--sp-blue-ink);
+}
+.timeMedia img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+}
+.timeMediaFallback {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.timeText {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.timeStudio {
+  font-weight: 800;
+  font-size: clamp(15px, 1.6vw, 17px);
+  color: var(--sp-white);
+}
+.timeTitle {
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.45;
+  color: var(--sp-yellow);
+}
+.timeDesc {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
+}
+.timeName {
+  margin-top: 2px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.72);
+}
+.timeMore {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  color: var(--sp-yellow);
+}
+
+/* =============================================================
+   VENUE / APPLY
+   ============================================================= */
+.venue {
+  padding-block: clamp(56px, 9vw, 130px);
+  background: var(--sp-yellow);
+  color: var(--sp-blue-ink);
+}
+.venueInner {
+  max-width: var(--sp-shell);
+  margin-inline: auto;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: clamp(28px, 5vw, 72px);
+  align-items: center;
+}
+.venueTitle {
+  /* Korean heading — render in the KR display face, not Latin-only Swanky */
+  font-family: var(--font-kr);
+  font-weight: 900;
+  font-size: clamp(30px, 5vw, 56px);
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+  color: var(--sp-blue-ink);
+}
+.venueList {
+  margin-top: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.venueList > div {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 2px solid var(--sp-blue-ink);
+}
+.venueList > div:last-child {
+  border-bottom: 2px solid var(--sp-blue-ink);
+}
+.venueList dt {
+  font-weight: 800;
+  font-size: 14px;
+}
+.venueList dd {
+  font-size: clamp(15px, 1.8vw, 18px);
+  font-weight: 600;
+}
+
+.applyBox {
+  position: relative;
+  background: var(--sp-blue);
+  color: var(--sp-white);
+  border: 3px solid var(--sp-blue-ink);
+  padding: clamp(28px, 4vw, 48px);
+  text-align: center;
+  box-shadow: 10px 10px 0 var(--sp-blue-ink);
+}
+.applyStar {
+  margin: 0 auto 16px;
+  display: block;
+}
+.applyNote {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+  color: var(--sp-yellow);
+  margin-bottom: 20px;
+}
+.applyCtas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.applyCta {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(15px, 1.8vw, 18px);
+  letter-spacing: 0.01em;
+  padding: 15px 24px;
+  background: var(--sp-yellow);
+  color: var(--sp-blue-ink);
+  border: 3px solid var(--sp-blue-ink);
+  transition: transform var(--dur-touch, 240ms)
+    var(--ease-heat, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.applyCtas .applyCta:nth-child(2) {
+  background: var(--sp-white);
+}
+.applyCta:hover,
+.applyCta:focus-visible {
+  transform: translate(-2px, -2px);
+  outline: none;
+}
+.applyCta:focus-visible {
+  box-shadow: 0 0 0 3px var(--sp-blue-ink);
+}
+
+/* =============================================================
+   BENEFITS (참가 혜택)
+   ============================================================= */
+.benefits {
+  padding-block: clamp(56px, 9vw, 130px);
+  background: var(--sp-blue-deep);
+}
+.benefitGroups {
+  max-width: var(--sp-shell);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(32px, 4vw, 56px);
+}
+.benefitGroupHead {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(17px, 2vw, 22px);
+  letter-spacing: 0.01em;
+  color: var(--sp-yellow);
+  padding-bottom: 12px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--sp-yellow);
+}
+.benefitBullet {
+  display: inline-flex;
+  width: 18px;
+  height: 18px;
+  flex: none;
+}
+.benefitItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(14px, 1.8vw, 22px);
+}
+.benefitCard {
+  background: var(--sp-white);
+  color: var(--sp-blue-ink);
+  border: 3px solid var(--sp-blue-ink);
+  box-shadow: 6px 6px 0 var(--sp-yellow);
+  padding: clamp(18px, 2.2vw, 26px);
+}
+.benefitTitle {
+  font-size: clamp(15px, 1.7vw, 18px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  color: var(--sp-blue-ink);
+}
+.benefitBody {
+  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #2c5a76;
+}
+
+/* =============================================================
+   FAQ
+   ============================================================= */
+.faq {
+  padding-block: clamp(56px, 9vw, 130px);
+  background: var(--sp-blue);
+  border-top: 3px solid var(--sp-yellow);
+}
+.faqList {
+  max-width: min(880px, 100%);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.faqItem {
+  background: var(--sp-white);
+  color: var(--sp-blue-ink);
+  border: 3px solid var(--sp-blue-ink);
+}
+.faqQ {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  list-style: none;
+  cursor: pointer;
+  padding: clamp(16px, 1.8vw, 22px);
+  font-weight: 800;
+  font-size: clamp(15px, 1.6vw, 17px);
+  line-height: 1.45;
+  color: var(--sp-blue-ink);
+}
+.faqQ::-webkit-details-marker {
+  display: none;
+}
+.faqMark {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  flex: none;
+  margin-top: 2px;
+}
+.faqItem[open] .faqQ {
+  color: var(--sp-blue-deep);
+  border-bottom: 2px solid var(--sp-yellow);
+}
+.faqQ:focus-visible {
+  outline: 3px solid var(--sp-blue-deep);
+  outline-offset: -3px;
+}
+.faqA {
+  padding: clamp(14px, 1.8vw, 20px) clamp(16px, 1.8vw, 22px);
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: #2c5a76;
+}
+
+/* =============================================================
+   FOOTER
+   ============================================================= */
+.footer {
+  background: var(--sp-blue-ink);
+  color: var(--sp-white);
+  padding: clamp(40px, 6vw, 72px) var(--sp-pad);
+}
+.footerInner {
+  max-width: var(--sp-shell);
+  margin-inline: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.footerMark {
+  /* Korean wordmark (디자인 썸머) — KR display face */
+  font-family: var(--font-kr);
+  font-weight: 900;
+  font-size: clamp(28px, 5vw, 52px);
+  letter-spacing: -0.01em;
+}
+.footerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: right;
+  font-family: var(--font-display);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.85);
+}
+.footerMeta a {
+  color: var(--sp-yellow);
+  font-weight: 700;
+}
+
+/* =============================================================
+   RESPONSIVE — collapse to single column on small screens
+   ============================================================= */
+@media (max-width: 720px) {
+  /* phones: let the hero grow past one viewport if needed (no clipping),
+     content still fits comfortably without the hard one-screen cap. */
+  .hero {
+    max-height: none;
+    min-height: 100svh;
+  }
+  .conceptRow,
+  .audienceGrid,
+  .timeCols {
+    grid-template-columns: 1fr;
+  }
+  .modalHead {
+    flex-direction: column;
+  }
+  .modalWorks {
+    grid-template-columns: 1fr;
+  }
+  .venueInner {
+    grid-template-columns: 1fr;
+  }
+  .heroMain {
+    justify-content: flex-start;
+    padding-block: clamp(28px, 9vw, 56px);
+  }
+  .footerInner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .footerMeta {
+    text-align: left;
+  }
+}
+
+@media (max-width: 480px) {
+  /* session rows drop the slot above & let portrait + text sit side by side */
+  .timeRowSession {
+    grid-template-columns: 56px 1fr;
+    grid-template-areas:
+      "slot slot"
+      "media text";
+    column-gap: 12px;
+    row-gap: 8px;
+  }
+  .timeRowSession .timeSlot {
+    grid-area: slot;
+  }
+  .timeMedia {
+    grid-area: media;
+  }
+  .timeText {
+    grid-area: text;
+  }
+}
+
+@media (max-width: 420px) {
+  .heroTopBar {
+    gap: 10px;
+  }
+  .heroTitle > span:nth-child(2) {
+    margin-left: 0;
+  }
+  .heroCtas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .heroCta {
+    justify-content: center;
+  }
+}
+
+/* =============================================================
+   REDUCED MOTION — keep all stars visible & full-size, just static
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .sparkle {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+  /* hero stars stay static (rAF layer also no-ops, so no trail/spawn) */
+  .heroStar {
+    transform: none;
+    filter: none;
+    transition: none;
+  }
+  .trailLayer {
+    display: none;
+  }
+  .timeRowInteractive,
+  .heroCta,
+  .applyCta {
+    transition: none;
+  }
+  /* hover sparks: no motion — keep them hidden until hover, then just appear */
+  .cardSpark {
+    transition: none;
+    transform: none;
+  }
+  .cardSparksOn .cardSpark {
+    transform: none;
+  }
+  .modalScrim,
+  .modal {
+    animation: none;
+  }
+}

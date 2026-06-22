@@ -1,0 +1,90 @@
+.faq {
+  padding-block: clamp(72px, 11vh, 160px);
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  margin-bottom: clamp(24px, 4vh, 48px);
+}
+
+.list {
+  border-top: 1.5px solid var(--ink);
+  max-width: 880px;
+}
+
+.item {
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+.q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-block: 20px;
+  cursor: pointer;
+  list-style: none;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  line-height: 1.4;
+  word-break: keep-all;
+}
+.q::-webkit-details-marker {
+  display: none;
+}
+.q:focus-visible {
+  outline: 2px solid var(--heat-main);
+  outline-offset: 4px;
+}
+
+/* +  →  ×  토글 마크 (열 색) */
+.mark {
+  position: relative;
+  flex: 0 0 auto;
+  width: 16px;
+  height: 16px;
+}
+.mark::before,
+.mark::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: var(--heat-main);
+  transition: transform var(--dur-touch) var(--ease-heat);
+}
+.mark::before {
+  width: 16px;
+  height: 2px;
+  transform: translate(-50%, -50%);
+}
+.mark::after {
+  width: 2px;
+  height: 16px;
+  transform: translate(-50%, -50%);
+}
+.item[open] .mark::after {
+  transform: translate(-50%, -50%) scaleY(0);
+}
+
+.a {
+  font-family: var(--font-kr);
+  font-size: var(--type-meta);
+  line-height: 1.7;
+  color: color-mix(in srgb, var(--ink) 74%, transparent);
+  word-break: keep-all;
+  padding-bottom: 22px;
+  max-width: 70ch;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mark::before,
+  .mark::after {
+    transition: none;
+  }
+}

@@ -1,0 +1,408 @@
+.hero {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: var(--margin);
+  isolation: isolate;
+}
+
+/* 히어로 하단 → 따뜻한 오라 그라운드로의 용해 (TASK A).
+   히어로 바닥에 아주 옅은 따뜻한 크림빛 그라데이션을 깔아, 흰빛 열 필드가
+   아래의 PostHeroAura 따뜻한 그라운드로 자연스럽게 번지게 한다. PostHeroAura
+   쪽 상단 페이드와 맞물려 경계선(밴드)이 사라진다. 캔버스(z-index:0) 위,
+   콘텐츠(z-index:2) 아래(z-index:1)에 둔다. pointer-events 없음. */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(160px, 26vh, 300px);
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 224, 205, 0),
+    rgba(255, 222, 198, 0.55)
+  );
+}
+
+/* 콘텐츠는 캔버스(z-index:0) 위. 각 요소가 직접 z-index 를 갖는다. */
+
+/* 텍스트 락업 거터 — 카드/타임테이블/신청과 동일한 중앙 거터.
+   풀블리드 배경(열 KV·날짜 모서리·하단 블렌드)과 달리, 텍스트는 이
+   거터 안에서만 좌우로 펼쳐져 본문 카드들과 줄을 맞추고 가운데로 모인다.
+   히어로 전체 높이를 덮는 절대배치 박스라, 내부 절대배치 요소들이
+   뷰포트가 아닌 거터의 좌우 끝을 기준으로 정렬된다. */
+.gutter {
+  /* 단일 정규 컨테이너 — 히어로 텍스트 락업을 아래 전 섹션과 같은 좌우 라인에 맞춘다.
+     max-width 1180 + 좌우 인셋 clamp(20,5vw,56). 내부 락업 요소(.lede/.titleBlock/
+     .studios)는 절대배치라 padding 으로 밀리지 않으므로, 동일 인셋을 --gutter-pad 로
+     공유해 left/right 에 직접 적용한다 → 콘텐츠 좌우 끝이 정규 컨테이너와 일치. */
+  --gutter-pad: clamp(20px, 5vw, 56px);
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1180px, 100%);
+  padding-inline: var(--gutter-pad);
+  pointer-events: none;
+}
+.gutter > * {
+  pointer-events: auto;
+}
+
+/* --- 모서리 날짜 (좌 08.20 D1 · 우 08.21 D2) ---------------- */
+.date {
+  position: absolute;
+  z-index: 2;
+  top: var(--margin);
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.4vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 0.98;
+  color: var(--ink);
+}
+.dateTl {
+  left: var(--margin);
+  text-align: left;
+}
+.dateTr {
+  right: var(--margin);
+  text-align: right;
+}
+
+/* --- 좌측 리드 클러스터: 배지 + 서브타이틀 + 짧은 desc -------- */
+.lede {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter-pad);
+  top: 34%;
+  max-width: min(40ch, 52%);
+}
+.badge {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--white);
+  background: color-mix(in oklab, var(--heat-core) 70%, var(--heat-main) 30%);
+  padding: 6px 12px;
+  border-radius: 999px;
+  margin-bottom: clamp(12px, 1.6vh, 18px);
+}
+/* 서브타이틀 (시각의 전환, 실무의 확장) — 옛 heatwave 태그라인 자리. */
+.tagline {
+  font-family: var(--font-kr);
+  font-size: clamp(20px, 2.4vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  word-break: keep-all;
+  color: var(--ink);
+  margin: 0;
+}
+.ledeDesc {
+  margin-top: clamp(10px, 1.4vh, 16px);
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.05vw, 16px);
+  font-weight: 500;
+  line-height: 1.55;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 70%, transparent);
+}
+
+/* --- 타이틀 클러스터 (우측 치우침) ------------------------- */
+.titleBlock {
+  position: absolute;
+  z-index: 2;
+  right: var(--gutter-pad);
+  top: 42%;
+  text-align: right;
+  max-width: 100%;
+}
+/* 2026°C 락업 — 단독으로 떠 있지 않게 서브타이틀과 한 묶음으로.
+   년도 마크(°C)는 또렷한 열 색 디자인 요소, 그 옆에 옅은 서브 카피를
+   붙여 하나의 정돈된 표현으로 읽히게 한다(우측 정렬 클러스터의 키커). */
+.mark {
+  display: inline-flex;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: clamp(8px, 0.9vw, 14px);
+  margin-bottom: clamp(8px, 1vh, 14px);
+}
+.markYear {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.6vw, 40px);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  color: var(--heat-main);
+}
+.markSub {
+  font-family: var(--font-display);
+  font-size: clamp(11px, 1vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: lowercase;
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+  /* 옅은 서브를 마크와 같은 베이스라인 위 한 칸으로 묶어 둔다 */
+  position: relative;
+  padding-left: clamp(8px, 0.9vw, 14px);
+  border-left: 1.5px solid color-mix(in srgb, var(--heat-main) 55%, transparent);
+}
+/* 디자인 썸머 — 한글 디스플레이, 가볍고 절제된 크기 */
+.title {
+  font-family: var(--font-kr);
+  font-size: clamp(46px, 8vw, 112px);
+  font-weight: 600;
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  white-space: nowrap;
+}
+/* --- English variant (TASK B) --------------------------------------------
+   Saira Condensed (free substitute for Franklin Gothic Medium Cond), exposed by
+   developFont.ts as --font-develop-en (className sets the var on the element). */
+.titleEn {
+  font-family: var(--font-develop-en), var(--font-display), sans-serif;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  /* "Design Summer Ilsan" must stay on ONE line (inherits white-space:nowrap)
+     and must NOT clip left/right at 1440px or 390px. Now lives in the centered
+     min(1100px,94%) gutter, so the cap is bounded by 1100px rather than the
+     viewport. Saira Condensed is narrow (~19 chars): at the 84px cap the line
+     is ~840px wide, comfortably inside 1100px. The mobile rule below shrinks
+     it for 390px. Bigger and more confident than before. */
+  font-size: clamp(36px, 6vw, 84px);
+}
+/* "Ilsan" 강조 — Design Summer 는 기본 잉크, 일산만 따뜻한 열 색으로 (en 전용). */
+.titleAccent {
+  color: var(--heat-main);
+}
+.taglineEn {
+  font-family: var(--font-develop-en), var(--font-display), sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.005em;
+}
+.taglineEn em {
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* 일시 + 장소 — 타이틀 아래, 우측 정렬 클러스터(ko). 두 줄로. */
+.venueMeta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: color-mix(in srgb, var(--ink) 70%, transparent);
+  margin-top: 12px;
+}
+.venueMeta .venueDate {
+  font-weight: 600;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+.venueMeta .venueName {
+  text-transform: none;
+}
+
+/* 일자별 사전등록 2버튼 — 타이틀 클러스터 하단, 우측 정렬. 따뜻한 딥-잉크 트리트먼트. */
+.register {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: clamp(10px, 1vw, 14px);
+  margin-top: clamp(18px, 2.6vh, 30px);
+}
+.regBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.05vw, 16px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  background: color-mix(in oklab, var(--ink) 82%, var(--heat-core) 18%);
+  padding: 13px 22px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 16px 36px -22px rgba(120, 50, 10, 0.55);
+  transition:
+    box-shadow var(--dur-touch) var(--ease-heat),
+    transform var(--dur-touch) var(--ease-heat);
+}
+.regBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(135deg, var(--heat-core), var(--heat-main));
+  transform: translateY(100%);
+  transition: transform var(--dur-bloom) var(--ease-heat);
+}
+.regBtn:hover,
+.regBtn:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 44px -20px rgba(200, 70, 20, 0.6);
+}
+.regBtn:hover::before,
+.regBtn:focus-visible::before {
+  transform: translateY(0);
+}
+.regBtn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* en 보조 메타 — 은은하게: 장소명(또렷한 디자인 요소) + 일시(가장 옅게).
+   타이틀 바로 아래 큰 한 줄로 때려박지 않고, 우측 정렬 클러스터를 따라 정돈. */
+.venueMetaEn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+/* 장소명 — 디자인 요소: 절제됐지만 또렷한 디스플레이 톤. */
+.venueName {
+  font-family: var(--font-develop-en), var(--font-display), sans-serif;
+  font-size: clamp(13px, 1.05vw, 16px);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+/* 일시 — 가장 옅게(은은하게). */
+.venueDate {
+  font-family: var(--font-develop-en), var(--font-display), sans-serif;
+  font-size: clamp(11px, 0.85vw, 13px);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+}
+
+/* --- 좌하단 연사: 세로쓰기 밴드 (아이덴티티), 데이별 묶음 ---- */
+.studios {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter-pad);
+  bottom: var(--margin);
+  display: flex;
+  align-items: flex-end;
+  /* DAY 그룹 사이 넓은 간격 = 데이 구분 (텍스트 라벨 없이 시각적으로만). */
+  gap: clamp(40px, 5vw, 84px);
+}
+.dayGroup {
+  display: flex;
+  align-items: flex-end;
+  gap: clamp(13px, 1.3vw, 22px);
+}
+.studio {
+  writing-mode: vertical-rl;
+  font-family: var(--font-kr);
+  /* 라벨을 뺀 만큼 이름 자체를 키운다. 높이에 반응시켜 짧은 비율
+     모니터에서도 히어로 밴드를 넘지 않게. */
+  font-size: clamp(14px, 2.1vh, 20px);
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink);
+  position: relative;
+  padding-left: 8px;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.studio::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 100%;
+  width: 1.5px;
+  background: var(--heat-main);
+  transition: bottom var(--dur-bloom) var(--ease-heat);
+}
+/* en: studio labels rendered in the develop English face (Saira Condensed,
+   free Franklin Gothic Cond substitute) to match the rest of the en hero.
+   --font-develop-en is set by sairaCondensed.className on the same element.
+   Vertical writing-mode + warm hover are inherited from .studio. */
+.studioEn {
+  font-family: var(--font-develop-en), var(--font-display), sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+.studio:hover,
+.studio:focus-visible {
+  color: var(--heat-main);
+}
+.studio:hover::before,
+.studio:focus-visible::before {
+  bottom: 0;
+}
+
+/* --- 모바일 (390) ------------------------------------------- */
+@media (max-width: 640px) {
+  .title {
+    font-size: clamp(34px, 11vw, 56px);
+  }
+  /* en 타이틀을 390px 한 줄에 안전하게: 거터(94%) 안에서 vw 로 좁히고 상한을 낮춘다. */
+  .titleEn {
+    font-size: clamp(24px, 8.6vw, 38px);
+  }
+  /* 모바일: 리드(배지·서브타이틀·desc)는 상단 정렬, 타이틀 클러스터는 그 아래. */
+  .lede {
+    top: 22%;
+    max-width: 92%;
+  }
+  .tagline {
+    font-size: clamp(20px, 6.4vw, 28px);
+  }
+  .titleBlock {
+    top: 46%;
+  }
+  /* 2026°C 락업이 모바일 폭을 넘지 않게 줄바꿈 허용 + 우측 정렬 유지. */
+  .mark {
+    flex-wrap: wrap;
+  }
+  .register {
+    justify-content: flex-end;
+  }
+  .regBtn {
+    font-size: clamp(12px, 3.4vw, 15px);
+    padding: 11px 16px;
+  }
+  .studios {
+    gap: 24px;
+  }
+  /* 라벨 제거 후 키운 이름 — 모바일에서도 한 밴드 안에 들어오게 살짝 줄임. */
+  .studio {
+    font-size: clamp(13px, 4.4vw, 17px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .studio::before {
+    transition: bottom var(--dur-touch) linear;
+  }
+  .regBtn,
+  .regBtn::before {
+    transition: none;
+  }
+  .regBtn:hover,
+  .regBtn:focus-visible {
+    transform: none;
+  }
+}

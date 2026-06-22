@@ -1,0 +1,893 @@
+/* ──────────────────────────────────────────────────────────────────────────
+ * Concept 03 — RISOGRAPH POSTER (KV-PRESERVING)
+ *
+ * The KV (develop Hero) + the ONE continuous warm Aura ground (PostHeroAura)
+ * are reused UNCHANGED. This stylesheet therefore must NOT paint an opaque
+ * background that would cover them: .page is transparent, the region is
+ * transparent, and every riso section floats on the warm aura. The "riso
+ * print" look is delivered ONLY via:
+ *   · scoped condensed display/label faces (Anton / Archivo from risoFont)
+ *   · poster-tile / postage-stamp LAYOUT
+ *   · halftone / misregistration / duotone OVERLAYS (mix-blend multiply,
+ *     translucent surfaces) that let the warm aura show through.
+ * No cream/opaque sheet replaces the aura.
+ * ────────────────────────────────────────────────────────────────────────── */
+
+.page {
+  /* riso ink accents (used for type/overlays only — NOT as a page background) */
+  --orange: #d6481e;
+  --orange-bright: #ff5b1f;
+  --blue: #131e5a;
+  --blue-bright: #1b2aa0;
+  --ink: #2a1c0e; /* warm dark ink, legible on the warm aura */
+  --paper: #fbf3e2; /* used for chip/dashed perforations only */
+
+  --display: var(--riso-display), "Anton", Impact, sans-serif;
+  --label: var(--riso-label), "Archivo", system-ui, sans-serif;
+  --ko: "Pretendard Variable", Pretendard, system-ui, sans-serif;
+
+  position: relative;
+  /* transparent: the hero KV (its own background) shows at the top, the warm
+     PostHeroAura field shows below. NEVER set an opaque background here. */
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--ko);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+.page :global(*),
+.page :global(*)::before,
+.page :global(*)::after {
+  box-sizing: border-box;
+}
+
+/* concept chip — fixed corner, kept */
+.conceptChip {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  max-width: 290px;
+  padding: 9px 12px;
+  background: var(--blue);
+  color: var(--paper);
+  border: 2px solid var(--orange);
+  box-shadow: 3px 3px 0 var(--orange);
+  font-family: var(--label);
+  transform: rotate(-1.4deg);
+}
+.chipNo {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--orange-bright);
+  font-weight: 700;
+}
+.chipName {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+.chipDesc {
+  font-family: var(--ko);
+  font-size: 10.5px;
+  line-height: 1.35;
+  opacity: 0.86;
+  margin-top: 2px;
+}
+
+/* ── BELOW-HERO REGION (warm aura ground) ───────────────────────────────
+   Mirrors PostHeroRegion: the aura layer is z-index 0 (mounted by
+   PostHeroAura), the content wrapper is z-index 1 so transparent sections
+   float on the one shared warm field. */
+.region {
+  position: relative;
+  background: transparent;
+}
+.regionInner {
+  position: relative;
+  z-index: 1;
+}
+
+/* canonical develop content container — same edges as every shared develop
+   section so left/right lines align across the whole page. Applied to the riso
+   sections we OWN. (The reused shared sections keep their own .shell gutter.) */
+.intro,
+.audience,
+.lineup,
+.benefits,
+.faq {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* halftone overlay helper — every Halftone used here is a tone OVERLAY that
+   multiplies onto the warm aura, never an opaque fill. Kept subtle so the
+   aura stays visible. */
+.halftoneOverlay {
+  mix-blend-mode: multiply;
+  opacity: 0.55;
+}
+
+/* shared band heading face */
+.bandTitle {
+  font-family: var(--display);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  line-height: 0.92;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ── INTRO / CONCEPT ────────────────────────────────────────────────── */
+.intro {
+  position: relative;
+  padding-block: clamp(64px, 12vh, 140px) clamp(28px, 4vw, 56px);
+}
+
+/* big misregistered ghost word — transparent overlay, aura shows through */
+.misreg {
+  position: absolute;
+  top: clamp(40px, 9vh, 96px);
+  right: -2%;
+  pointer-events: none;
+  font-family: var(--display);
+  font-size: clamp(96px, 22vw, 300px);
+  line-height: 0.8;
+  letter-spacing: -0.03em;
+  white-space: nowrap;
+  opacity: 0.16;
+  z-index: 0;
+}
+.misreg span {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.misOrange {
+  color: var(--orange);
+  transform: translate(-5px, -4px);
+}
+.misBlue {
+  color: var(--blue);
+  transform: translate(5px, 4px);
+  mix-blend-mode: multiply;
+}
+
+.introKicker {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-family: var(--label);
+  font-weight: 700;
+  font-size: clamp(11px, 1.4vw, 14px);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin: 0 0 14px;
+}
+.introKicker span:first-child {
+  color: var(--orange);
+}
+
+.introTitle {
+  position: relative;
+  z-index: 1;
+  font-family: var(--ko);
+  font-weight: 800;
+  font-size: clamp(30px, 5.4vw, 60px);
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  color: var(--blue);
+  margin: 0 0 14px;
+}
+
+/* director print line — print-register strapline under the title */
+.pressLine {
+  position: relative;
+  z-index: 1;
+  font-family: var(--label);
+  font-weight: 700;
+  font-size: clamp(11px, 1.5vw, 15px);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--orange);
+  margin: 0 0 18px;
+}
+
+.introLead {
+  position: relative;
+  z-index: 1;
+  font-family: var(--ko);
+  font-weight: 700;
+  font-size: clamp(16px, 2.2vw, 22px);
+  line-height: 1.5;
+  max-width: 30ch;
+  color: var(--ink);
+  margin: 0 0 8px;
+}
+.introBody {
+  position: relative;
+  z-index: 1;
+  font-family: var(--ko);
+  font-size: clamp(13px, 1.6vw, 16px);
+  line-height: 1.65;
+  max-width: 46ch;
+  color: var(--ink);
+  opacity: 0.86;
+  margin: 0 0 clamp(28px, 4vw, 48px);
+}
+
+/* concept duo — two translucent poster panels on the aura */
+.conceptDuo {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 2vw, 26px);
+}
+.conceptPanel {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(22px, 3vw, 40px);
+  min-height: 320px;
+  border: 2px solid var(--ink);
+  /* translucent ink wash — the warm aura still glows through behind it */
+  background: rgba(251, 243, 226, 0.34);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  box-shadow: 6px 6px 0 rgba(42, 28, 14, 0.18);
+}
+.conceptPanel.orange {
+  border-color: var(--orange);
+  box-shadow: 6px 6px 0 rgba(214, 72, 30, 0.3);
+}
+.conceptPanel.blue {
+  border-color: var(--blue);
+  box-shadow: 6px 6px 0 rgba(19, 30, 90, 0.28);
+}
+.conceptInner {
+  position: relative;
+  z-index: 2;
+}
+.conceptDay {
+  font-family: var(--label);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+  color: var(--ink);
+  opacity: 0.8;
+}
+.conceptEn {
+  position: relative;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(38px, 5.6vw, 70px);
+  line-height: 0.88;
+  text-transform: uppercase;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+.conceptPanel.orange .conceptEn {
+  color: var(--orange);
+}
+.conceptPanel.blue .conceptEn {
+  color: var(--blue);
+}
+/* misregistration ghost behind the EN concept word */
+.conceptEn::before {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: -1;
+  color: var(--orange-bright);
+  opacity: 0.32;
+  transform: translate(3px, 2px);
+  mix-blend-mode: multiply;
+}
+.conceptKo {
+  font-family: var(--ko);
+  font-weight: 800;
+  font-size: clamp(17px, 2.2vw, 26px);
+  letter-spacing: 0.3em;
+  margin-top: 6px;
+  color: var(--ink);
+}
+.conceptTitle {
+  font-family: var(--ko);
+  font-weight: 800;
+  font-size: clamp(16px, 1.9vw, 21px);
+  margin: 18px 0 8px;
+  color: var(--ink);
+}
+.conceptBody {
+  font-family: var(--ko);
+  font-size: clamp(13px, 1.5vw, 15px);
+  line-height: 1.65;
+  max-width: 42ch;
+  margin: 0;
+  color: var(--ink);
+  opacity: 0.9;
+}
+.conceptTags {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0;
+  margin: 20px 0 0;
+}
+.conceptTags li {
+  font-family: var(--ko);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 5px 11px;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  color: var(--ink);
+}
+.conceptPanel.orange .conceptTags li {
+  color: var(--orange);
+}
+.conceptPanel.blue .conceptTags li {
+  color: var(--blue);
+}
+
+/* run meta — date + venue line, printed-spec register */
+.runMeta {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+  margin: 0 0 clamp(28px, 4vw, 48px);
+  font-family: var(--label);
+  font-weight: 700;
+  font-size: clamp(12px, 1.5vw, 15px);
+  letter-spacing: 0.04em;
+}
+.runMeta span {
+  position: relative;
+  padding-left: 16px;
+  color: var(--ink);
+}
+.runMeta span::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  transform: translateY(-50%);
+  background: var(--orange);
+}
+.runMeta span:nth-child(2)::before {
+  background: var(--blue);
+}
+
+/* ── AUDIENCE (추천 대상) ────────────────────────────────────────────── */
+.audience {
+  padding-block: clamp(28px, 5vw, 56px);
+}
+.audGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 2vw, 26px);
+  margin-top: 28px;
+}
+.audCard {
+  position: relative;
+  padding: clamp(22px, 3vw, 36px);
+  border: 2px solid var(--ink);
+  background: rgba(251, 243, 226, 0.34);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  box-shadow: 6px 6px 0 rgba(42, 28, 14, 0.18);
+}
+.audCard.orange {
+  border-color: var(--orange);
+  box-shadow: 6px 6px 0 rgba(214, 72, 30, 0.3);
+}
+.audCard.blue {
+  border-color: var(--blue);
+  box-shadow: 6px 6px 0 rgba(19, 30, 90, 0.28);
+}
+.audKicker {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 6px 12px;
+  margin: 0 0 14px;
+  font-family: var(--label);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.74;
+}
+.audPass {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(22px, 3vw, 34px);
+  letter-spacing: 0.01em;
+  opacity: 1;
+}
+.audCard.orange .audPass {
+  color: var(--orange);
+}
+.audCard.blue .audPass {
+  color: var(--blue);
+}
+.audHeading {
+  font-family: var(--ko);
+  font-weight: 800;
+  font-size: clamp(16px, 2vw, 21px);
+  line-height: 1.35;
+  margin: 0 0 16px;
+  color: var(--ink);
+}
+.audList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.audList li {
+  position: relative;
+  padding-left: 22px;
+  font-family: var(--ko);
+  font-size: clamp(13px, 1.5vw, 15px);
+  line-height: 1.6;
+  color: var(--ink);
+  opacity: 0.92;
+}
+.audList li::before {
+  content: "▶";
+  position: absolute;
+  left: 0;
+  top: 1px;
+  font-size: 9px;
+  line-height: 1.7;
+}
+.audCard.orange .audList li::before {
+  color: var(--orange);
+}
+.audCard.blue .audList li::before {
+  color: var(--blue);
+}
+
+/* ── LINEUP (poster / postage-stamp tiles) ──────────────────────────── */
+.lineup {
+  padding-block: clamp(28px, 5vw, 64px) clamp(40px, 7vw, 88px);
+}
+.bandHead {
+  display: flex;
+  align-items: baseline;
+  gap: 18px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: 12px;
+}
+.bandHead .bandTitle {
+  position: relative;
+  font-size: clamp(48px, 9vw, 116px);
+  color: var(--orange);
+}
+/* misregistration ghost on the LINE UP banner */
+.bandHead .bandTitle::before,
+.bandHead .bandTitle::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+.bandHead .bandTitle::before {
+  color: var(--blue);
+  transform: translate(4px, 4px);
+  opacity: 0.55;
+  mix-blend-mode: multiply;
+}
+.bandHead .bandTitle::after {
+  color: var(--orange-bright);
+  transform: translate(-3px, -3px);
+  opacity: 0.4;
+}
+.bandSub {
+  font-family: var(--label);
+  font-weight: 700;
+  font-size: clamp(13px, 1.6vw, 16px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin: 0;
+}
+
+.dayRow {
+  margin-top: 36px;
+}
+.dayRowHead {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.dayRowLabel {
+  font-family: var(--display);
+  font-size: clamp(28px, 4vw, 48px);
+  text-transform: uppercase;
+}
+.dayRow.orange .dayRowLabel {
+  color: var(--orange);
+}
+.dayRow.blue .dayRowLabel {
+  color: var(--blue);
+}
+.dayRowEn {
+  font-family: var(--label);
+  font-weight: 700;
+  font-size: clamp(12px, 1.6vw, 16px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.72;
+}
+
+.stampGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 1.6vw, 22px);
+}
+
+/* speaker stamp tile — translucent so the aura glows through the paper */
+.stamp {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid var(--ink);
+  background: rgba(251, 243, 226, 0.42);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  box-shadow: 4px 4px 0 rgba(42, 28, 14, 0.16);
+  transform: rotate(var(--tilt, 0deg));
+}
+.stamp:nth-child(2n) {
+  --tilt: -0.7deg;
+}
+.stamp:nth-child(3n) {
+  --tilt: 0.8deg;
+}
+.stamp.orange {
+  border-color: var(--orange);
+}
+.stamp.blue {
+  border-color: var(--blue);
+}
+/* perforated postage-stamp edge */
+.stampPerf {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  border: 3px dashed rgba(42, 28, 14, 0.3);
+  margin: 4px;
+}
+
+.stampPhoto {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-bottom: 2px solid var(--ink);
+  /* tinted ink plate behind the duotone photo */
+  background: #f6c9b0;
+}
+.stamp.orange .stampPhoto {
+  background: #f6c9b0;
+}
+.stamp.blue .stampPhoto {
+  background: #b9c0e0;
+}
+.stampImg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* duotone-ish: desaturate + tint via multiply over the colored plate */
+  mix-blend-mode: multiply;
+  filter: grayscale(1) contrast(1.12);
+}
+.stamp.orange .stampImg {
+  filter: grayscale(1) contrast(1.1) sepia(0.5) saturate(2.2) hue-rotate(-18deg);
+}
+.stamp.blue .stampImg {
+  filter: grayscale(1) contrast(1.1) sepia(0.4) saturate(3) hue-rotate(190deg);
+}
+.stampInitial {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  font-family: var(--display);
+  font-size: 80px;
+  color: var(--paper);
+  z-index: 2;
+}
+
+.stampBody {
+  position: relative;
+  z-index: 2;
+  padding: 14px 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.stampTime {
+  font-family: var(--label);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  margin: 0;
+}
+.stamp.orange .stampTime {
+  color: var(--orange);
+}
+.stamp.blue .stampTime {
+  color: var(--blue);
+}
+.stampStudioEn {
+  font-family: var(--label);
+  font-weight: 500;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink);
+  opacity: 0.58;
+  margin: 0;
+}
+.stampStudio {
+  font-family: var(--ko);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.15;
+  margin: 0;
+  color: var(--blue);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.stamp.orange .stampStudio {
+  color: var(--orange);
+}
+.stampName {
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--ink);
+  opacity: 0.8;
+}
+.stampSession {
+  font-family: var(--ko);
+  font-weight: 700;
+  font-size: 13.5px;
+  line-height: 1.35;
+  margin: 4px 0 0;
+  color: var(--ink);
+  display: flex;
+  flex-direction: column;
+}
+.stampDesc {
+  font-family: var(--ko);
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--ink);
+  opacity: 0.82;
+  margin: 2px 0 0;
+}
+.stampCreds {
+  list-style: none;
+  padding: 8px 0 0;
+  margin: 8px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  border-top: 1px solid rgba(42, 28, 14, 0.28);
+}
+.stampCreds li {
+  font-family: var(--ko);
+  font-size: 10.5px;
+  line-height: 1.4;
+  color: var(--ink);
+  opacity: 0.78;
+  padding-left: 10px;
+  position: relative;
+}
+.stampCreds li::before {
+  content: "·";
+  position: absolute;
+  left: 2px;
+}
+
+/* ── BENEFITS (혜택 · INSERTS) ───────────────────────────────────────── */
+.benefits {
+  padding-block: clamp(28px, 5vw, 56px);
+}
+.benGroups {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 2vw, 26px);
+  margin-top: 28px;
+  align-items: start;
+}
+.benGroup {
+  position: relative;
+  overflow: hidden;
+  padding: clamp(22px, 3vw, 36px);
+  border: 2px solid var(--ink);
+  background: rgba(251, 243, 226, 0.34);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+  box-shadow: 6px 6px 0 rgba(42, 28, 14, 0.18);
+}
+.benGroup.orange {
+  border-color: var(--orange);
+  box-shadow: 6px 6px 0 rgba(214, 72, 30, 0.3);
+}
+.benGroup.blue {
+  border-color: var(--blue);
+  box-shadow: 6px 6px 0 rgba(19, 30, 90, 0.28);
+}
+.benInner {
+  position: relative;
+  z-index: 2;
+}
+.benIndex {
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(26px, 3.4vw, 40px);
+  line-height: 1;
+  margin: 0 0 8px;
+}
+.benGroup.orange .benIndex {
+  color: var(--orange);
+}
+.benGroup.blue .benIndex {
+  color: var(--blue);
+}
+.benHeading {
+  font-family: var(--ko);
+  font-weight: 800;
+  font-size: clamp(16px, 2vw, 21px);
+  line-height: 1.3;
+  margin: 0 0 18px;
+  color: var(--ink);
+}
+.benList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.benItem {
+  border-top: 1.5px dashed rgba(42, 28, 14, 0.3);
+  padding-top: 14px;
+}
+.benItemTitle {
+  font-family: var(--ko);
+  font-weight: 800;
+  font-size: clamp(14px, 1.6vw, 16px);
+  line-height: 1.4;
+  margin: 0 0 6px;
+  color: var(--ink);
+}
+.benItemBody {
+  font-family: var(--ko);
+  font-size: clamp(12.5px, 1.5vw, 14px);
+  line-height: 1.6;
+  margin: 0;
+  color: var(--ink);
+  opacity: 0.86;
+}
+
+/* ── FAQ (COLOPHON) ──────────────────────────────────────────────────── */
+.faq {
+  padding-block: clamp(28px, 5vw, 56px) clamp(40px, 7vw, 80px);
+}
+.faqList {
+  list-style: none;
+  padding: 0;
+  margin: 28px 0 0;
+  border-top: 3px solid var(--ink);
+}
+.faqItem {
+  display: flex;
+  gap: clamp(12px, 2vw, 24px);
+  padding: clamp(18px, 2.4vw, 28px) 0;
+  border-bottom: 1.5px solid rgba(42, 28, 14, 0.28);
+}
+.faqNo {
+  flex: none;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: clamp(22px, 3vw, 36px);
+  line-height: 1;
+  color: var(--orange);
+}
+.faqItem:nth-child(2n) .faqNo {
+  color: var(--blue);
+}
+.faqQa {
+  min-width: 0;
+}
+.faqQ {
+  font-family: var(--ko);
+  font-weight: 800;
+  font-size: clamp(15px, 1.9vw, 19px);
+  line-height: 1.4;
+  margin: 0 0 8px;
+  color: var(--ink);
+}
+.faqA {
+  font-family: var(--ko);
+  font-size: clamp(13px, 1.6vw, 15px);
+  line-height: 1.65;
+  margin: 0;
+  color: var(--ink);
+  opacity: 0.86;
+  max-width: 64ch;
+}
+
+/* ── RESPONSIVE ─────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .stampGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .conceptDuo,
+  .audGrid,
+  .benGroups {
+    grid-template-columns: 1fr;
+  }
+  .conceptChip {
+    max-width: 220px;
+    left: 8px;
+    bottom: 8px;
+  }
+}
+
+@media (max-width: 430px) {
+  .stampGrid {
+    grid-template-columns: 1fr;
+  }
+  .misreg {
+    font-size: clamp(80px, 30vw, 150px);
+  }
+}
+
+/* ── REDUCED MOTION ─────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .stamp,
+  .conceptPanel {
+    transform: none;
+  }
+}

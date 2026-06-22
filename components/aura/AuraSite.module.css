@@ -1,0 +1,80 @@
+/* ============================================================================
+ * AuraSite — the MAIN `/` page below-hero region.
+ * (cursor light-spot + day-anchor scroll offset + seam fix; ported from
+ *  components/aura1/Aura1.module.css, MINUS the sticky nav.)
+ * CSS Modules only; no Tailwind / UI / animation libs.
+ * ========================================================================== */
+
+/* ── BELOW-HERO WRAPPER ──────────────────────────────────────────────────────
+ * Scopes the cursor light-spot to the content region (the hero is outside it).
+ * Establishes a stacking context so the fixed spot composites against the warm
+ * aura ground inside PostHeroRegion.
+ *
+ * SEAM FIX (히어로↔콘텐츠 경계의 가로선 제거): the hero bottom is WHITE (히어로 배경은
+ * 흰색이 맞음 — no warm ::after band). The PostHeroAura layer's top is MASKED to
+ * transparent across its top --fade band, so right under the hero the wrapper
+ * background shows through. A SOLID cream ground here meets the white hero on a
+ * hard edge → a visible horizontal line. Instead, ramp this wrapper from pure
+ * WHITE at the very top (matching the hero) DOWN to the warm cream over the first
+ * ~44vh — exactly where the aura's top fade-in (var(--fade)) reaches full opacity.
+ * Result: white→cream is continuous, the aura blooms in over it, no cut. */
+.body {
+  /* 히어로(.hero::after)가 이제 바닥에서 따뜻한 크림(rgb(255,224,205))으로 녹아
+     끝난다. 콘텐츠 그라운드를 같은 크림으로 시작해 크림→크림 으로 매끄럽게 잇는다
+     (이전엔 흰 바닥 가정의 white→cream 램프였음 — 히어로 크림 바닥과 step 이 생겨
+     경계선이 보였다). */
+  --seam-cream: rgb(255, 224, 205);
+  position: relative;
+  isolation: isolate;
+  background: var(--seam-cream);
+}
+
+/* The spot: a SUBTLE, SMALL light wash, fixed at the viewport and transform-
+ * translated to the cursor (JS sets translate3d to clientX/clientY; the margin
+ * offsets here re-centre it on the pointer). A gentle low-opacity warm-cream
+ * radial gently LIGHTENS the busy warm ground directly under the pointer so text
+ * reads a little cleaner, with no visible hotspot. Fades in/out via data-on.
+ * pointer-events:none so it never intercepts clicks; will-change keeps it cheap. */
+.spot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* 오라 레이어 위·콘텐츠(z:1) 아래 — PostHeroRegion 의 behind 슬롯에 렌더되어
+     글자를 덮지 않고 배경(오라)만 달군다. */
+  z-index: 0;
+  width: 400px;
+  height: 400px;
+  margin: -200px 0 0 -200px; /* 400px 박스를 커서에 중심 정렬(≈200px 반경) */
+  border-radius: 50%;
+  pointer-events: none;
+  /* 따뜻한 화이트-골드 글로우 — screen 블렌드로 오라를 국소적으로 밝게 달궈
+     커서를 따라다니는 '핫스팟'을 만든다(콘텐츠 뒤라 강해도 가독성 영향 없음). */
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 248, 232, 0.6) 0%,
+    rgba(255, 234, 200, 0.34) 34%,
+    rgba(255, 224, 184, 0.13) 64%,
+    rgba(255, 224, 184, 0) 100%
+  );
+  mix-blend-mode: screen;
+  opacity: 0;
+  transition: opacity var(--dur-bloom) var(--ease-heat);
+  will-change: transform;
+}
+.spot[data-on="1"] {
+  opacity: 1;
+}
+
+/* DISABLE on touch (no fine pointer) and reduced-motion — belt-and-suspenders
+   alongside the JS guard so the element never paints in those modes. */
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .spot {
+    display: none;
+  }
+}
+
+/* ── DAY ANCHOR WRAPPERS ───────────────────────────────────────────────────── */
+/* a small scroll offset for the #day1 / #day2 anchors. display-neutral block. */
+.dayAnchor {
+  scroll-margin-top: 24px;
+}

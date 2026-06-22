@@ -1,0 +1,2231 @@
+/* =============================================================
+   HAND variant — "catch the spark"
+   Concept: a hand reaching up to catch a single point of light
+   out of the dark. Editorial / gallery-grade, not a magic poster.
+
+   Palette is a charcoal-ink ground + luminous warm off-white hand &
+   type, with ONE loud, high-contrast accent — a vivid lemon-yellow
+   (--hand-yellow) — used with hard discipline: the focal word "Catch",
+   the place name "Ilsan", and a few intentional meta marks. A muted
+   warm amber sits underneath as a quiet secondary (hairlines, dots,
+   micro-detail) so the yellow always reads as THE punch. No glow
+   shower, no sparkle, no party colours — hip = confident restraint +
+   one punchy yellow + oversized type + a designed meta layer.
+
+   Typography identity: natural Title/sentence-case condensed (Saira
+   Condensed) display — oversized, asymmetric, intentional; neither
+   all-caps nor all-lowercase. "Catch" is the focal word, carried by
+   scale/weight contrast + the yellow accent. Uppercase is reserved
+   for the tiny tracking micro-labels of the editorial index system.
+
+   All scoped under .wrap with local --hand-* custom props.
+   ============================================================= */
+
+.wrap {
+  /* ---- DARK-GROUND palette (warm charcoal ground + pale cream hand + one loud
+     yellow) ---- RESTORED. The whole page sits on a warm near-black / charcoal
+     ground; the HAND reads as a luminous pale CREAM illustration on that dark
+     ground; body/heading text is light cream. The vivid lemon-yellow is the
+     single loud accent — the focal word "Catch", the place name "Ilsan", and a
+     few intentional meta marks. A muted warm amber carries fine detail/hairlines
+     so the yellow always reads as THE punch. ---- */
+  --hand-bg: #1a1613; /* warm near-black charcoal ground */
+  --hand-bg-2: #211c18; /* slightly lifted charcoal for layered sections */
+  --hand-accent: #c8a06a; /* secondary warm amber/sand — fine detail, rules */
+  --hand-accent-soft: #d9b884; /* lighter amber for fine detail */
+  --hand-accent-deep: #a87d44; /* pressed/deeper amber */
+
+  /* ---- the hip, high-contrast PUNCH: a vivid lemon-yellow used as the single
+     loud accent. Strictly controlled — the focal word "Catch", the place name
+     "Ilsan", and a few intentional meta marks. On the dark ground pure lemon
+     pops cleanly, so --hand-yellow is used for BOTH large display accents and
+     the small sparks/labels (the old olive-gold ink tone is no longer needed
+     against charcoal). ---- */
+  --hand-yellow: #ece80e; /* vivid lemon-yellow — display accent / fills / sparks */
+  --hand-yellow-ink: #ece80e; /* same lemon on the dark ground (small marks read fine) */
+  --hand-line: rgba(243, 238, 228, 0.16); /* hairline rule on the dark ground */
+  --hand-glint: #f0d27a; /* the single caught point of light — warm amber-gold */
+  --hand-hand: #f3eee4; /* the hand fill — luminous pale CREAM on the charcoal ground */
+  /* fingernail SHEEN — a soft near-white highlight sitting ON TOP of the pale
+     cream fingertip. It is LIGHTER than the hand fill (--hand-hand #f3eee4) so it
+     reads as a glossy nail catching the light, NOT a recessed hole. A darker
+     patch here looked like a void/notch at every fingertip — fixed by flipping
+     the tone LIGHTER. Must NEVER be darker than the hand. Consumed by
+     HandSilhouette's nailFill default. */
+  --hand-nail: #fffdf6;
+  --hand-dark: #131009; /* deepest charcoal panel for "panel" sections */
+  --hand-ink: #1a1613; /* dark ink — used as text ON the yellow CTA / on cream cards */
+  --hand-cream: #f3eee4; /* primary light cream text tone on the dark ground */
+
+  /* legacy aliases kept so existing rules referencing the old tokens still
+     resolve to the new restrained palette (single source of truth above). */
+  --hand-coral: var(--hand-accent);
+  --hand-coral-deep: var(--hand-accent-deep);
+
+  position: relative;
+  width: 100%;
+  background: var(--hand-bg);
+  color: var(--hand-cream);
+  font-family: var(--font-kr);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.wrap *,
+.wrap *::before,
+.wrap *::after {
+  box-sizing: border-box;
+}
+
+/* ---- casing identity: titles, taglines and section headings use natural
+   Title/sentence case (text-transform: none). Uppercase is reserved for the
+   tiny tracking LABELS only — DAY codes, weekday/time codes, year, field keys,
+   the small concept English names and meta chips. Korean copy is unaffected. ---- */
+
+/* =============================================================
+   SPARK MOTE — the floating "idea bit" the hand reaches up to
+   catch. Replaces the old spiky stars: a soft round glint with a
+   bright core + a fine cross-glimmer, so it reads as a mote of
+   light / a caught idea rather than a star. Rendered by Mote.tsx.
+   ============================================================= */
+.mote {
+  position: absolute;
+  display: inline-block;
+  pointer-events: none;
+  transform-origin: center;
+  z-index: 3;
+  /* a very gentle, slow breath — barely-there, so it reads as a steady point
+     of light rather than a twinkle. Long period, tiny opacity swing. */
+  animation: motePulse 6.5s var(--ease-heat, ease-in-out) infinite both;
+  will-change: transform, opacity;
+}
+.mote svg {
+  display: block;
+  overflow: visible;
+}
+@keyframes motePulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.78;
+  }
+  50% {
+    transform: scale(1.02);
+    opacity: 1;
+  }
+}
+/* the faint companion glint sits quietly under the primary one — its own
+   dimmer breath so the static opacity isn't overridden by the animation. */
+.moteFaint {
+  animation: motePulseFaint 7.2s var(--ease-heat, ease-in-out) infinite both;
+}
+@keyframes motePulseFaint {
+  0%,
+  100% {
+    transform: scale(0.94);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+}
+
+/* =============================================================
+   HERO — hand is the centerpiece; everything else is positioned
+   around it. Fits exactly one viewport (100svh, overflow hidden).
+   Parallax driven by --hx/--hy/--hr (set via rAF in Hand.tsx).
+   ============================================================= */
+.hero {
+  /* ONE shared L/R gutter for every hero overlay, matched to the below-hero
+     section padding [clamp(20px,5vw,80px)] so the hero text column, the index
+     column and the sections all sit on the same vertical rules. */
+  --hero-gutter: clamp(20px, 5vw, 80px);
+  --breath: 0; /* -1..1 slow idle breath for the resting arm (rAF) */
+  --curl: 0; /* 0 open hand … 1 four digits folded to a pointing index (rAF) */
+  --poke: 0; /* 0 rest … 1 index finger extra extend on the jab (rAF) */
+  --aim: -34deg; /* arm rotation about the corner pivot (rAF) */
+  --reach: 150px; /* distance pivot → index fingertip, in px (rAF) */
+  /* the rigid arm+hand SVG box. Authored 300×520 (W×H) pointing UP; rendered at
+     this WIDTH and its own 520/300 aspect height. NEVER scaled per-frame (that
+     would distort it) — only rotated + translated as one piece. */
+  --hand-w: clamp(150px, 19vw, 250px);
+  /* box height from the 300×520 viewBox aspect (520/300 ≈ 1.733). */
+  --hand-h: calc(var(--hand-w) * 1.7333);
+  /* the index FINGERTIP sits at viewBox (150,30): 0.5 across, 30/520 ≈ 0.0577
+     down from the box TOP. Used to land the tip on a click. */
+  --tip-fx: 0.5;
+  --tip-fy: 0.0577;
+
+  position: relative;
+  width: 100%;
+  height: 100vh; /* fallback */
+  height: 100svh;
+  overflow: hidden;
+  isolation: isolate;
+  touch-action: pan-y;
+  /* warm CHARCOAL ground with a single quiet warm halo high-center, where the
+     hand reaches for the light — a soft fall-off, not a flare. A faint deeper
+     vignette toward the bottom gives the corner hand something to sit on.
+     Restrained, all dark. */
+  background:
+    radial-gradient(
+      90% 60% at 51% 10%,
+      rgba(240, 210, 122, 0.14) 0%,
+      rgba(240, 210, 122, 0) 50%
+    ),
+    radial-gradient(
+      90% 75% at 50% 100%,
+      rgba(8, 6, 4, 0.55) 0%,
+      var(--hand-bg) 64%
+    ),
+    var(--hand-bg);
+}
+
+/* =============================================================
+   EDITORIAL META LAYER — the "designed" overlay that makes the hero
+   read like a contemporary studio site: a thin top rule carrying
+   monospace-ish micro-labels, a small index/marker system, fine
+   tracking codes. Loud information, quiet ink (amber/dimmed cream),
+   so the yellow stays the only punch.
+   ============================================================= */
+
+/* the top hairline rail: a single thin rule pinned across the hero top with a
+   left index code and right field labels riding it. */
+.metaRail {
+  position: absolute;
+  top: clamp(54px, 7vw, 84px);
+  left: var(--hero-gutter);
+  right: var(--hero-gutter);
+  z-index: 6;
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 2vw, 22px);
+  pointer-events: none;
+}
+.metaRail::after {
+  /* the rule itself — fills the space between the flexed labels */
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--hand-line);
+  order: 1;
+}
+.metaCode {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(10px, 0.92vw, 12px);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--hand-accent);
+  white-space: nowrap;
+}
+.metaCode em {
+  font-style: normal;
+  color: var(--hand-yellow-ink);
+}
+.metaTags {
+  order: 2;
+  display: flex;
+  gap: clamp(10px, 1.6vw, 20px);
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(10px, 0.92vw, 12px);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(243, 238, 228, 0.55);
+  white-space: nowrap;
+}
+
+/* a quiet vertical edge marker on the far left — a stacked tracking code that
+   anchors the composition's left rule (purely editorial dressing). */
+.edgeMark {
+  position: absolute;
+  /* ride the far-left edge, vertically centred — clear of the bottom-left
+     title and the mid-right index columns. */
+  left: clamp(14px, 2.4vw, 26px);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 6;
+  display: none; /* shown ≥ 900px only — narrow screens stay clean */
+  pointer-events: none;
+}
+@media (min-width: 900px) {
+  .edgeMark {
+    display: block;
+  }
+}
+.edgeMark span {
+  display: block;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+  color: rgba(243, 238, 228, 0.42);
+}
+
+/* ---- wordmark: top, biased right ---- */
+.wordmark {
+  position: absolute;
+  top: clamp(16px, 3vw, 32px);
+  right: var(--hero-gutter);
+  z-index: 7;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(20px, 2.4vw, 32px);
+  letter-spacing: 0.02em;
+  /* brand wordmark renders as written ("K·print") — not shouty all-caps */
+  text-transform: none;
+  color: var(--hand-cream);
+  white-space: nowrap;
+}
+.wordmark em {
+  font-style: normal;
+  color: var(--hand-coral);
+}
+
+/* ---- big display title: flows inside the bottom-left .heroLeft column.
+   Title Case, condensed, ONE line reading "Design Summer Ilsan" — sized to sit
+   on a single line at desktop within the capped column without crowding the
+   right index column, and to wrap gracefully (controlled) on phones. "Ilsan"
+   carries the single lemon-yellow accent. ---- */
+.display {
+  /* flows inside .heroLeft now (no longer absolute / full-width), so it can
+     never run into the index column or the corner hand. */
+  margin: 0;
+  text-align: left;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 0.92;
+  /* natural Title Case — no shouty caps, no text-stroke (flat fill) */
+  text-transform: none;
+  /* readable editorial display, sized to sit on ONE line within the capped
+     left column at 1440 without crowding the right index column. */
+  font-size: clamp(38px, 5.4vw, 78px);
+  /* keep the lockup on a single line at desktop; wrapping is handled
+     explicitly in the mobile media query below. */
+  white-space: nowrap;
+  pointer-events: none;
+}
+.titleMain {
+  /* flat warm off-white — luminous on the charcoal ground, no outline */
+  color: var(--hand-cream);
+  /* keep "Design Summer" intact when the lockup wraps on phones, so the only
+     break that can occur is the clean one before "Ilsan". */
+  white-space: nowrap;
+}
+.titleIlsan {
+  /* the vivid lemon-yellow accent picks out the place name — the title PUNCH.
+     On the light paper ground pure lemon would wash out, so the exact #ece80e
+     hue is KEPT but seated on a crisp ink edge (thin shadow) so it reads cleanly
+     and still pops. A deliberate, designed treatment — not a hue change. */
+  color: var(--hand-yellow);
+  white-space: nowrap;
+  /* a soft warm bloom so the lemon word glows off the charcoal ground */
+  text-shadow: 0 0 22px rgba(236, 232, 14, 0.35);
+}
+
+/* ---- spark motes across the top ---- */
+.moteField {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+/* a very slow, small drift on the field glints — uses the `translate` property
+   (not `transform`) so it composes cleanly with the per-mote pulse scale.
+   De-synced per mote via the existing pulse animation-delay. Subtle by design. */
+.moteField .mote {
+  animation:
+    motePulse 6.5s var(--ease-heat, ease-in-out) infinite both,
+    moteDrift 12s ease-in-out infinite both;
+}
+/* keep the faint companion on its dimmer breath even inside the field */
+.moteField .moteFaint {
+  animation:
+    motePulseFaint 7.2s var(--ease-heat, ease-in-out) infinite both,
+    moteDrift 12s ease-in-out infinite both;
+}
+@keyframes moteDrift {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: -3px 7px;
+  }
+}
+
+/* =============================================================
+   THE REACHING ARM — ONE RIGID arm+hand SVG, anchored at the bottom-right
+   CORNER, never detaches. There is NO separate forearm bar: the forearm,
+   wrist, palm and fingers are all in the single .handBox SVG, so the limb
+   can never come apart, slide, or overshoot the fingertips.
+
+   .armRoot is pinned with its transform-origin AT the corner pivot and
+   rotated by --aim about it. Inside, the rigid .handBox is translated UP
+   along the local axis by --reach so its INDEX FINGERTIP lands on the click;
+   the forearm TAIL at the bottom of the SVG always runs PAST the corner and
+   is clipped by the hero's overflow:hidden, so the limb stays visually rooted
+   in the corner at every reach. On a click the rAF rotates --aim to the
+   target and translates --reach so the fingertip lands, jabs (--poke), then
+   retracts. Local reach axis = straight UP; --aim rotates it to any target.
+   ============================================================= */
+.armRoot {
+  position: absolute;
+  /* the shoulder pivot is the hero's bottom-right CORNER. The whole rigid limb
+     reaches UP from this point and rotates about it. */
+  right: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  z-index: 4;
+  pointer-events: none;
+  transform-origin: 100% 100%; /* the corner pivot */
+  /* rotate the whole arm about the pivot to aim; idle breath adds a tiny sway */
+  transform: rotate(calc(var(--aim, -34deg) + var(--breath, 0) * 0.6deg));
+  transition: none;
+  will-change: transform;
+}
+
+/* the RIGID arm+hand SVG box. NEVER scaled (that would distort it) — it is only
+   translated out along the reach axis by --reach and centered on the pivot's X.
+   The forearm TAIL fills the bottom of the box and is meant to run off the
+   corner; the index FINGERTIP (viewBox (150,30), i.e. --tip-fx across and
+   --tip-fy down from the box top) is the reach tip that lands on clicks.
+
+   The box bottom sits at the pivot (bottom:0). To put the FINGERTIP at the
+   reach point (pivotY − reach), translate the box UP by:
+       reach − (1 − tip_fy) · hand_h
+   i.e. lift so the tip — which is tip_fy·hand_h below the box top, hence
+   (1 − tip_fy)·hand_h above the box bottom — sits exactly at −reach. The
+   forearm tail (box bottom) therefore lands at pivotY − reach + (1−tip_fy)·h,
+   which for our rest/typical reaches is at or below the pivot → off the corner,
+   keeping the limb rooted. */
+.handBox {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: var(--hand-w);
+  height: var(--hand-h);
+  transform: translateX(-50%)
+    translateY(
+      calc(-1 * var(--reach) + (1 - var(--tip-fy)) * var(--hand-h))
+    );
+  transform-origin: bottom center;
+  pointer-events: none;
+  will-change: transform;
+}
+.handBox svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+  /* soft warm lift so the cream limb glows off the charcoal field */
+  filter: drop-shadow(-5px -3px 24px rgba(0, 0, 0, 0.55));
+}
+
+/* ---- DYNAMIC FOREARM ---------------------------------------------------
+   A hero-space SVG (no viewBox → 1 user unit = 1 px) covering the whole hero.
+   Its single <path> d is recomputed every frame by useHandControl.drawForearm
+   so the NEAR end is pinned just off the bottom-right corner and the FAR end is
+   pinned to the hand's WRIST. It sits BELOW the hand in DOM order (same z) so
+   the palm/wrist overlaps it — no seam, no "cut in the middle". ------------- */
+.forearmSvg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 4;
+  pointer-events: none;
+  overflow: visible;
+  /* match the hand's lift so the limb reads as one piece */
+  filter: drop-shadow(-5px -3px 24px rgba(0, 0, 0, 0.55));
+}
+.forearmPath {
+  fill: var(--hand-hand);
+}
+
+/* ---- CROSSFADE FINGER LAYERS ------------------------------------------
+   The palm is ONE solid mass that never animates in shape. On top of it sit two
+   layers that CROSSFADE on --curl (0 open … 1 pointing):
+     • .openLayer  — four evenly-spaced fingers + thumb. Visible at rest.
+     • .pointLayer — one extended index + a folded-knuckles lump + tucked thumb.
+                     Hidden at rest, jabs on --poke.
+   Because only OPACITY animates (palm constant, bases buried in the palm), the
+   fold reads with NO gap and nothing detaches. The point layer also extends a
+   touch up the pointing axis (−Y) on --poke for the arrival jab.
+   ------------------------------------------------------------------------- */
+.handBox svg :global(.palmBase) {
+  /* the solid base never changes — always fully opaque */
+  opacity: 1;
+}
+.handBox svg :global(.openLayer) {
+  /* fades OUT as the hand folds to a point */
+  opacity: calc(1 - var(--curl, 0));
+  will-change: opacity;
+}
+.handBox svg :global(.pointLayer) {
+  /* fades IN as the hand folds to a point */
+  opacity: var(--curl, 0);
+  transform-box: view-box; /* translate in viewBox units */
+  transform-origin: 150px 300px;
+  /* the whole pointing hand jabs a touch up the pointing axis on --poke */
+  transform: translateY(calc(var(--poke, 0) * -16px));
+  will-change: opacity, transform;
+}
+
+/* =============================================================
+   SPARK MARK — a quick 6-ray burst left at each poke's contact point.
+   Positioned in hero-local px (left/top, inline) by the impact callback;
+   each mounts fresh and self-removes, so the burst replays every poke.
+   ============================================================= */
+.sparkLayer {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+}
+.spark {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.sparkRay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 2px;
+  height: 13px;
+  margin-left: -1px;
+  margin-top: -6px;
+  border-radius: 2px;
+  background: var(--hand-yellow-ink);
+  transform-origin: center 6px;
+  transform: rotate(var(--ray, 0deg)) translateY(0) scaleY(0.2);
+  opacity: 0;
+  animation: sparkRay 560ms var(--ease-heat, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+@keyframes sparkRay {
+  0% {
+    transform: rotate(var(--ray, 0deg)) translateY(0) scaleY(0.2);
+    opacity: 0;
+  }
+  28% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--ray, 0deg)) translateY(-20px) scaleY(1);
+    opacity: 0;
+  }
+}
+
+/* =============================================================
+   HERO LEFT COLUMN — one bottom-left flow stack holding the tagline, the
+   "Design Summer Ilsan" title, and the intro copy (subtitle, desc, facts,
+   the two per-day CTAs). Because it is a single normal-flow column the pieces
+   keep guaranteed vertical spacing and never overlap each other. Its width is
+   capped to leave the right index column AND the lower-right corner hand clear.
+   ============================================================= */
+.heroLeft {
+  position: absolute;
+  left: var(--hero-gutter);
+  bottom: clamp(28px, 5vh, 64px);
+  z-index: 6;
+  display: flex;
+  flex-direction: column;
+  /* tagline → title → intro spacing */
+  gap: clamp(12px, 1.8vh, 22px);
+  /* cap the column so the title/copy never collide with the mid-right index
+     column. ~56vw keeps a clear right channel for the index + the corner hand
+     at 1440; the ch cap stops it sprawling on very wide screens. */
+  max-width: min(680px, 56vw);
+  pointer-events: none; /* children (CTAs) re-enable themselves */
+}
+
+/* ---- CATCH tagline: first line of the left column, ABOVE the title.
+   natural sentence case condensed; "Catch" is the focal word — yellow accent,
+   larger + heavier. ---- */
+.tagline {
+  margin: 0;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 500;
+  text-transform: none;
+  font-size: clamp(16px, 1.9vw, 24px);
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  /* the secondary words are quiet — a dimmed cream, not full white */
+  color: rgba(243, 238, 228, 0.66);
+  /* fits "the idea" on one line; "Catch" sits above it as the focal word. */
+  max-width: 16ch;
+}
+/* "catch" — the focal word carried by SCALE + WEIGHT contrast, with a quiet
+   warm accent rather than a saturated colour blob. Reduced from the previous
+   screen-filling 96px to a confident-but-readable editorial size. */
+.tagline .catch {
+  display: block;
+  font-weight: 700;
+  font-size: clamp(34px, 4.4vw, 62px);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  /* the focal word in the vivid lemon-yellow — THE accent moment up here.
+     Kept as #ece80e on the paper ground, seated on a crisp ink edge so it
+     reads cleanly and still pops (see .titleIlsan). */
+  color: var(--hand-yellow);
+  /* a soft warm bloom so the lemon word glows off the charcoal ground */
+  text-shadow: 0 0 22px rgba(236, 232, 14, 0.35);
+  margin-bottom: 0.08em;
+}
+.tagline .spk {
+  /* "idea" stays in the quiet cream — no second accent colour */
+  color: rgba(243, 238, 228, 0.66);
+}
+
+/* ---- date / venue: bottom-right ---- */
+.heroMeta {
+  position: absolute;
+  right: clamp(18px, 4vw, 64px);
+  bottom: clamp(20px, 3vw, 40px);
+  z-index: 6;
+  text-align: right;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--hand-cream);
+  line-height: 1.4;
+}
+.heroMeta .big {
+  display: block;
+  font-size: clamp(15px, 1.8vw, 24px);
+}
+.heroMeta .sub {
+  display: block;
+  font-size: clamp(11px, 1vw, 14px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hand-coral);
+}
+
+/* =============================================================
+   HERO INTRO BLOCK — subtitle, desc, date/venue facts, and the TWO
+   per-day registration CTAs. Sits mid-left, BELOW the tagline and ABOVE
+   the bottom-left title, so it never collides with the corner hand
+   (bottom-right) or the index columns (mid-right).
+   ============================================================= */
+.heroIntro {
+  /* flows directly under the title inside .heroLeft */
+  max-width: 46ch;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1vw, 12px);
+}
+.heroSubtitle {
+  margin: 0;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(18px, 2.2vw, 30px);
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+  color: var(--hand-cream);
+}
+.heroDesc {
+  margin: 0;
+  font-size: clamp(13px, 1.1vw, 16px);
+  line-height: 1.6;
+  color: rgba(243, 238, 228, 0.78);
+  max-width: 42ch;
+}
+.heroFacts {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 4px;
+  font-family: var(--hand-condensed), var(--font-display);
+}
+.heroFactDate {
+  font-weight: 600;
+  font-size: clamp(12px, 1.05vw, 15px);
+  letter-spacing: 0.02em;
+  color: var(--hand-yellow-ink);
+}
+.heroFactVenue {
+  font-weight: 600;
+  font-size: clamp(11px, 0.95vw, 13px);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hand-accent);
+}
+.heroCtas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: clamp(6px, 1vw, 12px);
+  pointer-events: auto;
+}
+
+/* the per-day CTAs reused in the hero AND near the venue block. D1 is the loud
+   solid lemon pill (the page's one punch); D2 is a quiet outlined twin so the
+   pair reads as two distinct registrations without two loud blocks. */
+.heroCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(13px, 1.2vw, 16px);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 11px 20px;
+  border: 1px solid var(--hand-yellow);
+  white-space: nowrap;
+  transition:
+    background var(--dur-touch, 240ms) ease,
+    color var(--dur-touch, 240ms) ease,
+    border-color var(--dur-touch, 240ms) ease,
+    transform var(--dur-touch, 240ms) ease;
+}
+.heroCta span {
+  transition: transform var(--dur-touch, 240ms) ease;
+}
+.heroCta:hover span {
+  transform: translateX(3px);
+}
+.heroCtaD1 {
+  background: var(--hand-yellow);
+  color: var(--hand-ink);
+}
+.heroCtaD1:hover {
+  background: transparent;
+  color: var(--hand-yellow);
+  transform: translateY(-2px);
+}
+.heroCtaD2 {
+  background: transparent;
+  color: var(--hand-yellow);
+  border-color: var(--hand-yellow);
+}
+.heroCtaD2:hover {
+  background: var(--hand-yellow);
+  color: var(--hand-ink);
+  transform: translateY(-2px);
+}
+
+/* ---- speaker index columns: MID-RIGHT stack ---- */
+.indexStack {
+  position: absolute;
+  z-index: 6;
+  right: var(--hero-gutter);
+  /* pinned to the UPPER-right, just below the meta rail — clear of the
+     bottom-left text column and the lower-right corner hand. */
+  top: clamp(108px, 15vh, 150px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.4vw, 30px);
+  pointer-events: none;
+}
+.index {
+  position: relative;
+}
+.indexCol {
+  max-width: 196px;
+  text-align: right;
+}
+.indexCol .indexHead {
+  justify-content: flex-end;
+}
+.indexHead {
+  position: relative;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(12px, 1.15vw, 15px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hand-cream);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  align-items: baseline;
+  padding-bottom: 7px;
+  border-bottom: 1px solid var(--hand-accent);
+  margin-bottom: 9px;
+  cursor: pointer;
+  outline: none;
+  transition: transform 280ms var(--ease-heat, ease);
+}
+.indexHead:focus-visible {
+  outline: 1px solid var(--hand-accent);
+  outline-offset: 4px;
+}
+.indexHead.lit {
+  transform: translateX(3px);
+}
+
+/* mote ignited behind a hovered/focused DAY label — sits behind the text,
+   pops from 0 → full as the hand reaches it */
+.litStar {
+  position: absolute;
+  top: -10px;
+  right: -14px;
+  z-index: -1;
+  pointer-events: none;
+  transform: scale(0.7);
+  opacity: 0;
+  filter: drop-shadow(0 0 10px rgba(216, 165, 52, 0.45));
+  transition:
+    transform 320ms var(--ease-heat, ease),
+    opacity 300ms ease;
+}
+.litStar .mote {
+  position: static;
+  animation: none;
+}
+.indexHead.lit .litStar {
+  transform: scale(1);
+  opacity: 0.85;
+}
+.indexHead .dayno {
+  color: var(--hand-yellow-ink);
+}
+.indexList {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+.indexItem {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(12px, 1.05vw, 15px);
+  letter-spacing: 0.02em;
+  color: var(--hand-cream);
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: baseline;
+  gap: 8px;
+  text-transform: uppercase;
+  cursor: pointer;
+  outline: none;
+  transition:
+    transform 200ms var(--ease-heat, ease),
+    color 200ms ease;
+}
+/* a fine zero-padded index number riding each entry — the studio "marker
+   system". Tabular, dimmed amber, so the list reads catalogued/designed. */
+.idxNum {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.78em;
+  letter-spacing: 0.06em;
+  color: var(--hand-accent);
+  opacity: 0.7;
+  transition: color 200ms ease, opacity 200ms ease;
+}
+.indexItem.lit .idxNum {
+  color: var(--hand-yellow-ink);
+  opacity: 1;
+}
+.indexItem::before {
+  content: "";
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--hand-yellow-ink);
+  transform: translateY(-2px);
+  opacity: 0;
+  transition:
+    opacity 260ms ease,
+    transform 260ms var(--ease-heat, ease);
+}
+.indexItem:focus-visible {
+  outline: 1px solid var(--hand-accent);
+  outline-offset: 3px;
+}
+.indexItem.lit {
+  transform: translateX(4px);
+  color: var(--hand-yellow-ink);
+}
+.indexItem.lit::before {
+  opacity: 1;
+  transform: translateY(-2px);
+}
+
+/* =============================================================
+   IDEA FIELD — the floating, pokeable "ideas" the corner hand jabs.
+   Each is a focusable button placed by % within the hero. At rest it
+   gently floats + breathes; on poke impact (.ideaReacted) it pops, a
+   spark burst fires, and a short label flashes in.
+   ============================================================= */
+.ideaField {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none; /* the buttons themselves re-enable pointer events */
+}
+.idea {
+  --idea-size: 30px;
+  position: absolute;
+  /* placed by left/top (set inline); center the hit area on that point */
+  transform: translate(-50%, -50%);
+  width: calc(var(--idea-size) + 28px);
+  height: calc(var(--idea-size) + 28px);
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  pointer-events: auto;
+  display: grid;
+  place-items: center;
+  /* a gentle, de-synced float so the ideas drift like they're suspended */
+  animation: ideaFloat 7s ease-in-out infinite both;
+  -webkit-tap-highlight-color: transparent;
+}
+.idea:nth-child(2) {
+  animation-duration: 8.4s;
+  animation-delay: -2s;
+}
+.idea:nth-child(3) {
+  animation-duration: 6.2s;
+  animation-delay: -3.4s;
+}
+.idea:nth-child(4) {
+  animation-duration: 9s;
+  animation-delay: -1.2s;
+}
+@keyframes ideaFloat {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -8px;
+  }
+}
+.idea:focus-visible {
+  outline: none;
+}
+.idea:focus-visible .ideaGlow {
+  outline: 1.5px solid var(--hand-yellow-ink);
+  outline-offset: 6px;
+  border-radius: 50%;
+}
+
+/* the glint itself — a Mote. It pops on reaction then settles brighter. */
+.ideaGlow {
+  position: relative;
+  display: grid;
+  place-items: center;
+  transition: transform 240ms var(--ease-heat, cubic-bezier(0.22, 1, 0.36, 1));
+}
+.ideaGlow .mote {
+  position: static;
+}
+.idea:hover .ideaGlow {
+  transform: scale(1.12);
+}
+/* the POP on impact — a quick punch out then settle, driven by re-adding the
+   .ideaReacted class (React bumps a counter to retrigger). */
+.idea.ideaReacted .ideaGlow {
+  animation: ideaPop 480ms var(--ease-heat, cubic-bezier(0.22, 1, 0.36, 1)) both;
+}
+@keyframes ideaPop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.55);
+  }
+  100% {
+    transform: scale(1.18);
+  }
+}
+/* once caught, the idea reads "lit" — a steady warm halo behind the glint */
+.idea.ideaReacted .ideaGlow::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(216, 165, 52, 0.32) 0%,
+    rgba(216, 165, 52, 0) 70%
+  );
+  z-index: -1;
+}
+
+/* SPARK BURST — six little rays that shoot outward on impact */
+.ideaBurst {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.burstRay {
+  position: absolute;
+  width: 2px;
+  height: 12px;
+  border-radius: 2px;
+  background: var(--hand-yellow-ink);
+  transform: rotate(var(--ray, 0deg)) translateY(0) scaleY(0);
+  transform-origin: center 6px;
+  opacity: 0;
+}
+.idea.ideaReacted .burstRay {
+  animation: burst 520ms var(--ease-heat, cubic-bezier(0.16, 1, 0.3, 1)) both;
+}
+@keyframes burst {
+  0% {
+    transform: rotate(var(--ray, 0deg)) translateY(0) scaleY(0.2);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: rotate(var(--ray, 0deg)) translateY(-22px) scaleY(1);
+    opacity: 0;
+  }
+}
+
+/* the short tagline that flashes in on a successful poke */
+.ideaLabel {
+  position: absolute;
+  top: calc(50% + var(--idea-size) * 0.6 + 8px);
+  left: 50%;
+  transform: translate(-50%, 4px);
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(13px, 1.3vw, 17px);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: var(--hand-yellow-ink);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+.idea.ideaReacted .ideaLabel {
+  animation: labelFlash 1500ms ease both;
+}
+@keyframes labelFlash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 6px);
+  }
+  18% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  72% {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -2px);
+  }
+}
+
+/* ---- hint line: how to play, sits low-left of the idea field ---- */
+.hint {
+  position: absolute;
+  left: var(--hero-gutter);
+  top: clamp(108px, 15vh, 150px);
+  z-index: 5;
+  margin: 0;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(11px, 1vw, 14px);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(243, 238, 228, 0.55);
+  pointer-events: none;
+}
+.hint span {
+  color: var(--hand-yellow-ink);
+}
+
+/* =============================================================
+   SECTIONS — below the hero
+   ============================================================= */
+.section {
+  position: relative;
+  padding: clamp(56px, 9vw, 130px) clamp(20px, 5vw, 80px);
+}
+.inner {
+  max-width: 1280px;
+  margin-inline: auto;
+}
+
+.sectionDark {
+  background: var(--hand-dark);
+  color: var(--hand-cream);
+}
+.sectionCream {
+  background: var(--hand-bg-2);
+  color: var(--hand-cream);
+}
+
+.kicker {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(12px, 1.1vw, 14px);
+  letter-spacing: 0.1em;
+  /* these are short phrases ("Catch the lineup"), not tracking labels — natural case */
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  margin-bottom: 22px;
+  color: var(--hand-coral);
+}
+/* a small, still dot rather than a twinkling star glyph — quiet and editorial */
+.kicker::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hand-accent);
+  flex: 0 0 auto;
+  transform: translateY(-1px);
+}
+.kickerOnDark {
+  color: var(--hand-accent);
+}
+.kickerCenter {
+  justify-content: center;
+}
+
+/* spark-accented section titles: a mote tucked at the end of the heading,
+   pulsing, so each major section head echoes the hero's caught spark */
+.sparkTitle {
+  position: relative;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.18em;
+}
+.sparkTitleCenter {
+  display: flex;
+  justify-content: center;
+}
+.titleStar {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+  margin-top: 0.12em;
+  /* a faint, steady warm halo — no spin, no scale twinkle */
+  filter: drop-shadow(0 0 8px rgba(216, 165, 52, 0.35));
+  opacity: 0.9;
+}
+.titleStar .mote {
+  position: static;
+  animation: none;
+}
+.lineupHeadMain {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.lineupHeadMain .kicker {
+  margin-bottom: 0;
+}
+
+/* the focal "catch" word reused in section headings — coral, heavier */
+.catchWord {
+  color: var(--hand-coral);
+}
+
+/* ---------- intro ---------- */
+.intro {
+  background: var(--hand-bg-2);
+}
+.introLead {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  text-transform: none;
+  font-size: clamp(34px, 5vw, 68px);
+  line-height: 0.98;
+  letter-spacing: -0.02em;
+  color: var(--hand-cream);
+  /* wide enough to keep "the sparkling idea" intact on a line under "Catch" */
+  max-width: 18ch;
+}
+.introLead .catch {
+  color: var(--hand-yellow);
+  /* a soft warm bloom so the lemon word glows off the charcoal ground */
+  text-shadow: 0 0 22px rgba(236, 232, 14, 0.35);
+}
+.introLead .spk {
+  color: var(--hand-cream);
+}
+.introBody {
+  margin-top: clamp(18px, 2.4vw, 34px);
+  font-size: clamp(16px, 1.4vw, 20px);
+  line-height: 1.75;
+  color: var(--hand-cream);
+  opacity: 0.9;
+  max-width: 52ch;
+}
+.conceptRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+  margin-top: clamp(34px, 4vw, 56px);
+}
+.conceptCard {
+  /* dark concept panel on the charcoal section — a lifted near-black surface */
+  background: rgba(243, 238, 228, 0.04);
+  color: var(--hand-cream);
+  padding: clamp(22px, 2.4vw, 34px);
+  border: 1px solid rgba(243, 238, 228, 0.14);
+}
+/* the second card is differentiated quietly: a thin warm accent rule on the
+   left edge rather than a full amber fill. */
+.conceptCard.alt {
+  background: rgba(243, 238, 228, 0.04);
+  color: var(--hand-cream);
+  border-color: rgba(243, 238, 228, 0.14);
+  border-left: 2px solid var(--hand-accent);
+}
+.conceptEn {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(20px, 2.4vw, 34px);
+  letter-spacing: -0.005em;
+  text-transform: uppercase;
+  color: var(--hand-accent);
+}
+.conceptTitle {
+  font-weight: 800;
+  font-size: clamp(16px, 1.5vw, 20px);
+  margin-top: 6px;
+  margin-bottom: 12px;
+}
+.conceptBody {
+  font-size: clamp(14px, 1.1vw, 16px);
+  line-height: 1.65;
+  opacity: 0.92;
+}
+.conceptDate {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hand-yellow-ink);
+  margin-top: 2px;
+}
+/* the per-day registration explainer note under the about cards */
+.aboutNote {
+  margin-top: clamp(22px, 2.6vw, 36px);
+  padding: clamp(14px, 1.6vw, 20px) clamp(16px, 1.8vw, 22px);
+  border-left: 2px solid var(--hand-accent);
+  background: rgba(243, 238, 228, 0.04);
+  font-size: clamp(13px, 1.05vw, 15px);
+  line-height: 1.7;
+  color: rgba(243, 238, 228, 0.82);
+  max-width: 72ch;
+}
+
+/* =============================================================
+   AUDIENCE — 추천 대상. Two cards (DAY 1 / DAY 2) on a lifted dark ground.
+   ============================================================= */
+.audience {
+  background: var(--hand-dark);
+  color: var(--hand-cream);
+}
+.audGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(16px, 2vw, 28px);
+  margin-top: clamp(28px, 3.4vw, 48px);
+}
+.audCard {
+  background: rgba(243, 238, 228, 0.04);
+  border: 1px solid rgba(243, 238, 228, 0.14);
+  padding: clamp(22px, 2.4vw, 34px);
+}
+.audCard.alt {
+  border-left: 2px solid var(--hand-accent);
+}
+.audDay {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(14px, 1.4vw, 18px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hand-yellow-ink);
+  margin-bottom: 8px;
+}
+.audHeading {
+  font-weight: 800;
+  font-size: clamp(17px, 1.7vw, 22px);
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+  margin: 0 0 16px;
+}
+.audList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.audList li {
+  position: relative;
+  padding-left: 20px;
+  font-size: clamp(14px, 1.1vw, 16px);
+  line-height: 1.6;
+  color: rgba(243, 238, 228, 0.82);
+}
+.audList li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--hand-yellow-ink);
+}
+.conceptTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin-top: 16px;
+}
+.conceptTags li {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+  padding: 5px 10px;
+  border: 1.5px solid currentColor;
+  text-transform: uppercase;
+}
+
+/* ---------- lineup ---------- */
+.lineupHead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: clamp(30px, 4vw, 52px);
+}
+.lineupTitle {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(38px, 5.2vw, 76px);
+  line-height: 0.92;
+  letter-spacing: -0.025em;
+  text-transform: none;
+  /* flat warm off-white on the dark section — quiet and legible */
+  color: var(--hand-cream);
+}
+/* Timetable reuses .lineupTitle on the dark ground → flat warm off-white. */
+.lineupTitleDark {
+  color: var(--hand-cream);
+}
+.lineupCount {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(13px, 1.2vw, 16px);
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: var(--hand-coral);
+}
+
+.dayGroup + .dayGroup {
+  margin-top: clamp(48px, 6vw, 90px);
+}
+.dayLabel {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(243, 238, 228, 0.2);
+}
+.dayLabel .dn {
+  font-size: clamp(24px, 3vw, 40px);
+  color: var(--hand-cream);
+}
+.dayLabel .dd {
+  font-size: clamp(13px, 1.2vw, 16px);
+  color: var(--hand-coral);
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(16px, 2vw, 26px);
+}
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* dark card on the charcoal lineup section — a lifted near-black surface */
+  background: rgba(243, 238, 228, 0.04);
+  color: var(--hand-cream);
+  border: 1px solid rgba(243, 238, 228, 0.14);
+  overflow: hidden;
+  transition:
+    transform var(--dur-touch, 240ms) var(--ease-heat, ease),
+    box-shadow var(--dur-touch, 240ms) var(--ease-heat, ease);
+}
+.card:hover {
+  transform: translateY(-4px);
+  /* a soft, neutral lift — gallery-grade, no hard poster offset */
+  box-shadow: 0 14px 34px rgba(0, 0, 0, 0.5);
+}
+/* a quiet point of light appears at the card's top-right on hover — the
+   "catch" motif, restrained: a small soft dot, no glyph, no glow, no spin. */
+.card::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--hand-accent);
+  box-shadow: 0 0 8px rgba(200, 160, 106, 0.45);
+  opacity: 0;
+  transform: scale(0.6);
+  transition:
+    opacity 260ms ease,
+    transform 300ms var(--ease-heat, ease);
+  pointer-events: none;
+}
+.card:hover::after {
+  opacity: 1;
+  transform: scale(1);
+}
+.cardTop {
+  display: flex;
+  gap: 16px;
+  padding: clamp(16px, 1.8vw, 24px);
+  align-items: flex-start;
+  border-bottom: 1px solid rgba(243, 238, 228, 0.14);
+}
+.cardTime {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(13px, 1.2vw, 16px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  /* quiet outlined chip in the warm accent — not a filled colour block */
+  background: transparent;
+  color: var(--hand-accent-deep);
+  border: 1px solid var(--hand-accent);
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+.cardStudioWrap {
+  flex: 1;
+  min-width: 0;
+}
+.cardStudio {
+  font-weight: 800;
+  font-size: clamp(18px, 2vw, 26px);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+.cardStudioEn {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hand-coral-deep);
+  margin-top: 3px;
+}
+.cardPortrait {
+  width: clamp(54px, 6vw, 76px);
+  height: clamp(54px, 6vw, 76px);
+  flex: 0 0 auto;
+  border: 1px solid rgba(243, 238, 228, 0.16);
+  object-fit: cover;
+  background: var(--hand-bg-2);
+}
+.cardPortraitPh {
+  width: clamp(54px, 6vw, 76px);
+  height: clamp(54px, 6vw, 76px);
+  flex: 0 0 auto;
+  border: 1px solid rgba(243, 238, 228, 0.16);
+  background: rgba(243, 238, 228, 0.08);
+  display: grid;
+  place-items: center;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 26px);
+  text-transform: uppercase;
+  color: var(--hand-accent-deep);
+}
+.cardBody {
+  padding: clamp(16px, 1.8vw, 24px);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+.cardSession {
+  font-weight: 800;
+  font-size: clamp(17px, 1.7vw, 22px);
+  line-height: 1.32;
+  letter-spacing: -0.01em;
+  white-space: pre-line;
+}
+.cardDesc {
+  font-size: clamp(13.5px, 1.05vw, 15px);
+  line-height: 1.65;
+  color: rgba(243, 238, 228, 0.78);
+}
+.cardName {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 14px;
+}
+.cardName b {
+  font-weight: 800;
+  font-size: clamp(15px, 1.3vw, 17px);
+}
+.cardName span {
+  color: rgba(243, 238, 228, 0.6);
+  font-size: 13px;
+}
+.creds {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(243, 238, 228, 0.16);
+}
+.creds li {
+  position: relative;
+  padding-left: 18px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: rgba(243, 238, 228, 0.72);
+}
+.creds li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--hand-accent);
+}
+/* bounded 대표작 strip: fixed-height horizontal thumbnails, scroll if many. */
+.works {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  height: clamp(96px, 11vw, 132px);
+  padding: 10px;
+  border-top: 1px solid rgba(243, 238, 228, 0.14);
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.poster {
+  display: block;
+  height: 100%;
+  width: auto;
+  flex: 0 0 auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--hand-bg-2);
+  border: 1px solid rgba(243, 238, 228, 0.16);
+  scroll-snap-align: start;
+}
+
+/* ---------- timetable ---------- */
+.timetable {
+  background: var(--hand-bg-2);
+  color: var(--hand-cream);
+}
+.timetable .kicker {
+  color: var(--hand-accent);
+}
+.timetable .kicker::before {
+  background: var(--hand-accent);
+}
+.ttGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(24px, 4vw, 56px);
+  margin-top: clamp(28px, 3vw, 44px);
+}
+.ttCol h3 {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 800;
+  font-size: clamp(20px, 2vw, 28px);
+  letter-spacing: 0.02em;
+  text-transform: none;
+  margin-bottom: 4px;
+}
+.ttColDate {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hand-accent);
+  opacity: 0.85;
+  margin-bottom: 16px;
+}
+.ttRow {
+  display: grid;
+  grid-template-columns: minmax(96px, auto) 1fr;
+  gap: 14px;
+  align-items: baseline;
+  padding: 13px 0;
+  border-top: 1px solid rgba(243, 238, 228, 0.16);
+}
+.ttRow:last-child {
+  border-bottom: 1px solid rgba(243, 238, 228, 0.16);
+}
+.ttTime {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(14px, 1.3vw, 17px);
+  letter-spacing: 0.01em;
+  color: var(--hand-accent);
+}
+.ttSession b {
+  display: block;
+  font-weight: 800;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.35;
+  white-space: pre-line;
+}
+.ttSession span {
+  display: block;
+  font-size: 13px;
+  color: rgba(243, 238, 228, 0.6);
+  margin-top: 3px;
+}
+
+/* ---- detailed program rows (reg / break / enriched session) ---- */
+.ttRows {
+  display: flex;
+  flex-direction: column;
+}
+.ttRow.ttRowMeta {
+  align-items: center;
+}
+.ttRowSession {
+  align-items: start;
+}
+/* reg / break marker rows — quiet, single line, with a small kind tag */
+.ttMetaLabel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: clamp(13px, 1.05vw, 15px);
+  color: rgba(243, 238, 228, 0.66);
+}
+.ttKindTag {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--hand-accent-deep);
+  border: 1px solid var(--hand-accent);
+  padding: 2px 7px;
+  white-space: nowrap;
+}
+/* enriched session: portrait + studio/speaker meta, then title, desc,
+   credentials and an optional work-thumbnail strip. */
+.ttSessionHead {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.ttPortrait {
+  width: clamp(46px, 5vw, 60px);
+  height: clamp(46px, 5vw, 60px);
+  flex: 0 0 auto;
+  object-fit: cover;
+  border: 1px solid rgba(243, 238, 228, 0.16);
+  background: var(--hand-bg-2);
+}
+.ttPortraitPh {
+  width: clamp(46px, 5vw, 60px);
+  height: clamp(46px, 5vw, 60px);
+  flex: 0 0 auto;
+  border: 1px solid rgba(243, 238, 228, 0.16);
+  background: rgba(243, 238, 228, 0.08);
+  display: grid;
+  place-items: center;
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(16px, 1.8vw, 22px);
+  text-transform: uppercase;
+  color: var(--hand-accent-deep);
+}
+.ttSessionMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.ttStudio {
+  font-weight: 800;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+.ttStudioEn {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--hand-coral-deep);
+}
+.ttSpeaker {
+  font-size: 12.5px;
+  color: rgba(243, 238, 228, 0.66);
+  margin-top: 2px;
+}
+.ttTitle {
+  display: block;
+  font-weight: 800;
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.35;
+}
+.ttDesc {
+  margin: 6px 0 0;
+  font-size: clamp(13px, 1.02vw, 14.5px);
+  line-height: 1.62;
+  color: rgba(243, 238, 228, 0.74);
+}
+.ttCreds {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: 10px;
+}
+.ttCreds li {
+  position: relative;
+  padding-left: 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: rgba(243, 238, 228, 0.66);
+}
+.ttCreds li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.6em;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--hand-accent);
+}
+.ttWorks {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+  height: clamp(74px, 9vw, 104px);
+  margin-top: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: thin;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.ttWork {
+  display: block;
+  height: 100%;
+  width: auto;
+  flex: 0 0 auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--hand-bg-2);
+  border: 1px solid rgba(243, 238, 228, 0.16);
+  scroll-snap-align: start;
+}
+
+/* ---------- venue ---------- */
+.venue {
+  background: var(--hand-bg-2);
+}
+.venueGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: clamp(28px, 4vw, 60px);
+  align-items: center;
+}
+.venueBig {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(32px, 4.6vw, 64px);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  color: var(--hand-cream);
+}
+.venueBig .yr {
+  color: var(--hand-coral);
+  display: block;
+}
+.venueFacts {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.fact {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 2px solid rgba(243, 238, 228, 0.2);
+}
+.fact:last-child {
+  border-bottom: 2px solid rgba(243, 238, 228, 0.2);
+}
+.factK {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--hand-coral);
+  white-space: nowrap;
+}
+.factV {
+  font-weight: 700;
+  text-align: right;
+  color: var(--hand-cream);
+  /* facts can be long (address / parking) — allow them to wrap cleanly */
+  max-width: 62ch;
+}
+
+/* the per-day registration CTAs repeated near the venue block */
+.venueCtas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: clamp(28px, 3.4vw, 48px);
+}
+
+/* =============================================================
+   BENEFITS — 참가 혜택. Grouped lists on the lifted charcoal ground.
+   ============================================================= */
+.benefits {
+  background: var(--hand-dark);
+  color: var(--hand-cream);
+}
+.benGroups {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 3.4vw, 48px);
+  margin-top: clamp(28px, 3.4vw, 48px);
+}
+.benHeading {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(17px, 1.7vw, 22px);
+  letter-spacing: 0.01em;
+  margin: 0 0 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--hand-line);
+  color: var(--hand-cream);
+}
+.benItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(14px, 1.8vw, 24px);
+}
+.benItem {
+  background: rgba(243, 238, 228, 0.04);
+  border: 1px solid rgba(243, 238, 228, 0.14);
+  border-top: 2px solid var(--hand-accent);
+  padding: clamp(16px, 1.8vw, 22px);
+}
+.benItemTitle {
+  display: block;
+  font-weight: 800;
+  font-size: clamp(15px, 1.3vw, 17px);
+  line-height: 1.35;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+}
+.benItemBody {
+  margin: 0;
+  font-size: clamp(13px, 1.05vw, 15px);
+  line-height: 1.62;
+  color: rgba(243, 238, 228, 0.76);
+}
+
+/* =============================================================
+   FAQ — accordion. Hairline rows; click toggles a single open answer.
+   ============================================================= */
+.faq {
+  background: var(--hand-bg-2);
+  color: var(--hand-cream);
+}
+.faq .kicker {
+  color: var(--hand-accent);
+}
+.faq .kicker::before {
+  background: var(--hand-accent);
+}
+.faqList {
+  margin-top: clamp(24px, 3vw, 40px);
+  border-top: 1px solid var(--hand-line);
+}
+.faqItem {
+  border-bottom: 1px solid var(--hand-line);
+}
+.faqQ {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: clamp(16px, 1.8vw, 22px) 0;
+  cursor: pointer;
+  color: var(--hand-cream);
+  -webkit-tap-highlight-color: transparent;
+}
+.faqQ:focus-visible {
+  outline: 1px solid var(--hand-accent);
+  outline-offset: 3px;
+}
+.faqQText {
+  font-weight: 800;
+  font-size: clamp(15px, 1.4vw, 19px);
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+.faqMark {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(22px, 2.2vw, 30px);
+  line-height: 1;
+  flex: 0 0 auto;
+  color: var(--hand-yellow-ink);
+}
+.faqA {
+  margin: 0;
+  padding: 0 clamp(34px, 3vw, 46px) clamp(18px, 2vw, 24px) 0;
+  font-size: clamp(13.5px, 1.1vw, 16px);
+  line-height: 1.72;
+  color: rgba(243, 238, 228, 0.8);
+}
+
+/* ---------- apply CTA ---------- */
+.apply {
+  background: var(--hand-dark);
+  color: var(--hand-cream);
+  text-align: center;
+}
+.applyTitle {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(34px, 5vw, 72px);
+  line-height: 0.96;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--hand-cream);
+}
+.applyTitle .catch {
+  color: var(--hand-yellow);
+  /* a soft warm bloom so the lemon word glows off the charcoal ground */
+  text-shadow: 0 0 22px rgba(236, 232, 14, 0.35);
+}
+.applyTitle .spk {
+  color: var(--hand-cream);
+}
+.applySub {
+  margin: clamp(16px, 2vw, 24px) auto clamp(28px, 3vw, 40px);
+  font-size: clamp(15px, 1.3vw, 18px);
+  line-height: 1.7;
+  max-width: 44ch;
+  opacity: 0.92;
+}
+.applyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  /* the page's one loud CTA: a solid vivid-yellow pill on the charcoal ground —
+     the high-contrast move, deliberate and singular. Dark ink on yellow keeps
+     it legible and premium; calm hover inverts to a yellow outline on dark. */
+  background: var(--hand-yellow);
+  color: var(--hand-ink);
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 600;
+  font-size: clamp(16px, 1.6vw, 22px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 15px 34px;
+  border: 1px solid var(--hand-yellow);
+  transition:
+    background var(--dur-touch, 240ms) ease,
+    color var(--dur-touch, 240ms) ease,
+    border-color var(--dur-touch, 240ms) ease,
+    transform var(--dur-touch, 240ms) ease;
+}
+.applyBtn:hover {
+  background: transparent;
+  border-color: var(--hand-yellow);
+  color: var(--hand-yellow);
+  transform: translateY(-2px);
+}
+.applyBtn span {
+  font-size: 1em;
+  transition: transform var(--dur-touch, 240ms) ease;
+}
+.applyBtn:hover span {
+  transform: translateX(3px);
+}
+
+/* ---------- footer ---------- */
+.footer {
+  background: var(--hand-dark);
+  color: var(--hand-cream);
+  padding: clamp(40px, 5vw, 64px) clamp(20px, 5vw, 80px);
+}
+.footerInner {
+  max-width: 1280px;
+  margin-inline: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+.footerMark {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-weight: 700;
+  font-size: clamp(28px, 4vw, 52px);
+  letter-spacing: -0.02em;
+  text-transform: none;
+}
+.footerMark em {
+  font-style: normal;
+  color: var(--hand-coral);
+}
+.footerMeta {
+  font-family: var(--hand-condensed), var(--font-display);
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  line-height: 1.8;
+  text-align: right;
+  text-transform: none;
+  opacity: 0.85;
+}
+.footerMeta a:hover {
+  color: var(--hand-coral);
+}
+
+/* =============================================================
+   RESPONSIVE
+   ============================================================= */
+@media (max-width: 880px) {
+  .conceptRow,
+  .cards,
+  .ttGrid,
+  .audGrid {
+    grid-template-columns: 1fr;
+  }
+  .venueGrid {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+  .benItems {
+    grid-template-columns: 1fr;
+  }
+  .factV {
+    text-align: left;
+  }
+  .fact {
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+/* hero stays one viewport on mobile; tighten the overlay placement */
+@media (max-width: 560px) {
+  .hero {
+    /* smaller arm + hand on phones — still clearly an arm+hand reaching from
+       the corner. The single rigid box shrinks; the rAF reads the rendered box
+       width so the rest reach / pivot track automatically. Height follows the
+       520/300 viewBox aspect via --hand-h. */
+    --hand-w: clamp(118px, 34vw, 180px);
+  }
+  /* pull the idea field up into the clear upper band so targets don't collide
+     with the bottom-left title / index columns on a 390px screen. */
+  .idea {
+    --idea-size: 24px;
+  }
+  .indexStack {
+    top: clamp(52px, 9vh, 92px);
+    gap: clamp(12px, 4vw, 20px);
+  }
+  .indexCol {
+    max-width: 122px;
+  }
+  .indexItem {
+    font-size: 12px;
+  }
+  .indexHead {
+    font-size: 11px;
+  }
+  /* keep the meta rail uncluttered on phones — drop the right field codes,
+     keep only the left index code riding the rule. */
+  .metaTags {
+    display: none;
+  }
+  .metaRail {
+    top: clamp(46px, 12vw, 64px);
+  }
+  /* the left column still anchors bottom-left; just tighten the internal
+     rhythm and the per-piece scale for a 390px screen. The single flow column
+     means the title + intro can never overlap, so no manual top/bottom pinning
+     per piece is needed anymore. */
+  .heroLeft {
+    bottom: clamp(16px, 5vw, 30px);
+    max-width: min(82vw, 360px);
+    gap: clamp(8px, 2.4vw, 14px);
+  }
+  .tagline {
+    font-size: clamp(15px, 5vw, 24px);
+    max-width: 9ch;
+  }
+  .tagline .catch {
+    font-size: clamp(34px, 12vw, 56px);
+  }
+  /* a controlled wrap ("Design Summer" / "Ilsan") is allowed on phones rather
+     than overflowing the narrow column. */
+  .display {
+    white-space: normal;
+    line-height: 0.96;
+    font-size: clamp(30px, 10vw, 52px);
+  }
+  /* compact hero intro: drop the long desc, keep subtitle + facts + the two
+     per-day CTAs. */
+  .heroDesc {
+    display: none;
+  }
+  .heroSubtitle {
+    font-size: clamp(16px, 5.4vw, 22px);
+  }
+  .heroCta {
+    font-size: 12px;
+    padding: 9px 14px;
+    gap: 6px;
+  }
+  .heroCtas {
+    gap: 8px;
+  }
+  .footerInner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .footerMeta {
+    text-align: left;
+  }
+}
+
+/* =============================================================
+   REDUCED MOTION — replace pulse/parallax with static state
+   ============================================================= */
+@media (prefers-reduced-motion: reduce) {
+  .mote {
+    animation: none;
+    opacity: 1;
+    transform: scale(1);
+  }
+  .moteField .mote {
+    animation: none;
+    translate: 0 0;
+  }
+  /* the arm rests peeking from the corner: JS writes the rest --aim/--reach
+     once and skips the rAF; --breath stays neutral so the arm resolves to a
+     static retracted pose, still rooted at the corner. --curl/--poke default to
+     0 (OPEN-hand peek) and are flipped to 1 instantly on a click (point state),
+     since the crossfade is pure opacity there is no animation to suppress. */
+  .armRoot,
+  .handBox,
+  .forearmSvg,
+  .forearmPath {
+    will-change: auto;
+  }
+  .handBox svg :global(.openLayer),
+  .handBox svg :global(.pointLayer) {
+    will-change: auto;
+  }
+  /* sparks still fire on click (a reaction without travel/poke motion) but
+     don't animate their rays — show them briefly at full extent instead. */
+  .sparkRay {
+    animation: none;
+    opacity: 1;
+    transform: rotate(var(--ray, 0deg)) translateY(-12px) scaleY(1);
+  }
+  /* ideas don't float; reactions are instant (no pop/burst/label motion).
+     Clicking a target still lights it — the glow stays at its caught state. */
+  .idea {
+    animation: none;
+  }
+  .idea.ideaReacted .ideaGlow,
+  .idea.ideaReacted .ideaLabel,
+  .idea.ideaReacted .burstRay {
+    animation: none;
+  }
+  .idea.ideaReacted .ideaGlow {
+    transform: scale(1.18);
+  }
+  .idea.ideaReacted .ideaLabel {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+  .card {
+    transition: none;
+  }
+  .card::after {
+    transition: none;
+  }
+  .kicker::before,
+  .titleStar {
+    animation: none;
+    transform: none;
+    opacity: 1;
+  }
+  .indexHead,
+  .indexHead.lit,
+  .indexItem,
+  .indexItem.lit,
+  .indexItem.lit::before,
+  .litStar {
+    transition: none;
+    transform: none;
+  }
+  .indexHead.lit .litStar {
+    transform: none;
+    opacity: 1;
+  }
+}

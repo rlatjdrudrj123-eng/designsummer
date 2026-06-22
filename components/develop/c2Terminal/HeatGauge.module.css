@@ -1,0 +1,36 @@
+.gauge {
+  width: 100%;
+}
+
+.gaugeHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.gaugeLabel {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--c2-dim);
+  text-transform: uppercase;
+}
+
+.gaugeValue {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--c2-hot);
+  font-variant-numeric: tabular-nums;
+}
+
+.gaugeUnit {
+  font-size: 13px;
+  margin-left: 2px;
+  color: var(--c2-amber-dim);
+}
+
+.gaugeCanvas {
+  display: block;
+  width: 100%;
+  height: 26px;
+}

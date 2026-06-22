@@ -1,0 +1,89 @@
+/* [SHEET 변형] 스코프 토큰 오버라이드 (= heatmap 변형과 동일한 구조).
+   원본의 열 액센트 토큰(--heat-core/main/mid/edge: cream→orange→red 계열)을
+   vivid spectral 팔레트(빨강/파랑/노랑)로 교체.
+   이 div 안의 모든 클론 섹션(버튼·룰·도트·틱·헤어라인)이 스펙트럼 색으로 칠해진다.
+   레이아웃·타이포·간격 토큰은 globals 그대로 상속.
+   ★ heatmap 의 .root 와 동일한 평면 구조 — 검은 ground/sheet 프레이밍 없음. */
+.root {
+  /* hot → cool 순서로 매핑 (vivid spectral):
+     --heat-main(주 강조, 버튼/룰/프롬프트) = 채도 높은 빨강
+     --heat-core(가장 뜨거운 중심)         = 진한 빨강
+     --heat-mid(중간)                      = 채도 높은 파랑
+     --heat-edge(가장자리/번짐의 끝)         = 채도 높은 노랑 */
+  --heat-core: #d10018; /* deepest red core */
+  --heat-main: #ff122e; /* primary saturated red accent */
+  --heat-mid: #0a46ff; /* saturated blue */
+  --heat-edge: #ffdb00; /* saturated yellow (edge of heat) */
+
+  display: block;
+  position: relative;
+}
+
+/* ABOUT 개요 인트로 (일자별 챕터 위) */
+.about {
+  padding-block: clamp(72px, 11vh, 140px) clamp(12px, 3vh, 32px);
+}
+.aboutTag {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  margin-bottom: clamp(18px, 3vh, 32px);
+}
+.aboutIntro {
+  font-family: var(--font-kr);
+  font-size: clamp(18px, 1.9vw, 26px);
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: var(--tracking-display);
+  word-break: keep-all;
+  text-wrap: balance;
+  max-width: 30ch;
+}
+
+/* 인쇄 하프톤 도트 스크린 — 절제된 망점 질감 (거칠지 않게).
+   격자 radial-gradient 타일을 multiply 로 흰 종이에 아주 옅게 박는다. */
+.halftone {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  pointer-events: none;
+  opacity: 0.06;
+  mix-blend-mode: multiply;
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    rgba(20, 22, 30, 0.85) 0,
+    rgba(20, 22, 30, 0.85) 0.9px,
+    transparent 1.5px
+  );
+  background-size: 5px 5px;
+  background-position: 0 0;
+}
+
+/* 고운 종이 그레인 — 아주 옅게 (heatmap 의 grain 과 동일한 절제된 톤).
+   "흰 종이의 입자감"만 더한다. 인터랙션은 막지 않음. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.05;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+@media (max-width: 640px) {
+  .halftone {
+    background-size: 4px 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .halftone {
+    opacity: 0.05;
+  }
+  .grain {
+    opacity: 0.04;
+  }
+}

@@ -1,0 +1,13 @@
+/* ============================================================
+   ConceptStage — immersive panel lineup wrapper.
+   The lineup is a vertical stack of full-bleed panels + day markers; each
+   panel owns its own near-full-viewport sizing. No gutter grid here — panels
+   run fuller-bleed than the card column, but each panel's inline padding
+   guarantees nothing is horizontally clipped.
+   ============================================================ */
+
+.lineup {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}

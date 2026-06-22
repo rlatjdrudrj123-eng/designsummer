@@ -1,0 +1,392 @@
+/* Aura1 전용 Hero 사본 — 공유 develop/Hero.module.css 에서 분기.
+   /aura 및 develop 탭에는 영향 없음. Aura1 한정 리파인 3가지(a/b/c) 주석 참조. */
+
+/* ---- S-Core Dream (에스코어드림) — 히어로 한정 한글 디스플레이 페이스. -------
+   클라이언트가 "디자인 썸머 일산"이 기본 Pretendard 라 특색이 없다고 해
+   특색 있는 무료 한글 디스플레이 서체로 교체. Heatwave 변형과 동일한
+   projectnoonnu CDN(@font-face) 방식으로 로드한다(npm·Google Fonts 미제공).
+   클라이언트 후속 피드백 "차라리 더 얇았으면" — 묵직한 800 컷이 과하고
+   어색하다고 해, 타이틀을 얇고 정제된 디스플레이 룩으로 다시 잡는다.
+   가벼운 3Light(300)·4Regular(400) 컷을 같은 family "SCDreamAura" 에 등록.
+   타이틀은 4Regular(400) 컷(큰 디스플레이 사이즈에서 3Light 는 너무 가늘게
+   읽혀 400 으로 안정감 확보), 2026°C 마크는 한 단계 더 가벼운 3Light(300)
+   컷으로 얇고 깔끔한 페어링. 800·700 컷은 더 이상 쓰지 않으므로 로드 제거.
+   사용은 이 변형(Aura1)에만 스코프.
+   별도 family "SCDreamAura" — 전역/다른 탭의 SCDream 정의와 충돌하지 않게 분리. */
+@font-face {
+  font-family: "SCDreamAura";
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-3Light.woff")
+    format("woff");
+}
+@font-face {
+  font-family: "SCDreamAura";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff")
+    format("woff");
+}
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  padding: var(--margin);
+  isolation: isolate;
+}
+
+/* 히어로 하단 → 따뜻한 오라 그라운드로의 용해 (히어로 → 콘텐츠 핸드오프).
+   히어로 바닥에 PostHeroAura 그라운드 상단색(rgb(255,224,205))과 정확히 같은
+   따뜻한 크림빛을 깔아, 흰빛 열 필드가 아래 오라 그라운드로 끊김 없이 번지게
+   한다. 멈춤점(0→40%→100%)을 둬 위쪽은 투명, 바닥은 그라운드색으로 완전히
+   불투명해져 히어로 하단이 곧 오라의 시작색이 되도록 한다 → 스티키 nav 와
+   PostHeroRegion 시작부에 하드 시임이 보이지 않는다. 더 키 큰 페이드로
+   천천히 녹인다. 캔버스(z-index:0) 위, 콘텐츠(z-index:2) 아래(z-index:1).
+   pointer-events 없음. */
+.hero::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: clamp(220px, 34vh, 400px);
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 224, 205, 0) 0%,
+    rgba(255, 224, 205, 0.5) 45%,
+    rgba(255, 224, 205, 0.85) 78%,
+    rgb(255, 224, 205) 100%
+  );
+}
+
+/* --- 페이퍼 그레인 텍스처 (정적 SVG 노이즈 오버레이) ----------------------
+   인쇄물 같은 결을 주는 미세 노이즈를 표면에 깐다. 비용 0 의 정적 레이어:
+   인라인 SVG feTurbulence(fractalNoise) 노이즈를 data-URI 로 background-image
+   에 넣어 작게 타일링한다. 캔버스/rAF/JS 없음(이전의 per-pixel 캔버스 그레인이
+   렌더를 멈추게 한 실수를 피한다). 낮은 opacity + mix-blend-mode:multiply 로
+   은은한 종이 결만 — 보이는 노이즈가 아니다. 열 필드(z:0) 위, 텍스트(z:2)
+   아래(z:1) 라 글자는 또렷하게 유지된다. pointer-events 없음. 애니메이션 아님
+   (정적) 이므로 prefers-reduced-motion 도 그대로 안전. */
+.grain {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.08;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 180px 180px;
+  background-repeat: repeat;
+}
+
+/* --- 우상단 K·print 로고 (KV 미러링) ------------------------------------
+   메인 `/` 히어로(.logo/.logoTr)와 동일한 지오메트리. 어드민 업로드 이미지가
+   있으면 <img>, 없으면 텍스트 워드마크. 우측은 콘텐츠 거터의 우측 끝에 맞춘다
+   (뷰포트 모서리 X): 거터 width:min(1180px,100%) + 인셋 clamp(20,5vw,56) →
+   우측 콘텐츠 끝 = calc(50% - min(590px,50%) + 인셋). */
+.logo {
+  position: absolute;
+  z-index: 2;
+  top: var(--margin);
+  font-family: var(--font-display);
+  font-size: clamp(18px, 1.7vw, 26px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--ink);
+}
+.logoTr {
+  right: max(var(--margin), calc(50% - min(590px, 50%) + clamp(20px, 5vw, 56px)));
+  text-align: right;
+}
+
+/* 콘텐츠는 캔버스(z-index:0) 위. 각 요소가 직접 z-index 를 갖는다. */
+
+/* 텍스트 락업 거터 — 카드/타임테이블/신청과 동일한 중앙 거터.
+   풀블리드 배경(열 KV·날짜 모서리·하단 블렌드)과 달리, 텍스트는 이
+   거터 안에서만 좌우로 펼쳐져 본문 카드들과 줄을 맞추고 가운데로 모인다.
+   히어로 전체 높이를 덮는 절대배치 박스라, 내부 절대배치 요소들이
+   뷰포트가 아닌 거터의 좌우 끝을 기준으로 정렬된다. */
+.gutter {
+  /* 단일 정규 컨테이너 — 히어로 텍스트 락업을 아래 전 섹션과 같은 좌우 라인에 맞춘다.
+     max-width 1180 + 좌우 인셋 clamp(20,5vw,56). 내부 락업 요소(.lede/.titleBlock/
+     .studios)는 절대배치라 padding 으로 밀리지 않으므로, 동일 인셋을 --gutter-pad 로
+     공유해 left/right 에 직접 적용한다 → 콘텐츠 좌우 끝이 정규 컨테이너와 일치. */
+  --gutter-pad: clamp(20px, 5vw, 56px);
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: min(1180px, 100%);
+  padding-inline: var(--gutter-pad);
+  pointer-events: none;
+}
+.gutter > * {
+  pointer-events: auto;
+}
+
+/* 모서리 날짜(.date/.dateTl/.dateTr)는 정보 다이어트로 히어로에서 제거됨.
+   동일 일자 정보는 아래 타임테이블·About 섹션에 존재한다. */
+
+/* --- 좌측 태그라인 "the creative heatwave" (KV 미러링) ---------
+   (변경 1) 태그라인 + 타이틀을 같은 가로 ROW 에 둔다. 거터 좌측 끝에 앉히되,
+   세로 위치를 우측 타이틀 줄("디자인 썸머 일산")의 세로 중앙에 정렬한다 —
+   2026℃ 마크/메타가 아니라 '타이틀 줄'에 맞춘다.
+
+   .titleBlock 은 top:32% 에서 시작하고, 그 안에서 [2026℃ 마크 + 마크 하단여백]
+   다음에 타이틀이 온다. 그래서 동일한 top:32% 앵커에서 아래로
+   (마크 높이 + 마크 margin-bottom + 타이틀 절반높이) 만큼 끌어내리면 태그라인의
+   세로 중앙이 타이틀 줄의 세로 중앙과 정확히 맞는다. 마크/타이틀과 동일한 clamp
+   값을 그대로 써서 반응형에서도 같이 움직인다(타이틀 line-height 0.94 의 절반).
+     마크 높이      = clamp(15px,1.5vw,22px)
+     마크 margin    = clamp(4px,0.7vh,9px)
+     타이틀 줄 절반  = calc(clamp(40px,5.8vw,86px) * 0.94 / 2)
+   transform 의 translateY(-50%) 로 태그라인 자기 높이의 절반을 다시 빼, 그 중앙이
+   기준선에 오게 한다. max-width 로 폭을 묶어 우측 .titleBlock 과 1440px 에서 겹치지
+   않게 한다. 모바일에선 아래 미디어쿼리에서 상단으로 재배치. */
+.tagline {
+  position: absolute;
+  z-index: 2;
+  left: var(--gutter-pad);
+  top: calc(
+    32% + clamp(26px, 2.9vw, 44px) + clamp(14px, 2.2vh, 30px) +
+      (clamp(36px, 5.2vw, 76px) * 0.94 / 2)
+  );
+  transform: translateY(-50%);
+  max-width: min(48%, 480px);
+  font-family: var(--font-display);
+  /* 키움(이전 clamp(15,1.5vw,22)). */
+  font-size: clamp(18px, 2vw, 30px);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1.25;
+  text-transform: lowercase;
+  /* 슬로건이 좌측 오렌지 로브 위에 올라가므로 그라데이션/오렌지 글자는 묻힌다.
+     솔리드 잉크(near-black)로 어디서나 또렷하게 — 별도 장식 없이 깔끔하게 둔다. */
+  color: var(--ink);
+}
+
+/* (d) 좌측 리드 클러스터(.lede/.badge/.tagline/.ledeDesc)는 정보 다이어트로
+   전부 제거됨 — 히어로 좌측은 비워 미니멀하게 둔다. 관련 스타일도 함께 삭제. */
+
+/* --- 타이틀 클러스터 (우측 치우침) -------------------------
+   (1) TYPE = HEAT CORE: 타이틀이 열 코어 위에 정확히 앉도록 vertical anchor 를
+   HeroHeat 의 CORE(y≈0.40 of fieldH) 부근으로 잡는다. fieldH = w/2(landscape)
+   이므로 100svh 히어로에서 코어는 대략 상단 30~34%. 타이틀 블록을 그 높이로
+   끌어와 글자 뒤가 가장 뜨겁게 읽히게 한다.
+   (3) GHOST 제거: 우측 정렬 + nowrap 인 타이틀이 좁은 폭에서 거터 좌측으로
+   넘쳐 잘린 고스트로 보이던 문제 → 거터 폭을 넘으면 글자 크기로 흡수(clamp)
+   하되, 만약을 위해 overflow 를 가시 영역으로 한정한다. */
+.titleBlock {
+  position: absolute;
+  z-index: 2;
+  right: var(--gutter-pad);
+  left: var(--gutter-pad);
+  top: 32%;
+  text-align: right;
+  max-width: none;
+  /* 거터 좌측 끝을 넘어 새어 나오는 클립 고스트 방지 */
+  overflow: visible;
+}
+/* (변경 2) 2026℃ 키커 — KV 미러링: 타이틀 바로 위에 바짝 붙는 작은 어두운 연도 마크.
+   타이틀의 연도 표식으로 또렷이 읽히도록, (a) 작은 폰트(흰색·과대 금지, 다크 유지),
+   (b) 타이틀 우측 끝에 맞춘 우측 정렬, (c) 타이틀과의 간격을 좁혀 바짝 tuck 한다
+   (떠 있는 별도 요소처럼 보이지 않게). 살짝의 트래킹으로 작은 글자 가독성 확보.
+   .tagline 의 row 정렬 calc 도 이 margin-bottom 값을 그대로 참조하므로 함께 맞춰 둔다. */
+.mark {
+  display: flex;
+  justify-content: flex-end;
+  /* 2026℃ 를 타이틀에서 더 떨어뜨림 — 위 간격 더 키움. */
+  margin-bottom: clamp(14px, 2.2vh, 30px);
+  line-height: 1;
+}
+.markYear {
+  font-family: "omnigothic", var(--font-display);
+  /* 2026℃ 더 키움(이전 clamp(20,2.1vw,32)). */
+  font-size: clamp(26px, 2.9vw, 44px);
+  /* 타이틀(400)과 굵기가 비슷해 보이도록 — 작은 사이즈라 광학적으로 얇아 보이는 걸
+     한 단계(500) 보정하고, 넓던 자간을 좁혀 타이틀과 같은 밀도로 읽히게. */
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: var(--ink);
+}
+/* 디자인 썸머 일산 — 210 옴니고딕 디스플레이(전역 Adobe JS 로더로 로드,
+   font-family "omnigothic", 200~600), weight 600. KV 충실도 복원:
+   이전 실험의 따뜻한 다층 글로우/번짐(text-shadow)을 제거한다 — KV 는 열 위에
+   납작한 near-black 타이틀(글로우 없음)이다. 글자는 잉크색 단색으로 또렷하게. */
+.title {
+  font-family: "omnigothic", var(--font-kr);
+  /* 살짝 줄임(이전 clamp(40,5.8vw,86)). */
+  font-size: clamp(36px, 5.2vw, 76px);
+  font-weight: 400;
+  line-height: 0.94;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  color: var(--ink);
+}
+/* --- English variant (TASK B) --------------------------------------------
+   Saira Condensed (free substitute for Franklin Gothic Medium Cond), exposed by
+   developFont.ts as --font-develop-en (className sets the var on the element). */
+.titleEn {
+  font-family: var(--font-develop-en), var(--font-display), sans-serif;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  /* "Design Summer Ilsan" must stay on ONE line (inherits white-space:nowrap)
+     and must NOT clip left/right at 1440px or 390px. Now lives in the centered
+     min(1100px,94%) gutter, so the cap is bounded by 1100px rather than the
+     viewport. Saira Condensed is narrow (~19 chars): at the 84px cap the line
+     is ~840px wide, comfortably inside 1100px. The mobile rule below shrinks
+     it for 390px. Bigger and more confident than before. */
+  font-size: clamp(36px, 6vw, 84px);
+}
+/* "Ilsan" 강조 — Design Summer 는 기본 잉크, 일산만 따뜻한 열 색으로 (en 전용). */
+.titleAccent {
+  color: var(--heat-main);
+}
+/* --- (변경 3) 날짜 + 장소 메타 블록 (KV 미러링) --------------------------
+   이전엔 장소 한 줄만 두고 날짜는 없었다. 메인 `/` 히어로(components/aura/Hero.tsx)의
+   .venueMeta / .metaLine 트리트먼트를 미러링해 타이틀 아래에 우측 정렬 두 줄을 둔다:
+     line1: 컴팩트 날짜 "08.20.목 - 08.21.금"
+     line2: 짧은 장소 "KINTEX 제2전시장" (층·호수 없음)
+   두 줄을 같은 폰트·웨이트로 묶어(.metaLine) 하나의 정돈된 메타 블록으로 읽히게 한다. */
+.venueMeta {
+  /* 날짜·장소를 타이틀에서 더 아래로 내림(이전 clamp(20,3vh,40)). */
+  margin-top: clamp(40px, 5.5vh, 72px);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+.metaLine {
+  font-family: var(--font-kr);
+  /* 날짜·장소 키움(이전 clamp(16,1.4vw,21)은 너무 작았음). */
+  font-size: clamp(18px, 1.7vw, 26px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--ink) 80%, transparent);
+}
+
+/* 일자별 사전등록 2버튼 — 타이틀 클러스터 하단, 우측 정렬. 따뜻한 딥-잉크 트리트먼트.
+   (c) Aura1 리파인: .titleBlock 흐름에서 빼내 거터 우측 하단에 절대배치하고,
+   좌하단 .studios 와 동일한 bottom(var(--margin)) 에 앵커한다 →
+   좌측 스튜디오 리스트 하단과 우측 버튼 하단이 같은 수평 베이스라인에 안착. */
+.register {
+  /* 타이틀 클러스터 흐름 안으로 — 날짜·장소 바로 아래 우측 정렬(이전엔 히어로
+     하단 절대배치라 너무 아래에 떨어져 있었음). */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: clamp(10px, 1vw, 14px);
+  /* 날짜·장소와 버튼 사이 간격을 더 키워 버튼을 조금 더 아래로. */
+  margin-top: clamp(52px, 7.5vh, 96px);
+}
+.regBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.05vw, 16px);
+  /* (5) 솔리드 블랙이 타이틀을 압도하던 문제 → 무게를 700→600 으로 낮춘다. */
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  /* (5) CTA 톤 재고 — 이전의 잉크48/코어52 는 머디한 브라운이라 탁했다. KV 의
+     블랙 타이포 톤에 맞춰 '딥 웜-차콜'(near-black + 살짝의 열 기운)로: 따뜻한
+     오렌지 히어로 위에서 고대비로 또렷하고 프리미엄하게 읽힌다. 흰 글자 + 솔리드
+     채움 유지(고스트 아님), hover 에서 heat 글로우로 따뜻하게 피어난다. */
+  background: color-mix(in oklab, var(--ink) 86%, var(--heat-core) 14%);
+  padding: 13px 22px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 12px 28px -20px rgba(40, 16, 6, 0.7);
+  transition:
+    box-shadow var(--dur-touch) var(--ease-heat),
+    transform var(--dur-touch) var(--ease-heat);
+}
+.regBtn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(135deg, var(--heat-core), var(--heat-main));
+  transform: translateY(100%);
+  transition: transform var(--dur-bloom) var(--ease-heat);
+}
+.regBtn:hover,
+.regBtn:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 20px 44px -20px rgba(200, 70, 20, 0.6);
+}
+.regBtn:hover::before,
+.regBtn:focus-visible::before {
+  transform: translateY(0);
+}
+.regBtn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* 좌하단 세로쓰기 스튜디오 밴드(.studios/.dayGroup/.studio/.studioEn)는
+   KV 정합을 위해 히어로에서 제거됨 — 동일 스튜디오명은 아래 라인업 섹션에 존재한다. */
+
+/* --- 모바일 (390) ------------------------------------------- */
+@media (max-width: 640px) {
+  /* 옴니고딕 600 헤드라인 — 390px 한 줄(nowrap)에 안전하도록 상한을 묶고,
+     vw 로 좁힌다("디자인 썸머 일산" 8자 + 공백이 거터 안에 들어오게). */
+  .title {
+    font-size: clamp(30px, 8.4vw, 42px);
+  }
+  /* en 타이틀을 390px 한 줄에 안전하게: 거터(94%) 안에서 vw 로 좁히고 상한을 낮춘다. */
+  .titleEn {
+    font-size: clamp(24px, 8.6vw, 38px);
+  }
+  /* 세로로 긴 portrait 열 필드의 코어(y≈0.42)에 타이틀을 얹는다. */
+  .titleBlock {
+    top: 30%;
+  }
+  /* 태그라인 — 390px 에선 데스크톱의 '타이틀 줄 정렬' calc(top) 을 풀고 상단으로
+     올린다(top:var(--margin), transform:none). 그러면 태그라인이 위, 타이틀
+     클러스터(top:30%)가 그 아래로 깔끔히 stack 된다(겹침 없음). */
+  .tagline {
+    top: var(--margin);
+    transform: none;
+    max-width: min(70%, 280px);
+    font-size: clamp(13px, 4vw, 18px);
+  }
+  /* 2026°C 락업이 모바일 폭을 넘지 않게 줄바꿈 허용 + 우측 정렬 유지. */
+  .mark {
+    flex-wrap: wrap;
+  }
+  /* (c) 모바일: register 는 거터 우측 하단에 그대로 절대배치 유지.
+     좁은 폭에서 세로쓰기 studios(좌하단)와 가로로 분리되어 겹치지 않고,
+     좌/우 하단 베이스라인 정렬도 모바일에서 함께 유지된다. */
+  .register {
+    justify-content: flex-end;
+  }
+  .regBtn {
+    font-size: clamp(12px, 3.4vw, 15px);
+    padding: 11px 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .regBtn,
+  .regBtn::before {
+    transition: none;
+  }
+  .regBtn:hover,
+  .regBtn:focus-visible {
+    transform: none;
+  }
+}

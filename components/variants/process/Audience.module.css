@@ -1,0 +1,91 @@
+.audience {
+  padding-block: clamp(72px, 11vh, 160px);
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  margin-bottom: clamp(24px, 4vh, 48px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(28px, 5vw, 80px);
+}
+
+.col {
+  display: flex;
+  flex-direction: column;
+}
+
+.dayLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.d1 .dayLabel {
+  color: var(--cmyk-c);
+}
+.d2 .dayLabel {
+  color: var(--cmyk-m);
+}
+
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(20px, 2.2vw, 30px);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+  word-break: keep-all;
+  margin-top: 10px;
+  padding-bottom: clamp(16px, 2vh, 24px);
+  border-bottom: 1.5px solid var(--ink);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 12px;
+  align-items: start;
+  padding-block: 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  line-height: 1.6;
+  letter-spacing: 0.005em;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+}
+
+.bullet {
+  width: 8px;
+  height: 8px;
+  margin-top: 0.55em;
+  border-radius: 50%;
+}
+.d1 .bullet {
+  background: var(--cmyk-c);
+}
+.d2 .bullet {
+  background: var(--cmyk-m);
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: clamp(36px, 7vh, 56px);
+  }
+}

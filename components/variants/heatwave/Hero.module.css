@@ -1,0 +1,359 @@
+/* HEATWAVE hero — poster recreation. White ground, black type, center heat bar. */
+
+/* ---- S-Core Dream (에스코어드림) — the client-confirmed KV face. ---------
+   Loaded via @font-face from jsdelivr (not on Google Fonts, no npm package).
+   One family "SCDream"; weight per face. Usage is scoped to this variant. */
+@font-face {
+  font-family: "SCDream";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-4Regular.woff")
+    format("woff");
+}
+@font-face {
+  font-family: "SCDream";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-5Medium.woff")
+    format("woff");
+}
+@font-face {
+  font-family: "SCDream";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_six@1.2/S-CoreDream-6Bold.woff")
+    format("woff");
+}
+
+.hero {
+  position: relative;
+  width: 100%;
+  /* keep the hero to a single viewport — no page overflow */
+  height: 100svh;
+  min-height: 600px;
+  background: var(--white);
+  color: var(--ink);
+  overflow: hidden;
+  display: flex;
+  isolation: isolate;
+}
+
+/* content container — same max-width / gutter as every below-hero section so
+   the hero's left & right content edges align with the rest of the page. */
+.inner {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: var(--hw-maxw);
+  margin-inline: auto;
+  padding: clamp(20px, 3.5vw, 44px) var(--hw-pad-x) clamp(22px, 3vw, 40px);
+  display: grid;
+  /* poster scaffold: top (title + brand) / center date band / bottom lists */
+  grid-template-rows: auto 1fr auto;
+  /* guarantee the three rows share the viewport with air between them */
+  row-gap: clamp(16px, 2.4vw, 32px);
+}
+
+/* ---- top bar: title top-left, brand top-right ----------------- */
+.topbar {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 24px;
+}
+.brand {
+  flex: none;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.wordmark {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(18px, 2vw, 26px);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.dotMark {
+  color: var(--heat-main);
+}
+.tagline {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  opacity: 0.85;
+}
+
+/* ---- signature heat bar field --------------------------------- */
+.barField {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+.vRule {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--ink);
+  transform: translateX(-50%);
+  z-index: 2;
+}
+.hRule {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--ink);
+  transform: translateY(-50%);
+  z-index: 2;
+}
+
+/* ---- title (top-left lockup) ---------------------------------- */
+.titleBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(8px, 1vw, 16px);
+  /* the title owns the upper-left quadrant; cap its width so it never reaches
+     the central bar / date numerals. */
+  max-width: 46%;
+}
+.title {
+  position: relative;
+  text-align: left;
+  /* KV face confirmed by client: S-Core Dream. SemiBold-ish (6Bold/700 face,
+     but the client said 900 was too bold) reads as a confident, refined lockup. */
+  font-family: "SCDream", var(--font-kr);
+  font-weight: 700;
+  color: #0a0a0a;
+  letter-spacing: -0.03em;
+  line-height: 0.98;
+  /* sized to fill the upper-left area without crowding the center band */
+  font-size: clamp(40px, 7.4vw, 104px);
+  pointer-events: none;
+}
+.titleLine {
+  display: block;
+  position: relative;
+}
+.titleSub {
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(14px, 1.6vw, 20px);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.titleVenue {
+  font-family: var(--font-kr);
+  font-weight: 500;
+  font-size: clamp(13px, 1.4vw, 18px);
+  letter-spacing: -0.01em;
+  opacity: 0.85;
+}
+
+/* ---- center focal band: dates flanking the bar ---------------- */
+/* The center grid row (1fr). Dates are centered vertically on the hRule
+   (the crossing of the two black rules) and flank the vertical bar:
+   08.20 just left of the bar, 08.21 just right. --bar-gap = breathing room
+   from the bar's dense core. */
+.centerBand {
+  position: relative;
+  z-index: 3;
+  align-self: center;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  --bar-gap: clamp(20px, 3vw, 56px);
+}
+.date {
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+}
+.dateLeft {
+  align-items: flex-end;
+  text-align: right;
+  padding-right: var(--bar-gap);
+}
+.dateRight {
+  align-items: flex-start;
+  text-align: left;
+  padding-left: var(--bar-gap);
+}
+.numeral {
+  /* KV 날짜 숫자: 둥근 기하학 디스플레이(Unbounded). 얇게(라이트) + 두 줄("08."/"20").
+     깔끔한 두 줄 스택 — 바 쪽으로 정렬(좌측 날짜는 우측 정렬). 글자 사이는 자연 간격. */
+  display: flex;
+  flex-direction: column;
+  font-weight: 300;
+  font-size: clamp(44px, 9vw, 132px);
+  letter-spacing: -0.01em;
+  line-height: 0.82;
+  color: #0a0a0a;
+}
+.numLine {
+  display: block;
+}
+.dot {
+  /* 주황색 금지 — 잉크(블랙) */
+  color: var(--ink);
+  margin: 0 -0.04em;
+}
+/* day-of-week + session time, tucked under each big numeral. Uses the KR face
+   (the numeral font is reset on this child) so it reads as a quiet caption and
+   never overlaps the numerals or the bar. */
+.dateMeta {
+  margin-top: clamp(8px, 1vw, 14px);
+  font-family: var(--font-kr);
+  font-weight: 600;
+  font-size: clamp(12px, 1.3vw, 16px);
+  letter-spacing: -0.01em;
+  line-height: 1;
+  color: var(--ink);
+  opacity: 0.8;
+  white-space: nowrap;
+}
+
+/* ---- bottom row: studio lists + per-day CTAs ------------------ */
+.bottom {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 2vw, 24px);
+}
+.studioRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: end;
+}
+.studios {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-family: var(--font-kr);
+  font-weight: 600;
+  font-size: clamp(13px, 1.4vw, 18px);
+  letter-spacing: -0.012em;
+  line-height: 1.15;
+}
+.studiosLeft {
+  align-items: flex-start;
+  text-align: left;
+}
+.studiosRight {
+  align-items: flex-end;
+  text-align: right;
+}
+.studios a {
+  position: relative;
+  display: inline-block;
+  padding: 1px 0;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.studios a:hover {
+  color: var(--heat-main);
+}
+/* tasteful day-lean: DAY 1 studios (left) warm into the cool end, DAY 2
+   studios (right) into the warm end — mirrors the lineup/timetable split.
+   --hw-d1/--hw-d2 cascade from the .root wrapper this hero sits inside. */
+.studiosLeft a:hover {
+  color: var(--hw-d1, var(--heat-main));
+}
+.studiosRight a:hover {
+  color: var(--hw-d2, var(--heat-main));
+}
+
+/* ---- per-day registration CTAs (two separate forms) ----------- */
+.regRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 1.4vw, 18px);
+}
+.regBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: clamp(11px, 1.4vw, 16px) clamp(12px, 2vw, 24px);
+  font-family: var(--font-kr);
+  font-weight: 700;
+  font-size: clamp(13px, 1.5vw, 18px);
+  letter-spacing: -0.01em;
+  color: var(--white);
+  background: var(--ink);
+  position: relative;
+  overflow: hidden;
+  transition: background var(--dur-touch) var(--ease-heat);
+}
+/* DAY 1 cool / DAY 2 warm end of the KV spectrum on hover/focus */
+.regCool:hover,
+.regCool:focus-visible {
+  background: var(--hw-d1, var(--heat-main));
+}
+.regWarm:hover,
+.regWarm:focus-visible {
+  background: var(--hw-d2, var(--heat-main));
+}
+
+/* ---- mobile (~390px) ------------------------------------------ */
+@media (max-width: 640px) {
+  .hero {
+    /* let the hero grow past one screen on phones — the per-day CTAs need the
+       room, and clipping them would hide the registration entry points. */
+    height: auto;
+    min-height: 100svh;
+  }
+  .inner {
+    padding-top: 16px;
+    row-gap: clamp(14px, 5vw, 28px);
+  }
+  .titleSub {
+    font-size: 13px;
+  }
+  .dateMeta {
+    font-size: 11px;
+    margin-top: 6px;
+  }
+  .regBtn {
+    font-size: 12px;
+    padding: 11px 8px;
+  }
+  .topbar {
+    gap: 12px;
+  }
+  .titleBlock {
+    max-width: 58%;
+    gap: 6px;
+  }
+  .title {
+    font-size: clamp(34px, 11vw, 64px);
+    line-height: 0.96;
+  }
+  .titleVenue {
+    font-size: 12px;
+  }
+  .numeral {
+    /* Unbounded 가 넓어서 모바일에선 더 작게 — 두 날짜가 바 양옆으로 안 넘치게 */
+    font-size: clamp(22px, 8.4vw, 44px);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+  }
+  /* tighter gap so both numerals still flank the bar at 390px */
+  .centerBand {
+    --bar-gap: clamp(8px, 2.5vw, 16px);
+  }
+  .studios {
+    font-size: 12px;
+  }
+}

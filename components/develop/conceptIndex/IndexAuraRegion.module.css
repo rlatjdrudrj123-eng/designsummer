@@ -1,0 +1,16 @@
+/* ============================================================
+   IndexAuraRegion — positioned container for the single continuous warm
+   Aura ground behind ALL below-hero content of the ConceptIndex page.
+   Mirrors PostHeroRegion.module.css: the aura layer is z-index 0; the
+   content wrapper is z-index 1 so the (transparent) index floats on the
+   one shared warm field.
+   ============================================================ */
+
+.region {
+  position: relative;
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}

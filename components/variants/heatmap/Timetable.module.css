@@ -1,0 +1,199 @@
+.timetable {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  margin-bottom: clamp(24px, 4vh, 48px);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 5vw, 80px);
+  align-items: start;
+}
+
+.dayHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid var(--ink);
+}
+.dayLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-body);
+  font-weight: 600;
+}
+.dayDate {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+}
+.dayTitle {
+  font-family: var(--font-kr);
+  font-size: var(--type-h3);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  margin-top: 12px;
+  word-break: keep-all;
+}
+.d1 .dayTitle {
+  color: var(--heat-main);
+}
+.d2 .dayTitle {
+  color: var(--heat-mid);
+}
+.day {
+  display: flex;
+  flex-direction: column;
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  list-style: none;
+  margin: clamp(14px, 2vh, 22px) 0 0;
+  padding: 0;
+}
+.row {
+  display: grid;
+  grid-template-columns: 6.6em 1fr;
+  column-gap: 16px;
+  align-items: baseline;
+  padding-block: 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.rowBody {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.time {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--heat-main);
+}
+.d2 .time {
+  color: var(--heat-mid);
+}
+.studio {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+.speaker {
+  font-family: var(--font-kr);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+.title {
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  line-height: 1.3;
+  word-break: keep-all;
+}
+.desc {
+  font-size: var(--type-meta);
+  line-height: 1.55;
+  opacity: 0.66;
+  word-break: keep-all;
+  margin-top: 2px;
+}
+
+/* 등록 행 — 차분한 강조(헤어라인 박스, 회색 시간) */
+.reg {
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+.reg .time {
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+}
+.reg .title {
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+/* 휴식 행 — 점선 구분, 시간만 강조하지 않음 */
+.brk {
+  border-bottom-style: dashed;
+}
+.brk .time {
+  color: color-mix(in srgb, var(--ink) 45%, transparent);
+}
+.brk .title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--type-meta);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+/* 데이별 신청 CTA */
+.cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: clamp(20px, 3vh, 32px);
+  background: var(--ink);
+  color: var(--white);
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 700;
+  padding: 16px 28px;
+  position: relative;
+  overflow: hidden;
+  transition: color var(--dur-touch) var(--ease-heat);
+}
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: var(--heat-main);
+  transform: translateY(100%);
+  transition: transform var(--dur-bloom) var(--ease-heat);
+}
+.cta2::before {
+  background: var(--heat-mid);
+}
+.cta:hover::before,
+.cta:focus-visible::before {
+  transform: translateY(0);
+}
+.cta span {
+  position: relative;
+  z-index: 1;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+    gap: clamp(28px, 7vh, 48px);
+  }
+  .row {
+    grid-template-columns: 1fr;
+    row-gap: 6px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cta::before {
+    transition: none;
+  }
+}

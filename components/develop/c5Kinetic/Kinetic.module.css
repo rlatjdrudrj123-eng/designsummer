@@ -1,0 +1,706 @@
+/* =============================================================================
+   CONCEPT 05 — KINETIC (REBALANCED)
+   Scoped styles. Fonts come from kineticFont.ts as CSS vars
+   (--kin-display = Archivo Black 900, --kin-text = Space Grotesk). Korean falls
+   back to the global Pretendard stack. CSS Modules only — no Tailwind, no libs.
+
+   REBALANCED: the heavy display face is back on the headlines/day-tags/marquee
+   so the page reads KINETIC again, AND two tasteful scroll-reactive marquees
+   provide the signature motion. KEPT from the B2B pass: hairline .rule dividers
+   + whitespace between sections (NOT the old loud full-width color bands).
+   Archivo Black ships a single heavy cut, so display text uses font-weight:400
+   (no faux-bold) — it already renders black.
+   ========================================================================== */
+
+.root {
+  --ink: #120b08;
+  --paper: #fff6ec;
+  --ember: #e13a1c;
+  --orange: #ff6a1a;
+  --amber: #ff9a1e;
+  --gold: #ffc740;
+  --line: rgba(18, 11, 8, 0.14);
+
+  --display: var(--kin-display), "Pretendard Variable", system-ui, sans-serif;
+  --text: var(--kin-text), "Pretendard Variable", system-ui, sans-serif;
+
+  position: relative;
+  /* NO full-page paper fill here — the KV (../Hero) and the continuous warm
+     Aura ground (../PostHeroRegion → PostHeroAura) ARE the page background.
+     This wrapper stays transparent so neither is replaced. */
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--text);
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The KINETIC block (marquees + concept + lineup) sits inside PostHeroRegion's
+   transparent content layer, directly on the warm aura. No background of its
+   own — the aura is the ground. Generous top space lets the aura's soft top
+   fade hand off from the hero before the first band. */
+.kinetic {
+  position: relative;
+  padding-top: clamp(20px, 4vw, 56px);
+}
+
+.root *,
+.root *::before,
+.root *::after {
+  box-sizing: border-box;
+}
+
+/* ----------------------------- concept chip ----------------------------- */
+.conceptChip {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-width: 260px;
+  padding: 10px 14px;
+  background: rgba(18, 11, 8, 0.9);
+  color: var(--paper);
+  border-radius: 999px 999px 14px 14px;
+  font-family: var(--text);
+  line-height: 1.3;
+  box-shadow: 0 8px 24px rgba(18, 11, 8, 0.3);
+}
+.conceptChip strong {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+}
+.conceptChip span {
+  font-size: 11px;
+  color: var(--gold);
+}
+
+/* =============================== DIVIDER =============================== */
+/* Sections are separated by a thin hairline rule + generous whitespace so the
+   page breathes — KEPT from the B2B pass. No loud full-width color band ever
+   cuts the warm aura; the kinetic energy comes from the marquees below, not
+   from heavy color bands. */
+.rule {
+  max-width: 1180px;
+  margin-block: clamp(40px, 7vw, 96px);
+  margin-inline: auto;
+  border: 0;
+  border-top: 1px solid var(--line);
+}
+
+/* =============================== MARQUEE =============================== */
+/* The signature kinetic motion. Full-bleed, transparent ground (the warm aura
+   shows through), bounded by hairline rules — a confident ticker, NOT a loud
+   color band. Two instances only: the event-title ticker (under the hero) and
+   the studio ticker (lineup divider). Speed/direction are driven by scroll
+   velocity via the inline --mq-duration / --mq-play custom props; both freeze
+   under prefers-reduced-motion. */
+.marquee {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  /* subtle warm wash so the band reads as an intentional rail on the aura,
+     without becoming an opaque color block */
+  background: rgba(255, 250, 244, 0.34);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  -webkit-user-select: none;
+  user-select: none;
+}
+.marqueeTrack {
+  display: flex;
+  width: max-content;
+  will-change: transform;
+  /* the loop: translate the doubled track by exactly -50% for a seamless wrap.
+     travel direction is switched by --mq-play (normal | reverse), set inline
+     from the scroll velocity; speed by --mq-duration. */
+  animation: kinMarquee var(--mq-duration, 34s) linear infinite;
+  animation-direction: var(--mq-play, normal);
+}
+.marqueeSeq {
+  display: flex;
+  align-items: center;
+  flex: none;
+}
+.marqueeItem {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+.marqueeText {
+  display: inline-block;
+  font-family: var(--display);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.marqueeSep {
+  display: inline-block;
+  color: var(--ember);
+  font-family: var(--text);
+  font-weight: 700;
+}
+
+/* event-title ticker — larger, the headline voice */
+.marqueeTitle {
+  margin-top: clamp(8px, 1.6vw, 20px);
+}
+.marqueeTitle .marqueeText {
+  font-size: clamp(24px, 4.2vw, 56px);
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--ink);
+  padding: clamp(10px, 1.4vw, 20px) clamp(16px, 1.8vw, 30px);
+}
+.marqueeTitle .marqueeSep {
+  font-size: clamp(18px, 3vw, 38px);
+}
+
+/* studio ticker — quieter, sits as the lineup divider */
+.marqueeStudios {
+  margin: clamp(20px, 3vw, 36px) 0 clamp(8px, 1.5vw, 18px);
+}
+.marqueeStudios .marqueeText {
+  font-size: clamp(15px, 1.9vw, 24px);
+  letter-spacing: 0;
+  color: rgba(18, 11, 8, 0.82);
+  padding: clamp(8px, 1vw, 14px) clamp(12px, 1.4vw, 22px);
+}
+.marqueeStudios .marqueeSep {
+  font-size: clamp(13px, 1.5vw, 18px);
+  color: var(--amber);
+}
+
+@keyframes kinMarquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* ===================== SHARED SECTION HEAD BITS ===================== */
+/* every section shares a centered max-width column + a quiet kicker. */
+.kicker {
+  margin: 0 0 14px;
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: rgba(18, 11, 8, 0.55);
+}
+
+/* =============================== ABOUT =============================== */
+.about {
+  /* canonical develop content container — aligns left/right edges with the
+     shared sections (Hero/Timetable/Directions/Apply). */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-block: clamp(48px, 8vw, 110px) clamp(36px, 5vw, 64px);
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+.aboutHead {
+  margin-bottom: clamp(28px, 4vw, 52px);
+}
+.aboutIntro {
+  margin: clamp(14px, 2vw, 22px) 0 0;
+  max-width: 64ch;
+  font-size: clamp(16px, 1.9vw, 21px);
+  line-height: 1.7;
+  font-weight: 500;
+  color: rgba(18, 11, 8, 0.82);
+}
+.dayBlocks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 32px);
+}
+.dayBlock {
+  padding: clamp(24px, 3vw, 40px);
+  border: 1px solid rgba(70, 30, 0, 0.14);
+  border-radius: 20px;
+  background: rgba(255, 250, 244, 0.62);
+  -webkit-backdrop-filter: blur(10px) saturate(124%);
+  backdrop-filter: blur(10px) saturate(124%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 18px 44px -28px rgba(70, 30, 0, 0.35);
+}
+/* NOTE: the colored top accent line was removed per client request
+   ("박스 위에 라인 들어있는 디자인 너무 싫어"). The DAY 01/DAY 02 colored
+   LABELS stay (.dayBlockTag below); only the bar across the top went. The
+   soft full border + warm tint keep the cards distinct without a top stripe. */
+.dayBlockTag {
+  margin: 0 0 8px;
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(18px, 2.3vw, 26px);
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+.dayBlock.d1 .dayBlockTag {
+  color: var(--ember);
+}
+.dayBlock.d2 .dayBlockTag {
+  color: var(--amber);
+}
+.dayBlockTag span {
+  font-family: var(--text);
+  font-weight: 700;
+  font-size: 0.42em;
+  letter-spacing: 0.16em;
+  color: rgba(18, 11, 8, 0.55);
+}
+.dayBlockMeta {
+  margin: 0 0 14px;
+  font-family: var(--display);
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: rgba(18, 11, 8, 0.5);
+}
+.dayBlockTitle {
+  margin: 0 0 14px;
+  font-size: clamp(20px, 2.8vw, 30px);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.dayBlockBody {
+  margin: 0;
+  font-size: clamp(15px, 1.7vw, 17px);
+  line-height: 1.66;
+  color: rgba(18, 11, 8, 0.78);
+}
+
+/* =============================== AUDIENCE =============================== */
+.audience {
+  /* canonical develop content container */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-block: clamp(40px, 6vw, 90px);
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+.audienceHead {
+  margin-bottom: clamp(24px, 3.5vw, 44px);
+}
+.audienceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 32px);
+}
+.audienceCol {
+  padding: clamp(22px, 3vw, 36px);
+  border-radius: 20px;
+  border: 1px solid rgba(70, 30, 0, 0.12);
+}
+.audienceCol.d1 {
+  background: rgba(225, 58, 28, 0.07);
+}
+.audienceCol.d2 {
+  background: rgba(255, 154, 30, 0.1);
+}
+.audienceDay {
+  margin: 0 0 10px;
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: clamp(16px, 2vw, 22px);
+  letter-spacing: 0;
+}
+.audienceCol.d1 .audienceDay {
+  color: var(--ember);
+}
+.audienceCol.d2 .audienceDay {
+  color: var(--amber);
+}
+.audienceHeading {
+  margin: 0 0 18px;
+  font-size: clamp(17px, 2.1vw, 22px);
+  font-weight: 700;
+  line-height: 1.35;
+}
+.audienceList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.audienceList li {
+  position: relative;
+  padding-left: 22px;
+  font-size: clamp(14px, 1.6vw, 16px);
+  line-height: 1.6;
+  color: rgba(18, 11, 8, 0.82);
+}
+.audienceList li::before {
+  content: "→";
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--display);
+  font-weight: 700;
+  color: var(--ember);
+}
+.audienceCol.d2 .audienceList li::before {
+  color: var(--amber);
+}
+
+/* =============================== BENEFITS =============================== */
+.benefitsWrap {
+  padding-top: 0;
+}
+.benefits {
+  /* canonical develop content container */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-block: clamp(40px, 6vw, 90px);
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+.benefitsHead {
+  margin-bottom: clamp(24px, 3.5vw, 44px);
+}
+.benefitGroup {
+  margin-top: clamp(28px, 4vw, 48px);
+}
+.benefitGroup:first-of-type {
+  margin-top: 0;
+}
+.benefitGroupHead {
+  margin: 0 0 clamp(16px, 2.2vw, 24px);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(15px, 1.8vw, 19px);
+  letter-spacing: 0.01em;
+}
+.benefitList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2.2vw, 28px);
+}
+.benefitItem {
+  padding: clamp(20px, 2.6vw, 30px);
+  border: 1px solid rgba(70, 30, 0, 0.12);
+  border-radius: 18px;
+  background: rgba(255, 250, 244, 0.62);
+  -webkit-backdrop-filter: blur(10px) saturate(124%);
+  backdrop-filter: blur(10px) saturate(124%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 18px 44px -28px rgba(70, 30, 0, 0.35);
+}
+.benefitTitle {
+  margin: 0 0 10px;
+  font-size: clamp(16px, 1.9vw, 19px);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.benefitBody {
+  margin: 0;
+  font-size: clamp(14px, 1.5vw, 15px);
+  line-height: 1.6;
+  color: rgba(18, 11, 8, 0.78);
+}
+
+/* =============================== FAQ =============================== */
+.faqWrap {
+  padding-top: 0;
+}
+.faq {
+  /* canonical develop content container */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-block: clamp(40px, 6vw, 90px);
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+.faqHead {
+  margin-bottom: clamp(24px, 3.5vw, 44px);
+}
+.faqList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 2.4vw, 28px);
+}
+.faqItem {
+  padding-bottom: clamp(18px, 2.4vw, 28px);
+  border-bottom: 1px solid var(--line);
+}
+.faqItem:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.faqQ {
+  margin: 0 0 10px;
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  font-size: clamp(16px, 2vw, 21px);
+  font-weight: 700;
+  line-height: 1.4;
+}
+.faqNum {
+  flex: none;
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 0.86em;
+  color: var(--ember);
+}
+.faqA {
+  margin: 0;
+  padding-left: clamp(0px, 3vw, 44px);
+  font-size: clamp(14px, 1.6vw, 17px);
+  line-height: 1.66;
+  color: rgba(18, 11, 8, 0.78);
+}
+
+/* =============================== LINEUP =============================== */
+.lineup {
+  padding: clamp(40px, 6vw, 90px) 0 clamp(48px, 8vw, 120px);
+}
+/* canonical develop content container — lineup head + day groups align to the
+   same edges as every shared section. The lineup's full-bleed speaker MARQUEE
+   stays edge-to-edge (it lives directly under .lineup, outside these wrappers). */
+.lineupHead,
+.dayGroup {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+.lineupHead {
+  margin-bottom: clamp(20px, 3vw, 36px);
+}
+.sectionTitle {
+  margin: 0;
+  font-family: var(--display);
+  /* KINETIC: heavy display again. Archivo Black is single-weight (renders black
+     at 400); Korean falls back to Pretendard at 800 so KR titles read bold too.
+     Bigger + tighter than the B2B pass, but still a clean headline (not a band). */
+  font-weight: 800;
+  font-size: clamp(30px, 4.6vw, 56px);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+}
+.sectionSub {
+  margin: 12px 0 0;
+  font-weight: 400;
+  font-size: clamp(14px, 1.7vw, 18px);
+  color: rgba(18, 11, 8, 0.65);
+}
+
+.dayGroup {
+  padding-block: clamp(28px, 4vw, 56px) 0;
+}
+.dayLabel {
+  margin: 0 0 clamp(18px, 2.5vw, 28px);
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  font-family: var(--display);
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: clamp(18px, 2.2vw, 26px);
+  letter-spacing: 0;
+}
+.dayLabelDate {
+  font-family: var(--text);
+  font-weight: 600;
+  font-size: 0.6em;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  color: rgba(18, 11, 8, 0.5);
+  margin-left: 8px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(18px, 2.5vw, 32px);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(70, 30, 0, 0.12);
+  border-radius: 18px;
+  /* frosted warm panel — picks up the aura behind it (matches the develop
+     speaker cards on the same field) while keeping the copy legible. */
+  background: rgba(255, 250, 244, 0.62);
+  -webkit-backdrop-filter: blur(10px) saturate(124%);
+  backdrop-filter: blur(10px) saturate(124%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 18px 44px -28px rgba(70, 30, 0, 0.35);
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 40px rgba(225, 58, 28, 0.16);
+}
+/* Speaker photo shrunk to a modest thumbnail per client request — the photo
+   no longer fills the card as a full-bleed 4:3 banner; it's a small rounded
+   avatar so the text (studio / name / session) stays the focus. Lives inside
+   the card body padding with the time chip floated over it. */
+.cardMedia {
+  position: relative;
+  width: clamp(84px, 9vw, 104px);
+  aspect-ratio: 1 / 1;
+  margin: clamp(18px, 2vw, 26px) 0 0 clamp(18px, 2vw, 26px);
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #fff2e2, #ffe2c4);
+}
+.photo {
+  position: absolute;
+  inset: 0;
+}
+.photoImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.photoEmpty {
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      rgba(225, 58, 28, 0.12) 0 14px,
+      rgba(255, 154, 30, 0.12) 14px 28px
+    );
+}
+.cardTime {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  padding: 3px 9px;
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--display);
+  font-weight: 700;
+  font-size: 11px;
+  border-radius: 999px;
+}
+.cardBody {
+  padding: clamp(18px, 2vw, 26px);
+}
+.cardStudio {
+  margin: 0 0 4px;
+  font-weight: 700;
+  font-size: clamp(15px, 1.8vw, 19px);
+}
+.cardStudio span {
+  font-family: var(--text);
+  font-weight: 500;
+  font-size: 0.7em;
+  color: rgba(18, 11, 8, 0.5);
+  margin-left: 6px;
+}
+.cardName {
+  margin: 0 0 14px;
+  font-weight: 600;
+  font-size: clamp(14px, 1.6vw, 16px);
+  color: rgba(18, 11, 8, 0.72);
+}
+.cardName em {
+  font-style: normal;
+  color: var(--ember);
+}
+.cardTitle {
+  margin: 0 0 12px;
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 700;
+  line-height: 1.3;
+}
+.cardTitle span {
+  display: block;
+}
+.cardDesc {
+  margin: 0 0 16px;
+  font-size: clamp(14px, 1.5vw, 15px);
+  line-height: 1.6;
+  color: rgba(18, 11, 8, 0.78);
+}
+.cardCreds {
+  list-style: none;
+  margin: 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.cardCreds li {
+  position: relative;
+  padding-left: 16px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(18, 11, 8, 0.62);
+}
+.cardCreds li::before {
+  content: "·";
+  position: absolute;
+  left: 4px;
+  color: var(--ember);
+  font-weight: 700;
+}
+
+/* Note: SCHEDULE / VENUE / APPLY / FOOTER are now the SHARED develop sections
+   (../Timetable, ../Directions, ../Apply, ../Footer), which bring their own
+   transparent-on-aura styling. The Kinetic concept only styles the marquee
+   bands + concept/lineup blocks above. */
+
+/* =============================== RESPONSIVE =============================== */
+@media (max-width: 980px) {
+  .benefitList {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .cards,
+  .dayBlocks,
+  .audienceGrid,
+  .benefitList {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .conceptChip {
+    right: 10px;
+    bottom: 10px;
+    max-width: calc(100vw - 20px);
+    padding: 8px 12px;
+  }
+}
+
+/* =========================== REDUCED MOTION =========================== */
+/* Freeze the signature marquees (the JS hook also returns 0 velocity, so they
+   never start moving) and kill the card hover lift. The KV (../Hero) and warm
+   Aura (../PostHeroAura) own their own reduced-motion handling. */
+@media (prefers-reduced-motion: reduce) {
+  .root *,
+  .root *::before,
+  .root *::after {
+    transition: none !important;
+  }
+  .marqueeTrack {
+    animation: none !important;
+    transform: none !important;
+  }
+  .card:hover {
+    transform: none !important;
+  }
+}

@@ -1,0 +1,22 @@
+# Firebase App Hosting 설정 — design-summer (Next.js SSR)
+# 문서: https://firebase.google.com/docs/app-hosting/configure
+#
+# 공개 페이지는 정적 캐시로 서빙되어 스파이크(홍보 트래픽)를 CDN이 흡수하고,
+# admin/미들웨어/API 는 Cloud Run 런타임에서 동작한다.
+
+runConfig:
+  # 트래픽 없을 땐 0으로 스케일다운(비용 절감), 몰리면 자동 확장.
+  minInstances: 0
+  maxInstances: 4
+  concurrency: 80
+  cpu: 1
+  memoryMiB: 512
+
+# 런타임 환경변수/시크릿.
+# ADMIN_PASSWORD 는 Cloud Secret Manager 에 등록 후 참조한다:
+#   firebase apphosting:secrets:set ADMIN_PASSWORD
+env:
+  - variable: ADMIN_PASSWORD
+    secret: ADMIN_PASSWORD
+    availability:
+      - RUNTIME

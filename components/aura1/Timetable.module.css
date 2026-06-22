@@ -1,0 +1,229 @@
+.timetable {
+  /* 단일 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+/* shell 의 padding-inline 을 정규 컨테이너 값으로 덮어쓴다(복합 선택자로 우선). */
+.timetable:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* 섹션 헤더 — 영문 키커 제거(클라이언트 요청), 한글 헤딩만. */
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  margin-bottom: clamp(28px, 4.5vh, 56px);
+}
+
+/* ── 통합 표 ──────────────────────────────────────────────────────────────
+   시간 | Day 1 | Day 2 의 3컬럼. CSS Grid 로 행/열을 만들고, 각 논리 행을
+   grid-template-columns 를 공유하는 자체 grid 컨테이너(.row)로 둔다.
+   따뜻한 오라 위 유리/카드 톤 — 은은한 배경 + 헤어라인 구분선. */
+.table {
+  /* 페이지 데이 컬러 코딩과 동일한 값(Lineup.module.css 의 --ds-red / --ds-gold-deep).
+     이 토큰들은 모듈 로컬이라 여기서 재정의해 일치시킨다. */
+  --day1: #ff4d00; /* DAY1 레드오렌지 */
+  --day2: #d99400; /* DAY2 골든-앰버(텍스트 대비) */
+  display: flex;
+  flex-direction: column;
+  /* 흰 패널(클라이언트 요청) — 따뜻한 오라 위에 흰 표면을 띄워 본문 가독성 확보.
+     헤딩(상세 프로그램)은 패널 밖(오라 위)에 그대로 남는다. */
+  background: #fffdfb; /* 아주 옅은 웜-화이트 */
+  border-radius: 18px;
+  padding: clamp(20px, 3.2vw, 40px);
+  border: 1px solid color-mix(in srgb, var(--ink) 8%, transparent);
+  box-shadow:
+    0 1px 2px color-mix(in srgb, var(--ink) 6%, transparent),
+    0 18px 48px -24px color-mix(in srgb, var(--heat-core) 30%, var(--ink));
+  border-top: 1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+}
+
+.headRow,
+.row {
+  display: grid;
+  grid-template-columns: 7.2em 1fr 1fr;
+  column-gap: clamp(16px, 2.4vw, 32px);
+}
+
+/* 헤더 행 — 시간 라벨 + Day1(레드)·Day2(골드) 컬럼 헤더. */
+.headRow {
+  align-items: end;
+  padding-block: clamp(12px, 1.8vh, 18px);
+  border-bottom: 1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+}
+.headTime {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 600;
+  letter-spacing: var(--tracking-meta);
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+}
+.headDay {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.headDayLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-body);
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+}
+.headDayDate {
+  font-family: var(--font-kr);
+  font-size: var(--type-meta);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: color-mix(in srgb, var(--ink) 58%, transparent);
+}
+/* Day1 = 레드(heat), Day2 = 골드 — 페이지의 데이 컬러 코딩과 일치.
+   --day1 / --day2 가 정의돼 있으면 사용하고, 없으면 heat 토큰으로 폴백. */
+.headDay1 .headDayLabel {
+  color: var(--day1, var(--heat-main));
+}
+.headDay2 .headDayLabel {
+  color: var(--day2, #c79a3a);
+}
+/* 헤더 언더라인 제거(클라이언트 요청) — 데이 컬러는 라벨 텍스트에만 유지. */
+
+/* ── 본문 행 ──────────────────────────────────────────────────────────── */
+.row {
+  align-items: stretch;
+  padding-block: clamp(14px, 1.9vh, 20px);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+}
+.row:last-child {
+  border-bottom: none;
+}
+
+.time {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--heat-main);
+  padding-top: 1px;
+}
+
+/* 세션 셀 — Day 별 스튜디오 · 연사 · 세션 제목.
+   박스·유리 카드·좌측 컬러 라인 모두 제거(클라이언트 요청). 순수 텍스트 셀. */
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+/* 데스크톱에선 컬럼 헤더가 있으므로 셀 내부 데이 힌트 숨김(모바일에서만 노출). */
+.cellHint {
+  display: none;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+  margin-bottom: 2px;
+}
+
+.studio {
+  font-size: var(--type-body);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  word-break: keep-all;
+}
+.speaker {
+  font-weight: 500;
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+}
+.sessionTitle {
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.4;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 86%, transparent);
+}
+
+/* 등록 / 휴식 — 양일 공통 → Day1·Day2 컬럼을 가로질러 병합한 가운데 셀. */
+/* 등록 / 휴식 — 박스 제거. Day1·Day2 컬럼을 가로질러 병합한 가운데 텍스트만. */
+.mergedCell {
+  grid-column: 2 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.mergedLabel {
+  font-size: var(--type-meta);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  word-break: keep-all;
+  text-align: center;
+  color: color-mix(in srgb, var(--ink) 80%, transparent);
+}
+.reg .time {
+  color: var(--ink);
+}
+.break {
+  opacity: 0.78;
+}
+.break .time {
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+.break .mergedLabel {
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* ── 모바일 (≤640px) ──────────────────────────────────────────────────────
+   3컬럼이 비좁으므로 슬롯을 블록으로 — 시간 헤더 아래 Day1/Day2 카드를 세로로
+   쌓는다. 컬럼 헤더 행은 숨기고, 각 셀 내부 데이 힌트(.cellHint)를 노출한다. */
+@media (max-width: 640px) {
+  .headRow {
+    display: none;
+  }
+  .table {
+    border-top: none;
+    gap: clamp(20px, 4vh, 28px);
+  }
+  .row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-block: 0;
+    padding-bottom: clamp(20px, 4vh, 28px);
+    border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  }
+  .row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  .time {
+    font-size: var(--type-body);
+    font-weight: 700;
+    color: var(--heat-main);
+  }
+  .cellHint {
+    display: block;
+  }
+  .cellDay1 .cellHint {
+    color: var(--day1, var(--heat-main));
+  }
+  .cellDay2 .cellHint {
+    color: var(--day2, #c79a3a);
+  }
+  .mergedCell {
+    /* flex 흐름에서 grid-column 무의미 — 자연 폭으로. */
+    grid-column: auto;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 정적 표 — 별도 모션 없음. */
+}

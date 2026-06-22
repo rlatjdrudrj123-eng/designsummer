@@ -1,0 +1,684 @@
+/* ─────────────────────────────────────────────────────────────────────────
+ * CONCEPT 02 — THERMAL TERMINAL (REWORK)
+ *
+ * The KV (develop <Hero/>) and the continuous warm Aura ground (PostHeroRegion
+ * → PostHeroAura) are REUSED UNCHANGED. There is NO dark/black background here.
+ * The "terminal / data console" identity is carried ONLY by:
+ *   · FONT   — scoped JetBrains Mono (--c2-mono), in WARM DARK INK on the light
+ *              warm field (the opposite of the old amber-on-black).
+ *   · LAYOUT — console boot readout, monospace session-log records, spec tables,
+ *              "// …" / "$ …" terminal kickers, expandable rows.
+ *   · METHOD — the °C heat-metric motif + Canvas2D HeatGauge.
+ *
+ * Sections are TRANSPARENT so the one warm aura shows through continuously.
+ * All inner content uses the canonical develop container (1180px /
+ * clamp(20px,5vw,56px)), centered, so rails line up with the other sections.
+ *
+ * CSS Modules only; no Tailwind / UI / animation libs. Scoped tokens via .root.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+.root {
+  /* WARM-ON-LIGHT palette (no dark ground). Ink is a deep burnt-brown that
+     reads on both the red-orange (Day 1) and golden-yellow (Day 2) ends of the
+     aura. Accents stay in the warm family. */
+  --c2-ink: #2a1305; /* primary warm dark ink */
+  --c2-ink-soft: rgba(42, 19, 5, 0.74); /* body */
+  --c2-dim: rgba(42, 19, 5, 0.55); /* meta / labels */
+  --c2-faint: rgba(42, 19, 5, 0.16); /* hairlines */
+  --c2-faint-2: rgba(42, 19, 5, 0.09);
+  --c2-hot: #c43d1c; /* heat core accent (matches --heat-core) */
+  --c2-amber: #b3450e; /* legible warm accent for kickers/numbers on light */
+  --c2-amber-dim: rgba(179, 69, 14, 0.8);
+  /* frosted surface for the console panels so the data frames lift off the
+     warm field while still letting it glow through (like the aura cards). */
+  --c2-surface: rgba(255, 251, 246, 0.5);
+  --c2-surface-bar: rgba(255, 244, 232, 0.62);
+
+  --c2-mono: var(--font-c2-mono), "JetBrains Mono", "IBM Plex Mono",
+    ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+
+  font-family: var(--c2-mono);
+  color: var(--c2-ink);
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  line-height: 1.5;
+}
+
+.root * {
+  box-sizing: border-box;
+}
+
+/* the scoped mono font must win over the base ko font-family on our text */
+.root .prompt,
+.root .indexLine,
+.root .host,
+.root .dayBodyHead,
+.root .introTitle,
+.root .lead,
+.root .body,
+.root .spec dt,
+.root .spec dd,
+.root .dayTag,
+.root .dayDate,
+.root .dayEn,
+.root .dayTitle,
+.root .dayBody,
+.root .tagItem,
+.root .logBar,
+.root .logCols,
+.root .conceptChip {
+  font-family: var(--c2-mono);
+}
+
+/* ── concept chip (required) — restyled to read on the warm ground ── */
+.conceptChip {
+  position: fixed;
+  left: 16px;
+  bottom: 16px;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 360px;
+  padding: 10px 14px;
+  background: rgba(255, 250, 244, 0.86);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1px solid var(--c2-faint);
+  border-radius: 4px;
+  box-shadow: 0 10px 30px -16px rgba(70, 30, 0, 0.45);
+}
+
+.chipDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--c2-hot);
+  box-shadow: 0 0 10px 2px rgba(196, 61, 28, 0.55);
+  flex: none;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.chipText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 11px;
+}
+
+.chipText strong {
+  color: var(--c2-amber);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.chipDesc {
+  color: var(--c2-dim);
+  line-height: 1.4;
+}
+
+/* ── blinking block cursor (warm ink) ── */
+.cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  margin-left: 0.12em;
+  background: var(--c2-hot);
+  vertical-align: -0.16em;
+  animation: blink 1.05s step-end infinite;
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* ── canonical content container (matches develop sections) ── */
+.introInner,
+.dayInner {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* sections are transparent on the aura; neutralize .shell's padding-inline so
+   the inner canonical container governs the rail (same as the shared
+   Lineup/Timetable). */
+.intro:global(.shell),
+.day:global(.shell) {
+  padding-inline: 0;
+  background: transparent;
+}
+
+.intro {
+  padding-block: clamp(40px, 7vh, 88px) clamp(24px, 4vh, 48px);
+}
+
+/* ── console boot readout (the terminal voice) ── */
+.prompt {
+  font-size: 13px;
+  color: var(--c2-amber-dim);
+  margin: 0 0 22px;
+  word-break: break-word;
+  letter-spacing: 0.01em;
+}
+
+.promptCaret {
+  color: var(--c2-amber);
+  font-weight: 700;
+}
+
+/* system index readout under the prompt (the data voice) */
+.indexLine {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--c2-dim);
+  margin: 0 0 18px;
+  word-break: break-word;
+}
+
+.introTitle {
+  font-size: clamp(34px, 7vw, 72px);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin: 0;
+  color: var(--c2-ink);
+}
+
+.introEn {
+  display: block;
+  font-size: clamp(12px, 2.2vw, 16px);
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  color: var(--c2-amber);
+  margin-top: 14px;
+}
+
+.lead {
+  font-size: clamp(15px, 2.2vw, 18px);
+  color: var(--c2-ink);
+  margin: 28px 0 12px;
+  line-height: 1.6;
+  max-width: 720px;
+}
+
+.body {
+  font-size: 14px;
+  color: var(--c2-ink-soft);
+  margin: 0;
+  line-height: 1.7;
+  max-width: 720px;
+}
+
+.gaugeWrap {
+  margin: 36px 0;
+  padding: 18px 20px;
+  background: var(--c2-surface);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--c2-faint);
+  border-radius: 6px;
+  max-width: 560px;
+}
+
+/* spec table — a monospace data grid */
+.specs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--c2-faint);
+  border: 1px solid var(--c2-faint);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 0;
+}
+
+.spec {
+  background: var(--c2-surface);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  padding: 16px 18px;
+}
+
+.spec dt {
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--c2-dim);
+  margin-bottom: 8px;
+}
+
+.spec dd {
+  margin: 0;
+  font-size: 15px;
+  color: var(--c2-ink);
+  font-weight: 500;
+}
+
+/* host readout line below the spec grid (terminal voice) */
+.host {
+  margin: 18px 0 0;
+  font-size: 12px;
+  color: var(--c2-ink-soft);
+}
+
+.hostKey {
+  color: var(--c2-amber);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* ── DAY LOG (concept + lineup) ── */
+.day {
+  padding-block: clamp(40px, 7vh, 80px) clamp(16px, 3vh, 32px);
+}
+
+.dayHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--c2-faint);
+}
+
+.dayMark {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dayTag {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--c2-amber);
+}
+
+.dayDate {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--c2-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.dayDow {
+  font-size: 14px;
+  color: var(--c2-dim);
+  margin-left: 4px;
+}
+
+.dayConcept {
+  flex: 1;
+  min-width: 220px;
+}
+
+.dayEn {
+  margin: 0;
+  font-size: clamp(20px, 3.4vw, 30px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--c2-ink);
+}
+
+.dayKo {
+  font-size: 0.55em;
+  letter-spacing: 0.3em;
+  color: var(--c2-amber);
+  margin-left: 14px;
+}
+
+.dayTitle {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: var(--c2-dim);
+}
+
+.dayBody {
+  margin: 22px 0 18px;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--c2-ink-soft);
+  max-width: 760px;
+}
+
+/* "// …" comment line that prefixes the partition body */
+.dayBodyHead {
+  display: block;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--c2-amber-dim);
+  margin-bottom: 6px;
+}
+
+.tags {
+  list-style: none;
+  margin: 0 0 26px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.tagItem {
+  font-size: 12px;
+  color: var(--c2-amber);
+  border: 1px solid var(--c2-faint);
+  background: rgba(255, 250, 244, 0.4);
+  border-radius: 999px;
+  padding: 4px 12px;
+}
+
+/* console log frame around the speaker records — frosted on the warm field */
+.log {
+  border: 1px solid var(--c2-faint);
+  border-radius: 8px;
+  background: var(--c2-surface);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  overflow: hidden;
+  box-shadow: 0 24px 50px -34px rgba(70, 30, 0, 0.4);
+}
+
+.logBar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--c2-dim);
+  padding: 10px 16px;
+  background: var(--c2-surface-bar);
+  border-bottom: 1px solid var(--c2-faint);
+}
+
+.logCmd {
+  word-break: break-word;
+}
+
+.logBarRight {
+  color: var(--c2-amber);
+  letter-spacing: 0.1em;
+  font-weight: 700;
+  flex: none;
+}
+
+/* column header row for the records (data table feel) */
+.logCols {
+  display: grid;
+  grid-template-columns: auto 44px 1fr auto;
+  gap: 16px;
+  padding: 8px 18px;
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  color: var(--c2-dim);
+  border-bottom: 1px solid var(--c2-faint-2);
+}
+
+.logCols > span:first-child {
+  grid-column: 1 / 3;
+}
+
+/* ── speaker record row (monospace data record / log row) ── */
+.rec {
+  border-bottom: 1px solid var(--c2-faint-2);
+}
+
+.rec:last-child {
+  border-bottom: none;
+}
+
+.recHead {
+  display: grid;
+  grid-template-columns: auto 44px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  padding: 16px 18px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: inherit;
+  font-family: var(--c2-mono);
+  transition: background 0.18s;
+}
+
+.recHead:hover {
+  background: rgba(196, 61, 28, 0.06);
+}
+
+.recOpen .recHead {
+  background: rgba(196, 61, 28, 0.08);
+}
+
+.recId {
+  font-size: 11px;
+  color: var(--c2-amber-dim);
+  letter-spacing: 0.08em;
+}
+
+.recAvatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 3px;
+  overflow: hidden;
+  background: rgba(255, 250, 244, 0.7);
+  border: 1px solid var(--c2-faint);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+.recAvatarImg {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.recAvatarPh {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--c2-amber-dim);
+}
+
+.recMain {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.recStudio {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--c2-ink);
+}
+
+.recStudioEn {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--c2-dim);
+  margin-left: 8px;
+  letter-spacing: 0.06em;
+}
+
+.recName {
+  font-size: 12px;
+  color: var(--c2-amber);
+}
+
+.recRole {
+  color: var(--c2-dim);
+}
+
+.recTitle {
+  font-size: 13px;
+  color: var(--c2-ink-soft);
+  margin-top: 2px;
+}
+
+.recTitleLine {
+  display: block;
+}
+
+.recMeta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  flex: none;
+}
+
+.recTime {
+  font-size: 12px;
+  color: var(--c2-dim);
+  font-variant-numeric: tabular-nums;
+}
+
+/* the per-speaker °C heat metric (method motif) */
+.recHeat {
+  display: inline-flex;
+  align-items: baseline;
+  color: var(--c2-hot);
+  font-weight: 700;
+}
+
+.recHeatNum {
+  font-size: 18px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.recHeatUnit {
+  font-size: 11px;
+  color: var(--c2-amber-dim);
+}
+
+.recToggle {
+  font-size: 12px;
+  color: var(--c2-amber-dim);
+}
+
+.recBody {
+  padding: 0 18px 20px 78px;
+  animation: recIn 0.2s ease;
+}
+
+@keyframes recIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.recDesc {
+  font-size: 13px;
+  line-height: 1.7;
+  color: var(--c2-ink-soft);
+  margin: 0 0 14px;
+}
+
+.recCreds {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.recCreds li {
+  font-size: 12px;
+  color: var(--c2-dim);
+  display: flex;
+  gap: 8px;
+}
+
+.bullet {
+  color: var(--c2-amber);
+  flex: none;
+}
+
+.recLink {
+  font-size: 12px;
+  color: var(--c2-amber);
+  text-decoration: none;
+  border: 1px solid var(--c2-faint);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+
+.recLink:hover {
+  background: rgba(196, 61, 28, 0.08);
+}
+
+/* ── responsive: mobile 390px ── */
+@media (max-width: 720px) {
+  .specs {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .logCols {
+    display: none;
+  }
+
+  /* record row collapses to two stacked zones */
+  .recHead {
+    grid-template-columns: 36px 1fr;
+    grid-template-areas:
+      "avatar main"
+      "avatar meta";
+    gap: 6px 12px;
+    align-items: start;
+  }
+
+  .recId {
+    display: none;
+  }
+
+  .recAvatar {
+    grid-area: avatar;
+    width: 36px;
+    height: 36px;
+  }
+
+  .recMain {
+    grid-area: main;
+  }
+
+  .recMeta {
+    grid-area: meta;
+    gap: 14px;
+    margin-top: 4px;
+  }
+
+  .recBody {
+    padding-left: 18px;
+  }
+
+  .conceptChip {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    max-width: none;
+  }
+}
+
+/* ── reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .cursor {
+    animation: none;
+    opacity: 1;
+  }
+  .chipDot {
+    animation: none;
+  }
+  .recBody {
+    animation: none;
+  }
+}

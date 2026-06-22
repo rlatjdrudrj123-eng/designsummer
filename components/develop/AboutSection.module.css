@@ -1,0 +1,107 @@
+.about {
+  /* 단일 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인.
+     max-width 1180 + padding-inline clamp(20,5vw,56) 로 좌우 끝을 일치시킨다. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+/* shell 의 padding-inline 을 정규 컨테이너 값으로 덮어쓴다(복합 선택자로 우선). */
+.about:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* 공통 섹션 헤더 — 작은 따뜻한 키커 + 톤 헤딩 (전 섹션 동일 리듬). */
+.kicker {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--heat-main);
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  margin-bottom: clamp(24px, 4vh, 44px);
+}
+.intro {
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.4vw, 20px);
+  font-weight: 500;
+  line-height: 1.7;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 82%, transparent);
+  max-width: 64ch;
+}
+
+.days {
+  margin-top: clamp(40px, 6vh, 72px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(24px, 4vw, 56px);
+}
+/* 데이 카드 — Aura 시안의 프로스티드 유리 패널. */
+.day {
+  border: 1px solid color-mix(in srgb, var(--heat-core) 22%, rgba(10, 10, 10, 0.1));
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(12px) saturate(118%);
+  backdrop-filter: blur(12px) saturate(118%);
+  box-shadow: 0 24px 60px -38px rgba(120, 50, 10, 0.4);
+  padding: clamp(24px, 3vw, 40px);
+}
+.dayHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--heat-core) 26%, var(--ink));
+}
+.dayLabel {
+  font-family: var(--font-display);
+  font-size: var(--type-body);
+  font-weight: 700;
+  color: var(--heat-main);
+}
+.dayDate {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  color: color-mix(in srgb, var(--ink) 60%, transparent);
+}
+.dayTitle {
+  margin-top: clamp(14px, 2vh, 20px);
+  font-family: var(--font-kr);
+  font-size: clamp(20px, 2vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 92%, var(--heat-core) 8%);
+}
+.dayBody {
+  margin-top: clamp(10px, 1.5vh, 16px);
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.65;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 74%, transparent);
+}
+
+@media (max-width: 640px) {
+  .days {
+    grid-template-columns: 1fr;
+    gap: clamp(20px, 4vh, 32px);
+  }
+}

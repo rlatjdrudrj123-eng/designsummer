@@ -1,0 +1,127 @@
+/* Aura1 전용 Apply 포크 — 공유 develop/Apply.module.css 와 동일한 스타일에서
+   하단 .note(참가비·정원 안내) 규칙만 제거했다. CTA 제목 + 스튜디오 라인업 +
+   일자별 사전등록 2버튼 트리트먼트는 원본과 동일. CSS Modules only; no libs. */
+
+.apply {
+  /* 단일 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  padding-block: clamp(72px, 11vh, 160px);
+  display: flex;
+  flex-direction: column;
+}
+/* shell 의 padding-inline 을 정규 컨테이너 값으로 덮어쓴다(복합 선택자로 우선). */
+.apply:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* 공통 섹션 헤더 — 작은 키커 + 따뜻한 톤 헤딩 (라인업/타임테이블/오시는길과 동일 리듬). */
+.kicker {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--heat-main);
+  margin-bottom: clamp(12px, 2vh, 20px);
+}
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  word-break: keep-all;
+  text-wrap: balance;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  max-width: 22ch;
+}
+
+/* 연사 스튜디오 라인업 — 거터 안에서 줄바꿈되는 정적 리스트. 좌우 클리핑 없음. */
+.studios {
+  list-style: none;
+  margin: clamp(28px, 4vh, 48px) 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 12px;
+}
+.studio {
+  font-family: var(--font-display);
+  font-size: var(--type-body);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 82%, var(--heat-core) 18%);
+  padding: 9px 16px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--heat-core) 26%, rgba(10, 10, 10, 0.12));
+  background: rgba(255, 255, 255, 0.46);
+  -webkit-backdrop-filter: blur(10px) saturate(120%);
+  backdrop-filter: blur(10px) saturate(120%);
+}
+
+/* 메인 신청 CTA */
+.actions {
+  margin-top: clamp(32px, 5vh, 56px);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: clamp(16px, 2vw, 28px);
+}
+/* Chapter/Timetable CTA 와 동일한 따뜻한 딥-잉크 트리트먼트. */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: color-mix(in oklab, var(--ink) 82%, var(--heat-core) 18%);
+  color: var(--white);
+  font-family: var(--font-kr);
+  font-size: clamp(17px, 1.4vw, 21px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  padding: 20px 36px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 18px 40px -22px rgba(120, 50, 10, 0.55);
+  transition:
+    color var(--dur-touch) var(--ease-heat),
+    box-shadow var(--dur-touch) var(--ease-heat),
+    transform var(--dur-touch) var(--ease-heat);
+}
+.cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(135deg, var(--heat-core), var(--heat-main));
+  transform: translateY(100%);
+  transition: transform var(--dur-bloom) var(--ease-heat);
+}
+.cta:hover,
+.cta:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 22px 48px -20px rgba(200, 70, 20, 0.6);
+}
+.cta:hover::before,
+.cta:focus-visible::before {
+  transform: translateY(0);
+}
+.cta span {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cta,
+  .cta::before {
+    transition: none;
+  }
+  .cta:hover,
+  .cta:focus-visible {
+    transform: none;
+  }
+}

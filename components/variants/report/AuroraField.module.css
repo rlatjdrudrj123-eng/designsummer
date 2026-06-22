@@ -1,0 +1,19 @@
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* heavy blur turns the additive blobs into a dreamy airbrushed aurora;
+     a strong saturate + slight contrast keeps the colour vivid, not milky */
+  filter: blur(46px) saturate(168%) contrast(106%);
+  /* slightly oversized so the blur edge never reveals a hard border */
+  transform: scale(1.12);
+  transform-origin: center;
+}
+
+@media (max-width: 700px) {
+  .canvas {
+    filter: blur(32px) saturate(160%) contrast(104%);
+  }
+}

@@ -1,0 +1,50 @@
+/* ============================================================
+   AuraBg — full-bleed warm aura ground (orange/amber/gold) behind
+   the lineup. Canvas paints soft blurred warm blobs; the CSS veil
+   melts the top/bottom edges into the surrounding white sections so
+   the field reads as a dreamy airbrushed wash, not a hard band.
+   ============================================================ */
+
+.layer {
+  position: absolute;
+  /* 섹션의 좌우 패딩(--margin) 만큼 바깥으로 빼서 화면 가장자리에 가깝게
+     풀블리드로 깔리게 한다. 위아래는 섹션 박스에 맞춘다. */
+  top: 0;
+  bottom: 0;
+  left: calc(var(--margin) * -1);
+  right: calc(var(--margin) * -1);
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  /* extra softening on top of the canvas blur — keeps the upscaled
+     low-res buffer perfectly smooth and dreamy. */
+  filter: blur(8px) saturate(118%);
+}
+
+/* white veil: lifts top/bottom edges so the aura fades into the white
+   sections above/below, and a faint center-light so type stays legible. */
+.veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(
+      to bottom,
+      #ffffff 0%,
+      rgba(255, 255, 255, 0) 16%,
+      rgba(255, 255, 255, 0) 84%,
+      #ffffff 100%
+    ),
+    radial-gradient(
+      120% 80% at 50% 42%,
+      rgba(255, 255, 255, 0.4),
+      rgba(255, 255, 255, 0) 60%
+    );
+}

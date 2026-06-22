@@ -1,0 +1,201 @@
+/* Aura1 전용 참가 혜택 사본 — 공유 develop/BenefitsSection 에서 분기.
+   /aura · develop 탭에는 영향 없음. Aura1 한정 변경:
+   클라이언트 요청대로 각 혜택에 그를 설명하는 그래픽 요소를 추가했다.
+   그래픽은 라이브러리 없이 인라인 SVG + CSS 로만 그린 "임시" 워밍 액센트다
+   (럭키드로우=선물상자, 샘플킷=종이/샘플 스택, 네트워킹=명함, 사전질문=말풍선).
+   본문 카피·데이터는 공유 conference.benefits.groups 를 그대로 렌더한다. */
+.benefits {
+  /* 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+.benefits:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* 섹션 헤더 — 영문 키커 제거(클라이언트 요청), 한글 헤딩만. */
+.heading {
+  font-family: var(--font-kr);
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  margin-bottom: clamp(28px, 4.5vh, 56px);
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(36px, 6vh, 64px);
+}
+.groupHeading {
+  font-family: var(--font-kr);
+  font-size: clamp(18px, 1.8vw, 24px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 92%, var(--heat-core) 8%);
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid color-mix(in srgb, var(--heat-core) 26%, var(--ink));
+}
+
+/* 3-up 카드 행 (그룹의 혜택 개수에 따라 1~3열). 각 카드 = 그래픽 + 제목 + 본문. */
+.items {
+  list-style: none;
+  margin: clamp(18px, 2.6vh, 28px) 0 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(16px, 2vw, 24px);
+}
+/* 단일 혜택(사전등록 그룹)은 폭을 다 쓰되 그래픽-좌/본문-우 가로 레이아웃으로. */
+.items:has(> .item:only-child) {
+  grid-template-columns: 1fr;
+}
+
+/* GLASS RECIPE — frosted-WHITE fill + backdrop blur so the warm aura diffuses
+   softly through while the card reads as a clean, legible surface; warm tone
+   survives only as a faint hairline edge. Matches the whiter speaker cards. */
+.item {
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.68);
+  -webkit-backdrop-filter: blur(20px) saturate(120%);
+  backdrop-filter: blur(20px) saturate(120%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 24px 60px -38px rgba(120, 50, 10, 0.35);
+  padding: clamp(20px, 2.4vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.8vw, 20px);
+}
+/* 단독 카드: 그래픽을 좌측에 두고 텍스트를 우측에 — 아이콘-레프트 행. */
+.items:has(> .item:only-child) .item {
+  flex-direction: row;
+  align-items: center;
+  gap: clamp(20px, 3vw, 36px);
+}
+
+/* --- 그래픽 액센트 (임시) -----------------------------------------------
+   워밍 오라 팔레트의 부드러운 라운드 타일 위에 인라인 SVG 픽토그램을 얹는다.
+   장식이므로 aria-hidden, pointer-events 없음. hover 시 살짝 떠오르는 열 모션. */
+.graphic {
+  flex: 0 0 auto;
+  width: clamp(64px, 7vw, 84px);
+  height: clamp(64px, 7vw, 84px);
+  display: grid;
+  place-items: center;
+  border-radius: 18px;
+  background:
+    radial-gradient(
+      circle at 32% 28%,
+      color-mix(in srgb, var(--heat-edge) 38%, transparent),
+      transparent 70%
+    ),
+    linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--heat-mid) 16%, var(--white)),
+      color-mix(in srgb, var(--heat-main) 10%, var(--white))
+    );
+  border: 1px solid color-mix(in srgb, var(--heat-core) 18%, transparent);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 12px 28px -20px rgba(120, 50, 10, 0.5);
+  transition:
+    transform var(--dur-touch) var(--ease-heat),
+    box-shadow var(--dur-touch) var(--ease-heat);
+}
+.graphic svg {
+  width: 58%;
+  height: 58%;
+  display: block;
+  overflow: visible;
+}
+/* SVG 라인워크/면 색 — 잉크 스트로크 + 열 색 면, 가이드 톤. */
+.gStroke {
+  fill: none;
+  stroke: color-mix(in oklab, var(--ink) 88%, var(--heat-core) 12%);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.gFill {
+  fill: var(--heat-main);
+}
+.gFillSoft {
+  fill: color-mix(in srgb, var(--heat-edge) 60%, var(--white));
+}
+.gAccent {
+  fill: var(--heat-core);
+}
+
+.item:hover .graphic,
+.item:focus-within .graphic {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.7),
+    0 18px 36px -18px rgba(200, 70, 20, 0.55);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.itemTitle {
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.4vw, 19px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+}
+.itemBody {
+  margin-top: 10px;
+  font-family: var(--font-kr);
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.65;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 72%, transparent);
+}
+
+@media (max-width: 640px) {
+  .items {
+    grid-template-columns: 1fr;
+  }
+  /* 모바일: 다중 카드도 아이콘-레프트 행으로 정렬해 세로 길이를 줄인다. */
+  .item {
+    flex-direction: row;
+    align-items: center;
+    gap: clamp(16px, 4vw, 22px);
+  }
+  .items:has(> .item:only-child) .item {
+    /* 단독 카드는 좁은 폭에서 그래픽-위/텍스트-아래로 다시 세운다. */
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .graphic {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .graphic {
+    transition: none;
+  }
+  .item:hover .graphic,
+  .item:focus-within .graphic {
+    transform: none;
+  }
+}

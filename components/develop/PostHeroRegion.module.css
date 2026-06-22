@@ -1,0 +1,42 @@
+/* ============================================================
+   PostHeroRegion — positioned container for the single continuous warm
+   Aura ground behind ALL below-hero sections. The aura layer is z-index 0;
+   the content wrapper is z-index 1 so every (now-transparent) section
+   floats on the one shared field.
+   ============================================================ */
+
+.region {
+  position: relative;
+  /* the warm field is the page ground here; the body's white only shows at
+     the very hero above. Keeping a transparent region lets the canvas show. */
+}
+
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   noAura — the "배경색 없음" version: PostHeroRegion renders NO aura
+   field, so the below-hero sections sit on the plain white page ground.
+   The warm --mood tonal text/accents are kept as-is (they read fine as
+   dark/warm ink on white). The only thing that needs help is the frosted
+   speaker card: its `rgba(255,255,255,0.5)` + backdrop-filter frost has no
+   warm field to pick up on a plain ground, so on white it nearly vanishes
+   into the page. Here we give those cards a subtle near-white SOLID surface
+   with a soft border + shadow so the cards still read as distinct panels.
+   Scoped to .noAura so the aura version (Lineup.module.css owns it) is
+   untouched. (Lineup.module.css is read-only; this layered override is the
+   intended seam — same .card class, just deepened on a plain ground.)
+   ============================================================ */
+.noAura :global(article) {
+  /* near-white solid surface so the card separates from the white page */
+  background: #fffdfb;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border-color: rgba(70, 30, 0, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    0 1px 2px rgba(70, 30, 0, 0.05),
+    0 20px 44px -28px rgba(70, 30, 0, 0.3);
+}

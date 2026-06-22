@@ -1,0 +1,77 @@
+.venue {
+  min-height: 54vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-block: clamp(72px, 11vh, 160px);
+}
+
+.tag {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  margin-bottom: clamp(16px, 3vh, 32px);
+}
+
+/* 장소 — 절제: h3 정도. 큰 디스플레이 금지 */
+.place {
+  font-family: var(--font-kr);
+  font-size: var(--type-h3);
+  font-weight: 600;
+  letter-spacing: var(--tracking-display);
+  word-break: keep-all;
+}
+
+.meta {
+  margin-top: clamp(24px, 4vh, 44px);
+  border-top: 1.5px solid var(--ink);
+  max-width: 720px;
+}
+.metaRow {
+  display: grid;
+  grid-template-columns: 84px 1fr;
+  gap: 24px;
+  align-items: baseline;
+  padding-block: 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+}
+.metaRow dt {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  opacity: 0.55;
+}
+.metaRow dd {
+  font-size: var(--type-body);
+  font-weight: 500;
+  line-height: 1.55;
+  word-break: keep-all;
+}
+
+@media (max-width: 640px) {
+  .metaRow {
+    grid-template-columns: 64px 1fr;
+    gap: 16px;
+  }
+}
+
+/* 안내 도면 — 풀폭 */
+.mapWrap {
+  margin-top: clamp(28px, 4vh, 48px);
+  width: 100%;
+}
+.map {
+  width: 100%;
+  height: auto;
+  display: block;
+  border: 1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+  background: var(--white);
+}
+.mapNote {
+  margin-top: 10px;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: 0.01em;
+  color: color-mix(in srgb, var(--ink) 50%, transparent);
+}

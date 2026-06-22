@@ -1,0 +1,308 @@
+.timetable {
+  /* 단일 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  /* 상하 여백 축소(클라이언트 요청). */
+  padding-block: clamp(20px, 3vh, 44px) clamp(28px, 4.5vh, 64px);
+}
+/* shell 의 padding-inline 을 정규 컨테이너 값으로 덮어쓴다(복합 선택자로 우선). */
+.timetable:global(.shell) {
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* 섹션 헤더 — 영문 키커 제거(클라이언트 요청), 한글 헤딩만. */
+.heading {
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(28px, 3.6vw, 52px);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.08;
+  word-break: keep-all;
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  margin-bottom: clamp(28px, 4.5vh, 56px);
+}
+
+/* ── 통합 표 ──────────────────────────────────────────────────────────────
+   시간 | Day 1 | Day 2 의 3컬럼. CSS Grid 로 행/열을 만들고, 각 논리 행을
+   grid-template-columns 를 공유하는 자체 grid 컨테이너(.row)로 둔다.
+   따뜻한 오라 위 유리/카드 톤 — 은은한 배경 + 헤어라인 구분선. */
+.table {
+  /* 페이지 데이 컬러 코딩과 동일한 값(Lineup.module.css 의 --ds-red / --ds-gold-deep).
+     이 토큰들은 모듈 로컬이라 여기서 재정의해 일치시킨다. */
+  --day1: #ff4d00; /* DAY1 레드오렌지 */
+  --day2: #d99400; /* DAY2 골든-앰버(텍스트 대비) */
+  display: flex;
+  flex-direction: column;
+  /* 반투명 유리(글래스모피즘) — 웜-화이트 ~64% 로 뒤 오라가 비치는 유리감 유지하되,
+     backdrop-blur + 표면 종이 질감(::before)으로 본문 가독성 확보. */
+  position: relative;
+  background: color-mix(in srgb, rgb(255, 251, 247) 64%, transparent);
+  -webkit-backdrop-filter: blur(22px) saturate(130%);
+  backdrop-filter: blur(22px) saturate(130%);
+  border-radius: 18px;
+  /* 표 내부 패딩 축소(클라이언트 요청) — 상하 더 타이트하게. */
+  padding: clamp(14px, 1.8vw, 24px) clamp(18px, 2.6vw, 34px);
+  border: 1px solid color-mix(in srgb, #ffffff 70%, transparent);
+  box-shadow:
+    inset 0 1px 1px color-mix(in srgb, #ffffff 60%, transparent),
+    0 20px 52px -28px color-mix(in srgb, var(--heat-core) 32%, var(--ink));
+}
+/* 미세 종이 질감 — 정적 SVG 노이즈를 표면에 옅게(글자 뒤). */
+.table::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0.65;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='t'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.6 0 0 0 0 0.35 0 0 0 0 0.1 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23t)'/%3E%3C/svg%3E");
+  background-size: 150px 150px;
+}
+/* 행들은 질감 위로(글자 또렷). */
+.headRow,
+.row {
+  position: relative;
+  z-index: 1;
+}
+
+.headRow,
+.row {
+  display: grid;
+  grid-template-columns: 7.2em 1fr 1fr;
+  column-gap: clamp(16px, 2.4vw, 32px);
+}
+
+/* 헤더 행 — 시간 라벨 + Day1(레드)·Day2(골드) 컬럼 헤더. */
+.headRow {
+  align-items: end;
+  padding-block: clamp(8px, 1.2vh, 14px);
+  border-bottom: 1.5px solid color-mix(in srgb, var(--ink) 16%, transparent);
+}
+/* time 헤더 — day 1./day 2. 라벨(.headDayLabel)과 동일한 폰트·사이즈·굵기·색. */
+.headTime {
+  font-family: "omnigothic", var(--font-display);
+  font-size: clamp(17px, 1.8vw, 24px);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: lowercase;
+  color: var(--ink);
+}
+.headDay {
+  display: flex;
+  flex-direction: column;
+}
+.headDayLabel {
+  font-family: "omnigothic", var(--font-display);
+  font-size: clamp(17px, 1.8vw, 24px);
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: lowercase;
+  color: var(--ink);
+}
+.headDayDate {
+  font-family: var(--font-kr);
+  font-size: var(--type-meta);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: color-mix(in srgb, var(--ink) 58%, transparent);
+}
+/* 데이 컬러 제거(클라이언트 요청) — day 라벨은 잉크 단색으로 통일. 언더라인도 없음. */
+
+/* ── 본문 행 ──────────────────────────────────────────────────────────── */
+.row {
+  align-items: stretch;
+  padding-block: clamp(11px, 1.5vh, 16px);
+  border-bottom: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+}
+.row:last-child {
+  border-bottom: none;
+}
+
+.time {
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1.05vw, 15px);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  /* 시간은 모두 검정(ink) — 주황은 하단 신청하기에만(클라이언트 요청). */
+  color: var(--ink);
+  padding-top: 2px;
+  white-space: nowrap;
+}
+
+/* 세션 셀 — Day 별 스튜디오 · 연사 · 세션 제목.
+   박스·유리 카드·좌측 컬러 라인 모두 제거(클라이언트 요청). 순수 텍스트 셀. */
+.cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+/* 데스크톱에선 컬럼 헤더가 있으므로 셀 내부 데이 힌트 숨김(모바일에서만 노출). */
+.cellHint {
+  display: none;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 700;
+  letter-spacing: var(--tracking-display);
+  margin-bottom: 2px;
+}
+
+.studio {
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.15vw, 16px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+  word-break: keep-all;
+  color: var(--ink);
+}
+/* 연사는 소속 바로 아래 한 줄로(클라이언트 요청). 소속과 한 묶음으로 보이게 바짝. */
+.speaker {
+  margin-top: 1px;
+  font-family: var(--font-kr);
+  font-size: clamp(12px, 1vw, 14px);
+  font-weight: 500;
+  line-height: 1.3;
+  color: color-mix(in srgb, var(--ink) 58%, transparent);
+}
+.sessionTitle {
+  margin-top: 5px;
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.05vw, 15px);
+  font-weight: 400;
+  line-height: 1.5;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 78%, transparent);
+}
+
+/* 등록 / 휴식 — 양일 공통 → Day1·Day2 컬럼을 가로질러 병합한 가운데 셀. */
+/* 등록 / 휴식 — 박스 제거. Day1·Day2 컬럼을 가로질러 병합한 가운데 텍스트만. */
+.mergedCell {
+  grid-column: 2 / 4;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* registration 좌정렬(클라이언트 요청). */
+}
+/* 등록(registration) 라벨 — 소속(.studio)과 동일한 폰트·사이즈·굵기로 통일. */
+.mergedLabel {
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.15vw, 16px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  word-break: keep-all;
+  text-align: left;
+  color: var(--ink);
+}
+.reg .time {
+  color: var(--ink);
+}
+
+/* ── 표 맨 아래 CTA 행 ─────────────────────────────────────────────────────
+   day1 / day2 컬럼에 각각 신청하기 버튼. 시간 칼럼은 비움. 하단 헤어라인 없음. */
+.ctaRow {
+  border-bottom: none;
+  padding-top: clamp(16px, 2.2vh, 24px);
+  align-items: stretch;
+}
+.ctaCell {
+  display: flex;
+  justify-content: flex-start; /* 각 날짜 컬럼 하단 좌정렬(클라이언트 요청). */
+}
+/* 신청하기 — 버튼 박스 없이, 소속명(.studio)과 동일한 볼드 텍스트 링크 + 사선 화살표. */
+.cta {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.15vw, 16px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  /* 하단 신청하기만 주황(heat). */
+  color: var(--heat-main);
+  transition: color 0.2s var(--ease-heat, ease);
+}
+.cta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.cta span::after {
+  content: "↗";
+  font-weight: 500;
+  transition: transform 0.22s var(--ease-heat, ease);
+}
+.cta:hover {
+  color: color-mix(in srgb, var(--heat-main) 80%, var(--ink));
+}
+.cta:hover span::after {
+  transform: translate(2px, -2px);
+}
+.break {
+  opacity: 0.78;
+}
+.break .time {
+  color: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+.break .mergedLabel {
+  font-weight: 500;
+  font-style: italic;
+}
+
+/* ── 모바일 (≤640px) ──────────────────────────────────────────────────────
+   클라이언트 요청: 모바일에서도 표(3컬럼 그리드)를 "그대로" 유지하고 크기만 축소.
+   블록 reflow(세로 쌓기) 없이 time | day1 | day2 컬럼 구조를 보존하되,
+   폰트·간격·내부 패딩만 줄여 좁은 폭에 맞춘다. */
+@media (max-width: 640px) {
+  .table {
+    /* 표 자체 패딩도 함께 축소. */
+    padding: clamp(12px, 3.4vw, 16px) clamp(12px, 3.6vw, 18px);
+  }
+  .headRow,
+  .row {
+    /* 시간 컬럼을 좁히고 컬럼 간격도 축소해 3컬럼을 좁은 폭에 욱여넣는다. */
+    grid-template-columns: 4.6em 1fr 1fr;
+    column-gap: clamp(8px, 2.4vw, 14px);
+  }
+  .headTime,
+  .headDayLabel {
+    font-size: clamp(12px, 3.4vw, 15px);
+  }
+  .time {
+    font-size: clamp(10px, 2.8vw, 12px);
+  }
+  .studio {
+    font-size: clamp(11px, 3vw, 13px);
+  }
+  .speaker {
+    font-size: clamp(10px, 2.6vw, 12px);
+  }
+  .sessionTitle,
+  .mergedLabel {
+    font-size: clamp(10px, 2.7vw, 12px);
+    line-height: 1.45;
+  }
+  .cell {
+    gap: 2px;
+  }
+  /* CTA 행 — 좁은 폭에선 빈 시간칼럼 제거하고 두 버튼이 폭을 꽉 채우게. */
+  .ctaRow {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 8px;
+  }
+  .ctaRow .time {
+    display: none;
+  }
+  .cta {
+    font-size: clamp(11px, 2.9vw, 13px);
+    padding: 11px 8px;
+    border-radius: 9px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* 정적 표 — 별도 모션 없음. */
+}

@@ -1,0 +1,68 @@
+.wrap {
+  position: relative;
+  isolation: isolate;
+}
+
+/* 콘텐츠는 글로우 위 */
+.wrap > :not(.glow) {
+  position: relative;
+  z-index: 1;
+}
+
+/* 커서 주변 열 — 종이를 데움(multiply). 평소 숨김, 진입 시 표기.
+   ★ HEATMAP 변형: 그라데이션을 진짜 jet 램프로 — 뜨거운 빨강 코어 → 주황 → 노랑 →
+     초록 → 시안 림 → 투명. 흰 종이 위에 분석 히트맵이 찍히는 룩. */
+.glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 460px;
+  height: 460px;
+  margin: -230px 0 0 -230px;
+  transform: translate(var(--mx, -9999px), var(--my, -9999px));
+  border-radius: 50%;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 300ms var(--ease-heat);
+}
+/* D1 (열원) — 빨강 코어 중심의 풀 jet */
+.wrap[data-day="1"] .glow {
+  background: radial-gradient(
+    circle,
+    #e6281e 0%,
+    #f58c1e 22%,
+    #f5dc32 42%,
+    #46c85a 60%,
+    #1ec2d2 76%,
+    rgba(255, 255, 255, 0) 88%
+  );
+}
+/* D2 (전사) — 동일 jet, 코어를 조금 더 차갑게 시작(주황) */
+.wrap[data-day="2"] .glow {
+  background: radial-gradient(
+    circle,
+    #f58c1e 0%,
+    #f5dc32 26%,
+    #46c85a 48%,
+    #1ec2d2 68%,
+    #2850dc 82%,
+    rgba(255, 255, 255, 0) 92%
+  );
+}
+.wrap.on .glow {
+  opacity: 0.5;
+}
+
+/* 터치·reduced-motion: 커서 열 없음 */
+@media (hover: none) {
+  .glow {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow {
+    transition: none;
+  }
+}

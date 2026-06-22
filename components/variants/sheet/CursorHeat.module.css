@@ -1,0 +1,70 @@
+.wrap {
+  position: relative;
+  isolation: isolate;
+}
+
+/* 콘텐츠는 글로우 위 */
+.wrap > :not(.glow) {
+  position: relative;
+  z-index: 1;
+}
+
+/* 커서 주변 열 — 종이를 데움(multiply). 평소 숨김, 진입 시 표기.
+   ★ SHEET 변형: 그라데이션을 vivid full-spectrum 램프로 — 채도 높은 빨강 코어 → 보라 →
+     파랑 → 시안 → 초록 → 노랑 림 → 투명. 흰 종이 위에 프리즘 스펙트럼이 찍히는 룩. */
+.glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 460px;
+  height: 460px;
+  margin: -230px 0 0 -230px;
+  transform: translate(var(--mx, -9999px), var(--my, -9999px));
+  border-radius: 50%;
+  opacity: 0;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+  z-index: 0;
+  transition: opacity 300ms var(--ease-heat);
+}
+/* D1 (열원) — 채도 높은 빨강 코어 중심의 full spectrum */
+.wrap[data-day="1"] .glow {
+  background: radial-gradient(
+    circle,
+    #ff122e 0%,
+    #8a1ee6 20%,
+    #0a46ff 40%,
+    #18c8e6 56%,
+    #35d03a 70%,
+    #ffe02e 82%,
+    rgba(255, 255, 255, 0) 92%
+  );
+}
+/* D2 (전사) — 동일 spectrum, 코어를 조금 더 차갑게 시작(노랑) */
+.wrap[data-day="2"] .glow {
+  background: radial-gradient(
+    circle,
+    #ffe02e 0%,
+    #ff122e 22%,
+    #8a1ee6 42%,
+    #0a46ff 60%,
+    #18c8e6 74%,
+    #35d03a 84%,
+    rgba(255, 255, 255, 0) 94%
+  );
+}
+.wrap.on .glow {
+  opacity: 0.5;
+}
+
+/* 터치·reduced-motion: 커서 열 없음 */
+@media (hover: none) {
+  .glow {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glow {
+    transition: none;
+  }
+}

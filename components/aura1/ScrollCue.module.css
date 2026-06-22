@@ -1,0 +1,126 @@
+/* Aura1 전용 ScrollCue — 공유 develop/ScrollCue 강화판.
+   라벨 펄스 + 더 긴 레일 + 열 입자 2개(스태거) + 바운싱 열-색 화살표. */
+.cue {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(20px, 3.6vh, 38px);
+  transform: translateX(-50%);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 11px;
+  pointer-events: none;
+  transition: opacity 0.5s var(--ease-heat);
+}
+.hidden {
+  opacity: 0;
+}
+
+.label {
+  font-family: var(--font-display);
+  font-size: 11px;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  font-weight: 700;
+  /* 열 색 포인트 + 은은한 펄스 */
+  color: color-mix(in srgb, var(--heat-main) 78%, var(--ink));
+  animation: cueLabel 2.4s var(--ease-heat) infinite;
+}
+@keyframes cueLabel {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* 세로 레일 + 아래로 흐르는 열 입자(2개, 스태거) */
+.rail {
+  position: relative;
+  width: 2px;
+  height: 60px;
+  background: linear-gradient(
+    to bottom,
+    color-mix(in srgb, var(--heat-main) 30%, transparent),
+    transparent
+  );
+  overflow: visible;
+}
+.bead {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 7px;
+  height: 7px;
+  margin-left: -3.5px;
+  border-radius: 50%;
+  background: var(--heat-main);
+  box-shadow: 0 0 10px 3px color-mix(in srgb, var(--heat-main) 65%, transparent);
+  animation: drip 1.8s var(--ease-heat) infinite;
+}
+.bead2 {
+  animation-delay: 0.9s;
+}
+@keyframes drip {
+  0% {
+    transform: translateY(-2px) scale(0.6);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(56px) scale(0.85);
+    opacity: 0;
+  }
+}
+
+/* 바운싱 열-색 화살표(아래 방향 V) — 적극적 스크롤 유도 */
+.chevron {
+  width: 14px;
+  height: 14px;
+  margin-top: -2px;
+  border-right: 2.5px solid var(--heat-main);
+  border-bottom: 2.5px solid var(--heat-main);
+  transform: rotate(45deg);
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--heat-main) 55%, transparent));
+  animation: cueBounce 1.5s var(--ease-heat) infinite;
+}
+@keyframes cueBounce {
+  0%,
+  100% {
+    transform: translateY(0) rotate(45deg);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(6px) rotate(45deg);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .label,
+  .bead,
+  .chevron {
+    animation: none;
+  }
+  .label {
+    opacity: 0.85;
+  }
+  .bead {
+    top: 0;
+    opacity: 0.8;
+  }
+  .bead2 {
+    top: 26px;
+  }
+  .chevron {
+    opacity: 0.85;
+  }
+}

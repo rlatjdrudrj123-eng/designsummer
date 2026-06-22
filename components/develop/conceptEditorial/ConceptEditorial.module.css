@@ -1,0 +1,385 @@
+/* ============================================================
+   ConceptEditorial — EDITORIAL / MAGAZINE concept for the develop page.
+   Keeps the warm KV tone (Hero + PostHeroAura ground). Only the lineup is
+   reimagined as full-width magazine feature blocks. All surfaces are
+   transparent so the single continuous warm aura shows through.
+   ============================================================ */
+
+/* --- region wrapper (mirrors develop/PostHeroRegion) -----------------
+   the warm aura field is z-index 0; content floats above at z-index 1. */
+.region {
+  position: relative;
+}
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   warm tonal system — same journey as develop's Lineup:
+   DAY 1 deep red-orange → DAY 2 bright golden-yellow. --mood (0→1) is
+   eased from scroll progress by EditorialLineup.useMood. No teal/cyan/green.
+   ============================================================ */
+.lineup {
+  --mood: 0;
+
+  --ds-red-deep: #e03200; /* DAY1 deep red-orange (for text, crisp) */
+  --ds-red: #ff4d00; /* DAY1 red-orange */
+  --ds-gold: #f59e00; /* DAY2 deep golden-amber (for text, contrast) */
+  --ds-yellow: #ffc400; /* DAY2 bright golden-yellow */
+
+  --tonal-a: color-mix(
+    in oklab,
+    var(--ds-red-deep) calc(100% - var(--mood) * 100%),
+    var(--ds-gold) calc(var(--mood) * 100%)
+  );
+  --tonal-b: color-mix(
+    in oklab,
+    var(--ds-red) calc(100% - var(--mood) * 100%),
+    var(--ds-yellow) calc(var(--mood) * 100%)
+  );
+  --accent: color-mix(
+    in oklab,
+    var(--ds-red-deep) calc(100% - var(--mood) * 100%),
+    var(--ds-gold) calc(var(--mood) * 100%)
+  );
+
+  /* warm ink hierarchy — dark warm ink on the light warm aura ground. */
+  --ink-warm: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --ink-soft: color-mix(in oklab, var(--ink-warm) 76%, transparent);
+  --ink-faint: color-mix(in oklab, var(--ink-warm) 54%, transparent);
+  --line: color-mix(in srgb, var(--heat-core) 18%, rgba(10, 10, 10, 0.12));
+
+  position: relative;
+  padding-block: clamp(56px, 11vh, 150px);
+}
+
+/* neutralize .shell's padding-inline so the inner content wrappers own the
+   gutter via the canonical develop container (max-width 1180 + clamp padding) —
+   keeps the editorial blocks flush with the shared Timetable / Directions /
+   Apply / Footer left & right lines. */
+.lineup:global(.shell) {
+  padding-inline: 0;
+}
+
+/* canonical develop content container — same edges as every shared section so
+   left/right lines align across the whole develop page. */
+.dayMarker,
+.features {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+/* ============================================================
+   big tonal DAY marker — separates Day 1 / Day 2, magazine masthead feel.
+   ============================================================ */
+.dayMarker {
+  margin-bottom: clamp(40px, 7vh, 96px);
+}
+.dayKicker {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin: 0 0 10px;
+}
+.dayTag {
+  font-family: var(--font-display);
+  font-size: clamp(46px, 12vw, 148px);
+  font-weight: 800;
+  line-height: 0.92;
+  letter-spacing: -0.02em;
+  margin: 0;
+  background-image: linear-gradient(100deg, var(--tonal-a), var(--tonal-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dayKo {
+  margin: clamp(12px, 2vh, 22px) 0 0;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.7vw, 20px);
+  font-weight: 600;
+  color: var(--ink-soft);
+  word-break: keep-all;
+}
+.dayKo span {
+  color: var(--accent);
+  margin: 0 4px;
+}
+
+/* ============================================================
+   editorial feature blocks
+   ============================================================ */
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(64px, 12vh, 150px);
+}
+.entry {
+  display: block;
+}
+
+.feature {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(22px, 3.4vh, 44px);
+}
+
+/* --- feature header: number/time + huge studio name + meta --- */
+.featureHead {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.4vh, 16px);
+}
+.featureNo {
+  display: flex;
+  align-items: baseline;
+  gap: 16px;
+  margin: 0;
+  font-family: var(--font-display);
+}
+.featureNoNum {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+}
+.featureTime {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+}
+/* the headline: large warm tonal studio name (gradient text-clip). */
+.studioName {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(40px, 8.5vw, 104px);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.03em;
+  word-break: keep-all;
+  background-image: linear-gradient(98deg, var(--tonal-a), var(--tonal-b));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.studioMeta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 20px;
+  margin: 0;
+}
+.studioEn {
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.studioPerson {
+  font-family: var(--font-kr);
+  font-size: 14px;
+  color: var(--ink-soft);
+  word-break: keep-all;
+}
+.studioPerson b {
+  font-weight: 700;
+  color: var(--ink-warm);
+  margin-right: 8px;
+}
+
+/* --- feature body: pull-quote + lede beside a small credentials sidebar.
+   Asymmetric: main column is wide, sidebar narrow. .flip swaps their order
+   per alternate feature for magazine rhythm. --- */
+.featureBody {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  gap: clamp(28px, 4vw, 72px);
+  align-items: start;
+}
+.feature.flip .featureBody {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.7fr);
+}
+.feature.flip .bodyMain {
+  order: 2;
+}
+.feature.flip .sidebar {
+  order: 1;
+  border-left: none;
+  border-right: 1px solid var(--line);
+  padding-left: 0;
+  padding-right: clamp(18px, 2vw, 30px);
+}
+
+.bodyMain {
+  min-width: 0;
+}
+/* session title as a big editorial pull-quote. */
+.pullQuote {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(23px, 3.2vw, 40px);
+  font-weight: 700;
+  line-height: 1.28;
+  letter-spacing: -0.018em;
+  word-break: keep-all;
+  color: var(--ink-warm);
+  display: flex;
+  flex-direction: column;
+}
+.pullQuote::before {
+  content: "";
+  display: block;
+  width: 54px;
+  height: 3px;
+  margin-bottom: clamp(16px, 2.4vh, 28px);
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--tonal-a), var(--tonal-b));
+}
+.lede {
+  margin: clamp(18px, 2.6vh, 30px) 0 0;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.4vw, 17px);
+  line-height: 1.78;
+  word-break: keep-all;
+  color: var(--ink-soft);
+  max-width: 46ch;
+}
+
+/* --- credentials sidebar --- */
+.sidebar {
+  min-width: 0;
+  border-left: 1px solid var(--line);
+  padding-left: clamp(18px, 2vw, 30px);
+}
+.sidebarLabel {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.creds {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.creds li {
+  font-family: var(--font-kr);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-faint);
+  word-break: keep-all;
+  padding-left: 16px;
+  position: relative;
+}
+.creds li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: background var(--dur-bloom, 0.6s) ease;
+}
+
+/* --- editorial image strip: asymmetric works/poster row --- */
+.strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(10px, 1.4vw, 18px);
+}
+.shot {
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(160px, 24vw, 300px);
+  object-fit: cover;
+  border-radius: 14px;
+  border: 1px solid var(--line);
+}
+/* the first shot reads larger → editorial focal frame. */
+.strip .shot:first-child {
+  flex: 2.4 1 0;
+}
+.shotPortrait {
+  flex: 1 1 0;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+.shotPh {
+  flex: 1 1 0;
+  min-width: 0;
+  height: clamp(160px, 24vw, 300px);
+  border-radius: 14px;
+  border: 1px solid var(--line);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(28px, 4vw, 56px);
+  color: color-mix(in oklab, var(--accent) 64%, transparent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, var(--tonal-a) 22%, transparent),
+    color-mix(in oklab, var(--tonal-b) 22%, transparent)
+  );
+}
+.strip .shotPh:first-child {
+  flex: 2.4 1 0;
+}
+
+/* ============================================================
+   mobile (≤760px) — single column, clean 390px. The asymmetric grid
+   collapses; the strip wraps to a tidy two-up.
+   ============================================================ */
+@media (max-width: 760px) {
+  .featureBody,
+  .feature.flip .featureBody {
+    grid-template-columns: 1fr;
+    gap: clamp(22px, 4vh, 34px);
+  }
+  .feature.flip .bodyMain {
+    order: 1;
+  }
+  .sidebar,
+  .feature.flip .sidebar {
+    order: 2;
+    border-left: none;
+    border-right: none;
+    border-top: 1px solid var(--line);
+    padding-left: 0;
+    padding-right: 0;
+    padding-top: clamp(18px, 3vh, 26px);
+  }
+  .lede {
+    max-width: none;
+  }
+  .strip .shot,
+  .strip .shot:first-child,
+  .strip .shotPh,
+  .strip .shotPh:first-child {
+    flex: 1 1 calc(50% - 6px);
+    height: clamp(140px, 38vw, 200px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .creds li::before {
+    transition: none;
+  }
+}

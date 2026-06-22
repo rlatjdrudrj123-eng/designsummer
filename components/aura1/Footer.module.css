@@ -1,0 +1,65 @@
+/* 푸터 (Aura1 전용 포크 — 미니멀). 따뜻한 Aura 톤, 짙은 웜 잉크.
+   영문 워드마크·카피라이트 제거. 주최·문의만 작게. 상단 헤어라인은 컨테이너 전폭. */
+
+.footer {
+  --ink-warm: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --ink-soft: color-mix(in oklab, var(--ink-warm) 70%, transparent);
+  --line-warm: color-mix(in srgb, var(--heat-core) 24%, rgba(10, 10, 10, 0.14));
+
+  /* 정규 캐노니컬 컨테이너 — 전 섹션 동일 좌우 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+  padding-block: clamp(40px, 6vh, 72px) clamp(32px, 5vh, 56px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: clamp(28px, 6vw, 80px);
+  color: var(--ink-warm);
+  /* 전폭 상단 헤어라인 — 컨테이너 전체에 깔끔히 걸친다(끊김 없음). */
+  border-top: 1.5px solid var(--line-warm);
+}
+
+.col {
+  margin: 0;
+}
+.col dt {
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: uppercase;
+  color: var(--heat-main);
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.col dd {
+  margin: 0;
+  font-size: var(--type-body);
+  color: var(--ink-soft);
+}
+.col a {
+  position: relative;
+  color: inherit;
+  text-decoration: none;
+}
+.col a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  height: 1.5px;
+  background: var(--heat-main);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur-touch) var(--ease-heat);
+}
+.col a:hover::after,
+.col a:focus-visible::after {
+  transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .col a::after {
+    transition: none;
+  }
+}

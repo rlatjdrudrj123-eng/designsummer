@@ -1,0 +1,932 @@
+/* REPORT — iridescent aurora festival poster.
+   Bright, dreamy iridescent gradient grounds; huge thin grotesque words that
+   melt into the gradient; one minimal dates · venue line. The display
+   face (--report-display, Archivo light) carries every large word + the small
+   structured labels; Korean body copy stays on --font-kr (Pretendard). */
+
+.root {
+  --rp-ink: #1b1726; /* low-contrast warm-violet ink for body */
+  --rp-faint: rgba(27, 23, 38, 0.52);
+  --rp-hair: rgba(27, 23, 38, 0.16);
+  --rp-paper: #f6f2ec;
+
+  position: relative;
+  width: 100%;
+  background: var(--rp-paper);
+  color: var(--rp-ink);
+  overflow-x: clip;
+  font-family: var(--font-kr, "Pretendard Variable", system-ui, sans-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================ shared field layers ================= */
+.fieldWrap,
+.softField {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.softField {
+  /* gentler fields behind interior sections */
+  opacity: 0.95;
+}
+/* The field is now DEEP + saturated, so interior sections get a stronger paper
+   wash to keep dark body copy legible — but it stays edge-weighted and lets a
+   vivid band of colour breathe through the centre so the iridescence still
+   reads rich rather than bleached. */
+.softField::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    120% 92% at 50% 42%,
+    rgba(246, 242, 236, 0.34) 0%,
+    rgba(246, 242, 236, 0.6) 46%,
+    rgba(246, 242, 236, 0.82) 100%
+  );
+}
+
+/* ============================ HERO =============================== */
+.hero {
+  position: relative;
+  min-height: 100svh;
+  padding: clamp(22px, 4vw, 56px);
+  display: flex;
+  flex-direction: column;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+/* The hero field is now a DEEP saturated ground, so all hero chrome (corner
+   label, context line, mark row) flips to luminous light ink for legibility +
+   premium contrast. Interior sections keep dark --rp-ink on washed fields. */
+.hero {
+  --rp-ink: #f4f1ff;
+  --rp-faint: rgba(244, 241, 255, 0.72);
+  --rp-hair: rgba(255, 255, 255, 0.26);
+}
+.hero .cornerStrong,
+.hero .heroLine {
+  text-shadow: 0 1px 14px rgba(12, 8, 32, 0.4);
+}
+
+/* giant ghosted numeral behind the title */
+.ghost {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -52%);
+  font-weight: 400;
+  font-size: clamp(360px, 62vw, 1100px);
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  /* a confident luminous graphic mark, not a faint smudge: brighter white +
+     screen blend so it catches and amplifies the field's glow */
+  color: rgba(255, 255, 255, 0.82);
+  mix-blend-mode: screen;
+  opacity: 0.5;
+  user-select: none;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+/* top-right edition label */
+.cornerLabel {
+  position: relative;
+  z-index: 3;
+  align-self: flex-end;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+.cornerStrong {
+  font-weight: 600;
+  font-size: clamp(14px, 1.2vw, 17px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.cornerThin {
+  font-weight: 300;
+  font-size: clamp(12px, 1vw, 14px);
+  color: var(--rp-faint);
+  letter-spacing: 0.06em;
+}
+
+/* the two huge thin words — luminous, confident, light-catching */
+.title {
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  margin-bottom: clamp(18px, 3vh, 36px);
+  font-weight: 300;
+  letter-spacing: -0.035em;
+  line-height: 0.78;
+  font-size: clamp(82px, 24.5vw, 380px);
+  text-transform: uppercase;
+  /* a bright luminous fill that catches light: a brilliant white core easing to
+     a faintly cool tone, so the type reads premium and lit rather than flat.
+     A layered glow + soft depth shadow gives it real presence on the field. */
+  background: linear-gradient(
+    160deg,
+    #ffffff 0%,
+    #ffffff 38%,
+    rgba(233, 240, 255, 0.92) 70%,
+    rgba(255, 246, 252, 0.96) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 6px 34px rgba(18, 10, 44, 0.45), 0 0 72px rgba(255, 255, 255, 0.4);
+  pointer-events: none;
+}
+.titleTop,
+.titleBottom {
+  display: block;
+}
+/* bold offset composition: top word pulled left, bottom word pushed right */
+.titleTop {
+  margin-left: -0.02em;
+}
+.titleBottom {
+  text-align: right;
+  margin-top: -0.06em;
+  margin-right: -0.02em;
+}
+
+/* hero foot: subtitle, desc, context line, the two CTAs, note + mark strip */
+.heroFoot {
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(16px, 2.5vh, 28px);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vh, 16px);
+}
+.heroSubtitle {
+  font-size: clamp(17px, 2.4vw, 26px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--rp-ink);
+  text-shadow: 0 1px 16px rgba(12, 8, 32, 0.42);
+}
+.heroDesc {
+  font-size: clamp(13.5px, 1.5vw, 16px);
+  line-height: 1.6;
+  max-width: 52ch;
+  color: var(--rp-faint);
+  text-shadow: 0 1px 14px rgba(12, 8, 32, 0.36);
+}
+
+/* one minimal context line beneath the title — dates · venue, facts only */
+.heroLine {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 18px;
+  font-size: clamp(12.5px, 1.2vw, 15px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--rp-ink);
+  text-shadow: 0 1px 14px rgba(12, 8, 32, 0.4);
+}
+.heroDate::after {
+  content: "·";
+  margin-left: 18px;
+  color: var(--rp-faint);
+}
+.heroVenue {
+  color: var(--rp-faint);
+}
+
+/* two distinct per-day registration CTAs on the deep hero field */
+.heroCtas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 4px;
+}
+.heroCta {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 13px 24px;
+  border-radius: 999px;
+  background: #fbf8ff;
+  color: #1b1726;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: clamp(13px, 1.3vw, 15px);
+  letter-spacing: 0.01em;
+  box-shadow: 0 10px 30px rgba(12, 8, 32, 0.38),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.heroCta:nth-child(2) {
+  background: transparent;
+  color: #f4f1ff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.55) inset;
+}
+.heroCta:hover {
+  transform: translateY(-2px);
+}
+.heroCta span {
+  transition: transform 0.18s ease;
+}
+.heroCta:hover span {
+  transform: translateX(3px);
+}
+.heroNote {
+  font-size: clamp(11.5px, 1.1vw, 13px);
+  line-height: 1.55;
+  max-width: 60ch;
+  color: var(--rp-faint);
+  text-shadow: 0 1px 12px rgba(12, 8, 32, 0.34);
+}
+
+/* bottom mark strip */
+.markRow {
+  position: relative;
+  z-index: 3;
+  margin-top: clamp(8px, 1.5vh, 16px);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  padding-top: 18px;
+  border-top: 1px solid var(--rp-hair);
+}
+.mark {
+  font-weight: 400;
+  font-size: clamp(10px, 0.9vw, 12.5px);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rp-faint);
+  white-space: nowrap;
+}
+
+/* ============================ generic section heads =============== */
+.sectionHead {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: clamp(26px, 4vw, 48px);
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rp-hair);
+}
+.sectionTitle {
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  font-size: clamp(40px, 7vw, 96px);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.sectionMeta {
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  color: var(--rp-faint);
+}
+
+/* ============================ INTRO ============================== */
+.intro {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(64px, 11vw, 160px) clamp(22px, 4vw, 56px);
+}
+.introInner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.eyebrow {
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--rp-faint);
+  margin-bottom: 18px;
+}
+.sectionLead {
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  font-size: clamp(26px, 4.4vw, 56px);
+  line-height: 1.12;
+  max-width: 18ch;
+  margin-bottom: 22px;
+}
+.introBody {
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.7;
+  max-width: 56ch;
+  color: rgba(27, 23, 38, 0.78);
+}
+.concepts {
+  margin-top: clamp(40px, 6vw, 80px);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(24px, 4vw, 56px);
+}
+.concept {
+  border-top: 1px solid var(--rp-hair);
+  padding-top: 20px;
+}
+.conceptEn {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font-weight: 400;
+  font-size: 14px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.conceptDay {
+  font-weight: 300;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--rp-faint);
+}
+.conceptTitle {
+  margin-top: 14px;
+  font-size: clamp(22px, 2.8vw, 32px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.conceptBody {
+  margin-top: 12px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(27, 23, 38, 0.78);
+}
+
+/* ============================ TIMETABLE ========================== */
+.timetable {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(56px, 9vw, 130px) clamp(22px, 4vw, 56px);
+}
+.ttInner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.ttGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(28px, 5vw, 72px);
+}
+.ttDayHead {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--rp-hair);
+}
+.ttDayLabel {
+  font-weight: 400;
+  font-size: clamp(18px, 2.2vw, 26px);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.ttDayMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ttDayDate {
+  font-size: 12.5px;
+  color: var(--rp-faint);
+  letter-spacing: 0.02em;
+}
+.ttDayTheme {
+  font-size: 13px;
+  font-weight: 600;
+}
+.ttList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.ttRow {
+  border-top: 1px solid var(--rp-hair);
+  padding: 18px 0;
+  display: grid;
+  grid-template-columns: 104px 1fr;
+  gap: 16px;
+}
+.ttTime {
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--rp-faint);
+  white-space: nowrap;
+  padding-top: 2px;
+}
+
+/* registration / break rows — visually distinct from sessions */
+.ttRowMeta {
+  align-items: center;
+}
+.ttMetaBody {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+}
+.ttMetaTag {
+  font-family: var(--report-display, inherit);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid var(--rp-hair);
+  color: var(--rp-faint);
+  background: rgba(255, 255, 255, 0.45);
+  text-transform: uppercase;
+}
+.ttRowMeta[data-kind="break"] .ttMetaTag {
+  background: rgba(27, 23, 38, 0.06);
+}
+.ttMetaLabel {
+  font-size: 13.5px;
+  color: rgba(27, 23, 38, 0.66);
+}
+
+/* session row body */
+.ttSession {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+.ttSessionHead {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.ttPhoto {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border-radius: 50%;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: 0 0 0 1px var(--rp-hair), 0 4px 14px rgba(12, 8, 32, 0.12);
+}
+.ttPhotoPlaceholder {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  border-radius: 50%;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.55), rgba(150, 92, 248, 0.22));
+  box-shadow: 0 0 0 1px var(--rp-hair);
+}
+.ttSpeakerMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ttStudioLine {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.ttStudio {
+  font-size: clamp(15px, 1.7vw, 18px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.ttStudioEn {
+  font-weight: 300;
+  font-size: 12px;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  color: var(--rp-faint);
+}
+.ttSpeaker {
+  font-size: 13px;
+  color: rgba(27, 23, 38, 0.7);
+}
+.ttTitle {
+  font-size: clamp(15.5px, 1.8vw, 19px);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+.ttDesc {
+  font-size: 14px;
+  line-height: 1.65;
+  color: rgba(27, 23, 38, 0.76);
+}
+.ttCreds {
+  margin: 2px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+}
+.ttCred {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--rp-faint);
+  padding-left: 12px;
+  position: relative;
+}
+.ttCred::before {
+  content: "·";
+  position: absolute;
+  left: 2px;
+}
+
+/* ============================ AUDIENCE =========================== */
+.audience {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(56px, 9vw, 130px) clamp(22px, 4vw, 56px);
+}
+.audienceInner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.audienceGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: clamp(20px, 3vw, 40px);
+}
+.audienceCard {
+  border-top: 1px solid var(--rp-hair);
+  padding-top: 20px;
+}
+.audienceDay {
+  font-weight: 400;
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rp-faint);
+}
+.audienceHeading {
+  margin-top: 10px;
+  font-size: clamp(18px, 2.4vw, 26px);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.audienceList {
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+.audienceItem {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: rgba(27, 23, 38, 0.8);
+  padding-left: 18px;
+  position: relative;
+}
+.audienceItem::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.62em;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(150deg, #f84ec4, #965cf8);
+}
+
+/* ============================ BENEFITS =========================== */
+.benefits {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(56px, 9vw, 130px) clamp(22px, 4vw, 56px);
+}
+.benefitsInner {
+  position: relative;
+  z-index: 2;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.benefitsGrid {
+  display: grid;
+  gap: clamp(32px, 5vw, 56px);
+}
+.benefitGroup {
+  position: relative;
+}
+.benefitGroupHead {
+  font-weight: 400;
+  font-size: clamp(15px, 1.8vw, 20px);
+  letter-spacing: 0.04em;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--rp-hair);
+}
+.benefitItems {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: clamp(16px, 2.4vw, 28px);
+}
+.benefitItem {
+  background: rgba(246, 242, 236, 0.66);
+  backdrop-filter: blur(4px);
+  border: 1px solid var(--rp-hair);
+  border-radius: 4px;
+  padding: clamp(18px, 2.2vw, 26px);
+}
+.benefitTitle {
+  font-size: clamp(15px, 1.7vw, 18px);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+}
+.benefitBody {
+  margin-top: 10px;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: rgba(27, 23, 38, 0.76);
+}
+
+/* ============================ FAQ ================================ */
+.faq {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(56px, 9vw, 130px) clamp(22px, 4vw, 56px);
+}
+.faqInner {
+  position: relative;
+  z-index: 2;
+  max-width: 880px;
+  margin: 0 auto;
+}
+.faqList {
+  margin: 0;
+}
+.faqRow {
+  padding: 22px 0;
+  border-top: 1px solid var(--rp-hair);
+}
+.faqRow:last-child {
+  border-bottom: 1px solid var(--rp-hair);
+}
+.faqQ {
+  display: flex;
+  gap: 12px;
+  font-size: clamp(15px, 1.8vw, 19px);
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.005em;
+}
+.faqMark {
+  flex: none;
+  font-weight: 500;
+  font-size: clamp(15px, 1.8vw, 19px);
+  color: #965cf8;
+}
+.faqA {
+  margin: 12px 0 0 24px;
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: rgba(27, 23, 38, 0.78);
+}
+
+/* ============================ INFORMATION ======================== */
+.info {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(56px, 9vw, 130px) clamp(22px, 4vw, 56px);
+}
+.infoInner {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  margin: 0 auto;
+}
+.infoTable {
+  margin: 0;
+}
+.infoRow {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding: 18px 0;
+  border-top: 1px solid var(--rp-hair);
+}
+.infoRow:last-child {
+  border-bottom: 1px solid var(--rp-hair);
+}
+.infoKey {
+  font-weight: 400;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rp-faint);
+}
+.infoVal {
+  margin: 0;
+  font-size: clamp(14.5px, 1.6vw, 18px);
+  font-weight: 500;
+  line-height: 1.55;
+}
+
+/* ============================ APPLY ============================== */
+.apply {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 78svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(56px, 9vw, 130px) clamp(22px, 4vw, 56px);
+}
+/* apply sits on a full deep field (no paper wash) → light chrome like the hero */
+.apply {
+  --rp-ink: #f4f1ff;
+  --rp-faint: rgba(244, 241, 255, 0.74);
+}
+.applyInner {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.applyEyebrow {
+  font-weight: 400;
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--rp-faint);
+  margin-bottom: 16px;
+}
+.applyTitle {
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 0.84;
+  font-size: clamp(56px, 14vw, 200px);
+  text-transform: uppercase;
+  background: linear-gradient(
+    160deg,
+    #ffffff 0%,
+    #ffffff 38%,
+    rgba(233, 240, 255, 0.92) 70%,
+    rgba(255, 246, 252, 0.96) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 1px 1px rgba(255, 255, 255, 0.5),
+    0 6px 34px rgba(18, 10, 44, 0.45), 0 0 72px rgba(255, 255, 255, 0.4);
+}
+.applyTitleTop,
+.applyTitleBottom {
+  display: block;
+}
+.applySub {
+  margin-top: 22px;
+  font-size: clamp(14px, 1.6vw, 17px);
+  color: rgba(244, 241, 255, 0.86);
+  text-shadow: 0 1px 16px rgba(12, 8, 32, 0.42);
+}
+.applyCtas {
+  margin-top: 28px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  justify-content: center;
+}
+.applyBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 34px;
+  border-radius: 999px;
+  /* a bright solid pill that pops off the deep field */
+  background: #fbf8ff;
+  color: #1b1726;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.01em;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  box-shadow: 0 12px 38px rgba(12, 8, 32, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+}
+.applyCtas .applyBtn:nth-child(2) {
+  background: transparent;
+  color: #f4f1ff;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+}
+.applyBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 48px rgba(12, 8, 32, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+}
+.applyBtn span {
+  transition: transform 0.18s ease;
+}
+.applyBtn:hover span {
+  transform: translateX(4px);
+}
+.applyNote {
+  margin-top: 16px;
+  font-size: 12px;
+  color: var(--rp-faint);
+}
+
+/* ============================ FOOTER ============================= */
+.footer {
+  position: relative;
+  z-index: 1;
+  padding: clamp(40px, 6vw, 72px) clamp(22px, 4vw, 56px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--rp-hair);
+}
+.footWordmark {
+  font-weight: 300;
+  font-size: clamp(28px, 5vw, 56px);
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+.footMeta {
+  font-size: 13px;
+  color: rgba(27, 23, 38, 0.7);
+}
+.footContact {
+  font-size: 12.5px;
+  color: var(--rp-faint);
+}
+
+/* ============================ RESPONSIVE ========================= */
+@media (max-width: 860px) {
+  .concepts,
+  .audienceGrid,
+  .ttGrid {
+    grid-template-columns: 1fr;
+  }
+  .infoRow {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .ttRow {
+    grid-template-columns: 78px 1fr;
+    gap: 10px;
+  }
+  .title {
+    line-height: 0.86;
+  }
+  .heroCtas,
+  .applyCtas {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .heroCta,
+  .applyBtn {
+    justify-content: center;
+  }
+}
+
+/* respect reduced motion — kill the button hover transforms */
+@media (prefers-reduced-motion: reduce) {
+  .applyBtn,
+  .applyBtn span,
+  .heroCta,
+  .heroCta span {
+    transition: none;
+  }
+  .applyBtn:hover,
+  .heroCta:hover {
+    transform: none;
+  }
+  .applyBtn:hover span,
+  .heroCta:hover span {
+    transform: none;
+  }
+}
