@@ -11,12 +11,11 @@ runConfig:
   concurrency: 80
   cpu: 1
   memoryMiB: 512
-
-# 런타임 환경변수/시크릿.
-# ADMIN_PASSWORD 는 Cloud Secret Manager 에 등록 후 참조한다:
+# NOTE: admin 비밀번호(ADMIN_PASSWORD)는 2단계(Storage 이관) 때 Secret Manager 에
+# 등록 후 아래처럼 다시 연결한다. 1단계(공개 사이트 배포)에선 불필요:
 #   firebase apphosting:secrets:set ADMIN_PASSWORD
-env:
-  - variable: ADMIN_PASSWORD
-    secret: ADMIN_PASSWORD
-    availability:
-      - RUNTIME
+#   firebase apphosting:secrets:grantaccess ADMIN_PASSWORD --backend <backend>
+# env:
+#   - variable: ADMIN_PASSWORD
+#     secret: ADMIN_PASSWORD
+#     availability: [RUNTIME]
