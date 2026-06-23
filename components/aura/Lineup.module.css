@@ -509,11 +509,8 @@
   font-size: clamp(18px, 1.8vw, 23px);
   font-weight: 800;
   letter-spacing: -0.01em;
-  /* 평상시에도 또렷하게 — 항상 보이는 굵은 밑줄(링크/CTA 어포던스) + 은은한 글로우. */
-  text-decoration: underline;
-  text-decoration-color: var(--accent);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 5px;
+  /* 평상시에도 또렷하게 — 확대 + 은은한 글로우(밑줄 없음). */
+  text-decoration: none;
   color: var(--accent);
   filter: drop-shadow(0 1px 7px color-mix(in srgb, var(--accent) 32%, transparent));
   /* 텍스트 위로 밝은 띠가 스쳐가는 shine(반짝) — 더 밝고 자주. */
