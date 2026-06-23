@@ -167,11 +167,11 @@
     border-radius: 16px;
   }
   .bannerTitle {
-    font-size: clamp(18px, 5vw, 22px);
+    font-size: clamp(15px, 4vw, 18px);
   }
   .body {
-    font-size: clamp(13px, 3.4vw, 15px);
-    line-height: 1.55;
+    font-size: clamp(11.5px, 3vw, 13px);
+    line-height: 1.5;
   }
   .bannerVisual {
     width: clamp(78px, 24vw, 110px);
