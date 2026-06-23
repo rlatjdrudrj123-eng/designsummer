@@ -134,21 +134,38 @@
 }
 
 @media (max-width: 640px) {
-  /* 모바일: 5개 앵커가 좁은 바에서 겹치고 짤려 → 앵커·구분선 숨기고
-     브랜드(맨 위로) + K-PRINT 바로가기만 남겨 깔끔하게(원페이지라 앵커는 보조). */
-  .nav,
+  /* 모바일: 타이틀(브랜드) 숨기고 섹션 내비를 보여준다(클라이언트 요청).
+     좁은 폭에 5개 앵커 + 바로가기를 넣기 위해 폰트·간격을 줄이고
+     CTA 는 '바로가기' 단어를 빼 'K-PRINT 2026 ↗' 로 축약. */
+  .brand,
   .divider {
     display: none;
   }
-  .brand {
-    display: inline-block;
-    font-size: 15px;
+  .left {
+    flex: 1;
+    min-width: 0;
+  }
+  .nav {
+    display: flex;
+    flex: 1;
+    gap: clamp(9px, 2.6vw, 14px);
+    min-width: 0;
+  }
+  .navLink {
+    font-size: 12px;
+    letter-spacing: 0;
+    white-space: nowrap;
   }
   .cta {
-    font-size: 13px;
+    font-size: 12px;
+    flex: none;
+  }
+  .ctaWord {
+    display: none;
   }
   .inner {
-    padding-inline: clamp(16px, 5vw, 20px);
+    gap: 10px;
+    padding-inline: clamp(14px, 4vw, 18px);
   }
 }
 

@@ -58,7 +58,8 @@ export default function FloatingBar() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          K-PRINT 2026 바로가기 <span aria-hidden="true">↗</span>
+          K-PRINT 2026<span className={styles.ctaWord}> 바로가기</span>{" "}
+          <span aria-hidden="true">↗</span>
         </a>
       </div>
     </div>
