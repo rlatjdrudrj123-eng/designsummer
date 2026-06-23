@@ -21,12 +21,12 @@ export function imageLink(key: string): string | null {
   return v && v.trim() ? v : null;
 }
 
-/** 한 연사의 대표작 이미지들(여러 장). work-{id} 와 work-{id}-1..N 을 순서대로 모은다. */
+/** 한 연사의 대표작 이미지들(여러 장) — 어드민이 관리하는 work-{id}-1..N 슬롯만 사용.
+   ※ 번호 없는 레거시 base 키(work-{id})는 어드민에 슬롯이 없어 관리·삭제가 불가하고
+   과거 잘못 저장된 이미지가 엉뚱한 연사에 노출되는 원인이라 더 이상 포함하지 않는다. */
 export const WORK_SLOTS = 5;
 export function workImages(id: string): string[] {
   const urls: string[] = [];
-  const base = imageMap[`work-${id}`];
-  if (base) urls.push(base);
   for (let i = 1; i <= WORK_SLOTS; i++) {
     const u = imageMap[`work-${id}-${i}`];
     if (u) urls.push(u);
@@ -37,7 +37,6 @@ export function workImages(id: string): string[] {
 /** workImages 와 동일한 순서의 이미지 키들. 각 대표작 썸네일의 링크 조회에 사용. */
 export function workKeys(id: string): string[] {
   const keys: string[] = [];
-  if (imageMap[`work-${id}`]) keys.push(`work-${id}`);
   for (let i = 1; i <= WORK_SLOTS; i++) {
     if (imageMap[`work-${id}-${i}`]) keys.push(`work-${id}-${i}`);
   }
