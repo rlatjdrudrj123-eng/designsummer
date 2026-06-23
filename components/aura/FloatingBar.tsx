@@ -48,7 +48,7 @@ export default function FloatingBar() {
               benefit
             </a>
             <a href="#faq" className={styles.navLink}>
-              faq
+              FAQ
             </a>
           </nav>
         </div>
