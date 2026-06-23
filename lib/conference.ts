@@ -242,9 +242,9 @@ export const conference = {
       url: "https://www.kintex.com/web/ko/service/parking_user.do",
     },
     contact: {
-      org: "‘K-PRINT 2026’ 사무국",
+      org: "K-PRINT 사무국",
       email: "kprint@kprint.kr",
-      hours: "평일 09:00–18:00 (점심시간 12:00–13:00 제외)",
+      tel: "02-551-0102",
     },
   },
 

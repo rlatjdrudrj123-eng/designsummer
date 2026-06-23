@@ -82,7 +82,9 @@ export default function Directions() {
             <a className={styles.contactLink} href={`mailto:${contact.email}`}>
               {contact.email}
             </a>
-            <span className={styles.hours}>{contact.hours}</span>
+            <a className={styles.contactLink} href={`tel:${contact.tel.replace(/-/g, "")}`}>
+              {contact.tel}
+            </a>
           </dd>
         </div>
       </dl>

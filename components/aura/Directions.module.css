@@ -111,7 +111,8 @@
   display: block;
 }
 .contactLink {
-  display: inline-block;
+  display: block;
+  width: fit-content;
   margin-top: 4px;
   color: var(--heat-main);
   text-decoration: underline;
