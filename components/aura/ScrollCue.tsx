@@ -29,7 +29,7 @@ export default function ScrollCue() {
 
   return (
     <div className={`${styles.cue} ${hidden ? styles.hidden : ""}`} aria-hidden="true">
-      <span className={styles.label}>scroll</span>
+      <span className={styles.label}>스크롤</span>
       <span className={styles.rail}>
         <span className={styles.bead} />
         <span className={`${styles.bead} ${styles.bead2}`} />

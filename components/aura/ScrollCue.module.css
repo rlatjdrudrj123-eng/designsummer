@@ -18,11 +18,11 @@
 }
 
 .label {
-  font-family: var(--font-display);
-  font-size: 11px;
-  letter-spacing: 0.34em;
-  text-indent: 0.34em;
-  font-weight: 700;
+  font-family: var(--font-kr);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-indent: 0.06em;
+  font-weight: 600;
   /* 열 색 포인트 + 은은한 펄스 */
   color: color-mix(in srgb, var(--heat-main) 78%, var(--ink));
   animation: cueLabel 2.4s var(--ease-heat) infinite;
