@@ -12,9 +12,17 @@ const instrument = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Design Summer 2026 · K-PRINT",
+  title: "디자인 썸머 일산",
   description:
-    "K-PRINT 2026 디자인 세미나 Design Summer. 2026.08.20–08.21, KINTEX 제2전시장 301호.",
+    "K-PRINT 2026, 디자인 썸머 일산, 2026.08.20-08.21. KINTEX 제2전시장",
+  openGraph: {
+    title: "디자인 썸머 일산",
+    description:
+      "K-PRINT 2026, 디자인 썸머 일산, 2026.08.20-08.21. KINTEX 제2전시장",
+    type: "website",
+    url: "https://design-summer.kr/",
+    siteName: "design-summer.kr",
+  },
 };
 
 export const viewport: Viewport = {

@@ -288,18 +288,31 @@
   .cell {
     gap: 2px;
   }
-  /* CTA 행 — 좁은 폭에선 빈 시간칼럼 제거하고 두 버튼이 폭을 꽉 채우게. */
+  /* CTA 행 — 좁은 폭에선 빈 시간칼럼 제거하고 두 컬럼이 폭을 꽉 채우게. */
   .ctaRow {
     grid-template-columns: 1fr 1fr;
-    column-gap: 8px;
+    column-gap: clamp(8px, 2.4vw, 14px);
+    align-items: start;
   }
   .ctaRow .time {
     display: none;
   }
+  /* 셀·링크 모두 좌·상단 정렬 — 한 줄에 안 들어가면 2줄로 깔끔히 줄바꿈. */
+  .ctaCell {
+    align-items: flex-start;
+  }
   .cta {
     font-size: clamp(11px, 2.9vw, 13px);
-    padding: 11px 8px;
-    border-radius: 9px;
+    padding: 8px 0;
+    align-items: flex-start;
+  }
+  .cta span {
+    display: inline;
+    line-height: 1.35;
+    word-break: keep-all;
+  }
+  .cta span::after {
+    margin-left: 5px;
   }
 }
 

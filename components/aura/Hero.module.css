@@ -318,10 +318,12 @@
 .regBtn::before {
   content: "";
   position: absolute;
-  inset: 0;
+  /* 살짝 넘치게(-1px) + 모서리 둥글게 — hover 채움 시 밑색이 1px 경계로 비치지 않게. */
+  inset: -1px;
+  border-radius: inherit;
   z-index: 0;
   background: linear-gradient(135deg, var(--heat-core), var(--heat-main));
-  transform: translateY(100%);
+  transform: translateY(101%);
   transition: transform var(--dur-bloom) var(--ease-heat);
 }
 .regBtn:hover,
