@@ -74,7 +74,7 @@
   font-family: "omnigothic", var(--font-kr);
   /* "section A. creative" 헤드라인. 섹션 문자(A/B)는 대문자 유지(입력 대소문자 보존)
      → text-transform 적용하지 않음. */
-  font-size: clamp(26px, 3.6vw, 46px);
+  font-size: clamp(22px, 3.6vw, 46px);
   font-weight: 500;
   line-height: 0.95;
   letter-spacing: -0.02em;
@@ -114,7 +114,7 @@
 .dayTitle {
   margin-top: clamp(16px, 2.2vh, 22px);
   font-family: "omnigothic", var(--font-kr);
-  font-size: clamp(22px, 2.6vw, 34px);
+  font-size: clamp(19px, 2.6vw, 34px);
   font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.16;

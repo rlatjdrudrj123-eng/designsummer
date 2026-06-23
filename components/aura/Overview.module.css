@@ -20,7 +20,7 @@
    소문자, 열 색. 한 줄에 "디자인 썸머 일산 : the creative heatwave". */
 .heading {
   font-family: "omnigothic", var(--font-kr);
-  font-size: clamp(28px, 3.6vw, 52px);
+  font-size: clamp(23px, 3.6vw, 52px);
   font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.1;

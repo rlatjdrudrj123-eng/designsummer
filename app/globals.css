@@ -58,6 +58,9 @@
     --grid-cols: 4;
     --gutter: 16px;
     --margin: 24px;
+    /* 모바일에서 본문·라벨을 한 단계 축소(클라이언트 요청) — 데스크톱 영향 없음. */
+    --type-body: 15px;
+    --type-meta: 12px;
   }
 }
 
