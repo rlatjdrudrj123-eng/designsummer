@@ -86,7 +86,7 @@ export const conference = {
         day: 2,
         date: "08.21. fri",
         label: "craft day",
-        audience: "편집/패키지 디자이너, 인쇄/제작 실무자",
+        audience: "편집/패키지 디자이너, 기업 대표·브랜드 매니저, 인쇄/제작 실무자",
         body: "비즈니스 논리, 후가공(박인쇄), 매체별 출력 편차 등\n실물 제작 단계에서 고려해야할 디테일을 짚어봅니다.",
       },
     ],
