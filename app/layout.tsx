@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     siteName: "design-summer.kr",
     images: [
       {
-        url: "/preview.png",
+        url: "/preview-v2.png",
         width: 1000,
         height: 500,
         alt: "디자인 썸머 일산 — K-PRINT 2026",
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     title: "디자인 썸머 일산",
     description:
       "K-PRINT 동시개최 세미나! 디자인 썸머 일산, 26.08.20. 목 - 08.21. 금, KINTEX 제2전시장",
-    images: ["/preview.png"],
+    images: ["/preview-v2.png"],
   },
 };
 
