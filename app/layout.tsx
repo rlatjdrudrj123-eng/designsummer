@@ -12,6 +12,7 @@ const instrument = Instrument_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://design-summer.kr"),
   title: "디자인 썸머 일산",
   description:
     "K-PRINT 2026, 디자인 썸머 일산, 2026.08.20-08.21. KINTEX 제2전시장",
@@ -22,6 +23,21 @@ export const metadata: Metadata = {
     type: "website",
     url: "https://design-summer.kr/",
     siteName: "design-summer.kr",
+    images: [
+      {
+        url: "/preview.png",
+        width: 2000,
+        height: 1000,
+        alt: "디자인 썸머 일산 — K-PRINT 2026",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "디자인 썸머 일산",
+    description:
+      "K-PRINT 2026, 디자인 썸머 일산, 2026.08.20-08.21. KINTEX 제2전시장",
+    images: ["/preview.png"],
   },
 };
 
