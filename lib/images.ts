@@ -8,7 +8,10 @@ export type ImageMap = Record<string, string>;
 export const imageMap: ImageMap = images as ImageMap;
 
 export function imageUrl(key: string): string | null {
-  return imageMap[key] ?? null;
+  /* 업로드된 슬롯은 확장자 무관 런타임 라우트(/api/img)로 서빙 → 로컬/터널에서
+     재빌드 없이 업로드가 바로 반영(정적 경로는 빌드 이후 추가 파일을 못 서빙).
+     미업로드 슬롯(매니페스트에 없음)은 null → 호출부 플레이스홀더 유지. */
+  return imageMap[key] ? `/api/img/${key}` : null;
 }
 
 /* 이미지별 링크 매니페스트 (key → url). 어드민 "링크" 입력이 갱신. */
