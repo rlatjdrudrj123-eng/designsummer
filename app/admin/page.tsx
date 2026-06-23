@@ -95,8 +95,13 @@ export default async function AdminPage() {
                 <div key={it.key} className={styles.slot}>
                   <div className={styles.preview}>
                     {url ? (
+                      // 확장자 무관 런타임 라우트로 미리보기 — 업로드(어떤 확장자든)가
+                      // 재빌드 없이 즉시 보인다. ?t=… 로 브라우저 캐시도 무력화.
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={url} alt={it.label} />
+                      <img
+                        src={`/api/img/${it.key}?t=${Date.now()}`}
+                        alt={it.label}
+                      />
                     ) : (
                       <span className={styles.empty}>비어 있음</span>
                     )}
