@@ -190,7 +190,7 @@ export const conference = {
       {
         title: "lucky draw",
         amount: "100만원 상당",
-        body: "강연 종료 후 현장 추첨을 통해 참석자분들을 위해 엄선한 프리미엄 경품을 제공합니다.",
+        body: "강연 종료 후 현장 추첨을 통해 참석자분들에게 프리미엄 경품을 제공합니다.",
         imageKey: "event-luckydraw",
       },
       {
