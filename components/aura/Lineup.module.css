@@ -511,7 +511,7 @@
   justify-content: center;
 }
 .dayCtaBtn {
-  /* 레퍼런스 폼 — 채움 라운드 버튼, 텍스트 왼쪽 / ↗ 오른쪽(space-between). hover heat 블룸. */
+  /* 깔끔한 채움 알약 — 텍스트 왼쪽 / ↗ 오른쪽. 데이 컬러는 hover 채움에만 은은히. */
   position: relative;
   overflow: hidden;
   display: inline-flex;

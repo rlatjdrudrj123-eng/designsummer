@@ -1,49 +1,96 @@
 import styles from "./Directions.module.css";
-import VenueMap from "@/components/develop/VenueMap";
 import { conference } from "@/lib/conference";
-import { siteContent } from "@/lib/content";
 
-/* 오시는 길 · 문의 (Aura 전용 포크) — 위치(주소·주차) + 안내 도면 + 문의.
+/* 오시는 길 · 문의 (Aura 전용 포크) — 위치(건물·호수·주소·지도) + 대중교통 + 주차 + 문의.
    (forked from components/aura1/Directions.tsx — independent of /aura1.)
 
-   주최/정원/참가비/일시는 상단 개요(Overview)의 참가 정보 스트립에 있고,
-   여기에는 '오시는 길'(위치·도면)과 '문의'(연락처)만 남긴다.
-   안내 도면(VenueMap)은 인라인 SVG 다이어그램(사진 아님)으로 유지한다. */
+   레이아웃·톤은 개요의 Information 블록(EventInfo / Overview.facts)과 동일하게 맞춘다:
+   라벨은 값 위에 쌓고 블랙, 값은 다크. 주황은 '클릭되는 것'(지도/주차 안내 칩, 메일)에만.
+   콘텐츠 = conference.directions. */
 export default function Directions() {
-  const { address, parking } = conference.info;
-  const rows: { label: string; value: string }[] = [
-    { label: "주소", value: address },
-    { label: "주차", value: parking },
-  ];
+  const { place, address, mapLinks, navi, transit, parking, parkingLink, contact } =
+    conference.directions;
 
   return (
     <section id="venue" className={styles.venue}>
-      <h2 className={styles.heading}>오시는 길 · 문의</h2>
+      <h2 className={styles.heading}>location &amp; contact</h2>
 
-      {/* dl 자체가 전폭 — 상단 룰과 각 행의 하단 룰이 컨테이너 전체에 걸친다. */}
-      <dl className={styles.meta}>
-        {rows.map((r) => (
-          <div key={r.label} className={styles.metaRow}>
-            <dt>{r.label}</dt>
-            <dd>{r.value}</dd>
-          </div>
-        ))}
-        <div className={styles.metaRow}>
-          <dt>문의</dt>
-          <dd>
-            <a className={styles.contactLink} href={`mailto:${siteContent.contact}`}>
-              {siteContent.contact}
+      <dl className={styles.facts}>
+        <div className={styles.fact}>
+          <dt className={styles.factLabel}>장소</dt>
+          <dd className={styles.factValue}>{place}</dd>
+        </div>
+
+        <div className={styles.fact}>
+          <dt className={styles.factLabel}>주소</dt>
+          <dd className={styles.factValue}>
+            {address}
+            <span className={styles.chips}>
+              {mapLinks.map((m) => (
+                <a
+                  key={m.label}
+                  className={styles.chip}
+                  href={m.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {m.label}
+                  <span aria-hidden="true" className={styles.chipArrow}>
+                    ↗
+                  </span>
+                </a>
+              ))}
+            </span>
+          </dd>
+        </div>
+
+        <div className={styles.fact}>
+          <dt className={styles.factLabel}>검색어</dt>
+          <dd className={styles.factValue}>{navi}</dd>
+        </div>
+
+        <div className={styles.fact}>
+          <dt className={styles.factLabel}>대중교통</dt>
+          <dd className={styles.factValue}>
+            <ul className={styles.lines}>
+              {transit.map((t) => (
+                <li key={t}>{t}</li>
+              ))}
+            </ul>
+          </dd>
+        </div>
+
+        <div className={`${styles.fact} ${styles.wide}`}>
+          <dt className={styles.factLabel}>주차</dt>
+          <dd className={styles.factValue}>
+            {parking}
+            <span className={styles.chips}>
+              <a
+                className={styles.chip}
+                href={parkingLink.url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                {parkingLink.label}
+                <span aria-hidden="true" className={styles.chipArrow}>
+                  ↗
+                </span>
+              </a>
+            </span>
+          </dd>
+        </div>
+
+        <div className={`${styles.fact} ${styles.wide}`}>
+          <dt className={styles.factLabel}>문의</dt>
+          <dd className={styles.factValue}>
+            <span className={styles.contactOrg}>{contact.org}</span>
+            <a className={styles.contactLink} href={`mailto:${contact.email}`}>
+              {contact.email}
             </a>
+            <span className={styles.hours}>{contact.hours}</span>
           </dd>
         </div>
       </dl>
-
-      <div className={styles.mapWrap}>
-        <VenueMap />
-        <p className={styles.mapNote}>
-          ※ 안내 도면(샘플) — 실제 행사 도면으로 교체 예정
-        </p>
-      </div>
     </section>
   );
 }

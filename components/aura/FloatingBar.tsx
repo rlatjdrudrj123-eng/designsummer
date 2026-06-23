@@ -45,7 +45,7 @@ export default function FloatingBar() {
               section B
             </a>
             <a href="#benefits" className={styles.navLink}>
-              event
+              benefit
             </a>
             <a href="#faq" className={styles.navLink}>
               FAQ

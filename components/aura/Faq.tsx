@@ -9,7 +9,7 @@ import { conference } from "@/lib/conference";
 export default function Faq() {
   return (
     <section id="faq" className={styles.faq}>
-      <h2 className={styles.heading}>자주 묻는 질문</h2>
+      <h2 className={styles.heading}>FAQ</h2>
 
       {/* ul/li 가 전폭 — 상단 룰 + 각 항목 하단 룰이 컨테이너 전체에 걸친다. */}
       <ul className={styles.list}>

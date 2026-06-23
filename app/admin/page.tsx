@@ -55,6 +55,15 @@ export default async function AdminPage() {
         label: `지난 행사 ${i + 1}`,
       })),
     },
+    {
+      title: "참가 혜택 (benefit)",
+      hint: "투명 PNG 권장 (컬러 배너 위에 떠 보이게) · 가로형 ~480×320px",
+      items: [
+        { key: "event-welcome", label: "welcome goods" },
+        { key: "event-luckydraw", label: "lucky draw" },
+        { key: "event-invitation", label: "K-PRINT invitation" },
+      ],
+    },
   ];
 
   return (

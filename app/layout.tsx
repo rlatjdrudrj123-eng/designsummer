@@ -53,6 +53,26 @@ export default function RootLayout({
               '(function(d){var config={kitId:"bln8piq",scriptTimeout:3000,async:true};var tk=d.createElement("script"),f=false,a;tk.src="https://use.typekit.net/"+config.kitId+".js";tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;try{Typekit.load(config)}catch(e){}};(d.head||d.getElementsByTagName("head")[0]).appendChild(tk);})(document);',
           }}
         />
+        {/* Microsoft Clarity — 히트맵·세션 분석 (프로젝트 xaxhw93h2a). */}
+        <link rel="preconnect" href="https://www.clarity.ms" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              '(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","xaxhw93h2a");',
+          }}
+        />
+        {/* Google Analytics 4 (gtag) — 측정 ID G-FLZEZ9Z2MV. */}
+        <link rel="preconnect" href="https://www.googletagmanager.com" />
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-FLZEZ9Z2MV"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-FLZEZ9Z2MV');",
+          }}
+        />
       </head>
       <body>{children}</body>
     </html>

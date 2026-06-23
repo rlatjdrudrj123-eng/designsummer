@@ -1,0 +1,90 @@
+/* 온도 테스트 띠 배너 — 풀폭 옅은 밴드 위 제목 + (설명 / CTA) 행. */
+.temp {
+  width: 100%;
+  padding-block: clamp(40px, 6vh, 80px);
+  background: color-mix(in srgb, #fffaf5 60%, transparent);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  border-block: 1px solid rgba(255, 255, 255, 0.5);
+}
+.inner {
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 5vw, 56px);
+}
+
+.title {
+  margin: 0;
+  /* 좌정렬 — 나머지 섹션과 통일(가운데 정렬 어색함 제거). */
+  text-align: left;
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(22px, 2.8vw, 36px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  word-break: keep-all;
+  color: var(--ink);
+}
+.emoji {
+  font-family: var(--font-kr);
+}
+
+.row {
+  margin-top: clamp(16px, 2.4vh, 26px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(20px, 3vw, 48px);
+}
+.body {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.15vw, 16px);
+  font-weight: 400;
+  line-height: 1.65;
+  word-break: keep-all;
+  color: color-mix(in srgb, var(--ink) 74%, transparent);
+}
+
+/* CTA — 아웃라인 펄 + 사선 화살표(레퍼런스). hover 시 heat 톤. */
+.cta {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: clamp(11px, 1.4vh, 15px) clamp(22px, 2.6vw, 30px);
+  border-radius: 999px;
+  border: 1.5px solid color-mix(in srgb, var(--ink) 52%, var(--heat-core) 48%);
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1vw, 15px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  color: var(--ink);
+  white-space: nowrap;
+  transition:
+    color 0.2s var(--ease-heat, ease),
+    border-color 0.2s var(--ease-heat, ease),
+    transform 0.2s var(--ease-heat, ease);
+}
+.cta::after {
+  content: "↗";
+  font-weight: 500;
+  transition: transform 0.22s var(--ease-heat, ease);
+}
+.cta:hover {
+  color: var(--heat-main);
+  border-color: var(--heat-main);
+  transform: translateY(-1px);
+}
+.cta:hover::after {
+  transform: translate(2px, -2px);
+}
+
+@media (max-width: 760px) {
+  .row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(16px, 3vh, 22px);
+  }
+}

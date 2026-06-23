@@ -26,9 +26,9 @@ import Timetable from "./Timetable";
 import EventInfo from "./EventInfo";
 import Lineup from "./Lineup";
 import Benefits from "./Benefits";
+import TempTest from "./TempTest";
 import Directions from "./Directions";
 import Faq from "./Faq";
-import Footer from "./Footer";
 import ScrollCue from "./ScrollCue";
 import FloatingBar from "./FloatingBar";
 import PostHeroRegion from "@/components/develop/PostHeroRegion";
@@ -210,9 +210,11 @@ export default function AuraSite() {
             <Lineup day={2} />
           </div>
           <Benefits />
-          <Directions />
+          {/* 온도 테스트 — 일단 숨김(클라이언트 요청). 나중에 다시 노출. */}
+          {/* <TempTest /> */}
+          {/* FAQ 를 오시는 길 위로(클라이언트 요청). */}
           <Faq />
-          <Footer />
+          <Directions />
         </PostHeroRegion>
       </div>
 
