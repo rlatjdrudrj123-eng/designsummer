@@ -57,7 +57,7 @@
   :root {
     --grid-cols: 4;
     --gutter: 16px;
-    --margin: 20px;
+    --margin: 24px;
   }
 }
 

@@ -2,7 +2,7 @@
   /* 단일 정규 컨테이너 — 전 섹션·히어로 락업과 동일한 좌우 라인. */
   max-width: 1180px;
   margin-inline: auto;
-  padding-inline: clamp(20px, 5vw, 56px);
+  padding-inline: clamp(24px, 5vw, 56px);
   display: flex;
   flex-direction: column;
   /* 상하 여백 축소(클라이언트 요청). */
@@ -10,7 +10,7 @@
 }
 /* shell 의 padding-inline 을 정규 컨테이너 값으로 덮어쓴다(복합 선택자로 우선). */
 .timetable:global(.shell) {
-  padding-inline: clamp(20px, 5vw, 56px);
+  padding-inline: clamp(24px, 5vw, 56px);
 }
 
 /* 섹션 헤더 — 영문 키커 제거(클라이언트 요청), 한글 헤딩만. */

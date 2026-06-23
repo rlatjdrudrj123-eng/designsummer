@@ -8,7 +8,7 @@ import { conference } from "@/lib/conference";
    라벨은 값 위에 쌓고 블랙, 값은 다크. 주황은 '클릭되는 것'(지도/주차 안내 칩, 메일)에만.
    콘텐츠 = conference.directions. */
 export default function Directions() {
-  const { place, address, mapLinks, navi, transit, parking, parkingLink, contact } =
+  const { place, address, mapLinks, transit, parking, parkingLink, contact } =
     conference.directions;
 
   return (
@@ -42,11 +42,6 @@ export default function Directions() {
               ))}
             </span>
           </dd>
-        </div>
-
-        <div className={styles.fact}>
-          <dt className={styles.factLabel}>검색어</dt>
-          <dd className={styles.factValue}>{navi}</dd>
         </div>
 
         <div className={styles.fact}>

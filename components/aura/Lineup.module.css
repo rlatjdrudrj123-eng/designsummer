@@ -19,11 +19,11 @@
   --ds-gold: #f59e00;
   --ds-gold-deep: #d99400;
 
-  /* Day-toned values; overridden per day in .d1 / .d2 below. */
-  --tonal-a: var(--ds-red-deep);
-  --tonal-b: var(--ds-red);
-  --accent: var(--ds-red-deep);
-  --ink-day: #9c2400;
+  /* 메인 컬러로 통일(클라이언트 요청) — section A/B 동일. heat-core/heat-main 사용. */
+  --tonal-a: var(--heat-core);
+  --tonal-b: var(--heat-main);
+  --accent: var(--heat-main);
+  --ink-day: color-mix(in srgb, var(--heat-core) 84%, #000);
 
   /* Warm ink hierarchy — dark warm ink for legibility over the bright aura. */
   --ink-warm: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
@@ -32,6 +32,9 @@
   --line: color-mix(in srgb, var(--heat-core) 18%, rgba(10, 10, 10, 0.12));
 
   position: relative;
+  /* 우측 대형 KV(.kvBleed)가 뷰포트 밖으로 삐져나가 모바일에서 가로 스크롤/흰 여백을
+     만들던 문제 → 섹션에서 가로만 클립(세로는 visible 유지). 블리드 효과는 유지. */
+  overflow-x: clip;
   padding-block: clamp(48px, 8vh, 110px);
 }
 /* Full-bleed root (the aura ground sits behind); .cards carries the rails.
@@ -40,19 +43,14 @@
   padding-inline: 0;
 }
 
-/* DAY 1 = clear RED / red-orange. DAY 2 = clear GOLD / amber.
-   Hard-set per day (no blend) so the coding is unmistakable. */
-.d1 {
-  --tonal-a: var(--ds-red-deep);
-  --tonal-b: var(--ds-red);
-  --accent: var(--ds-red);
-  --ink-day: #9c2400; /* deep red ink — clearly legible */
-}
+/* section A/B 모두 메인 컬러(레드오렌지)로 통일 — 데이별 색 구분 폐기(클라이언트 요청).
+   형태 구분(DayKV 그래픽)만 남기고 텍스트·액센트 색은 동일하게 간다. */
+.d1,
 .d2 {
-  --tonal-a: var(--ds-gold);
-  --tonal-b: var(--ds-gold-deep);
-  --accent: var(--ds-gold-deep);
-  --ink-day: #8a5500; /* deep amber/brown-gold ink — readable, not light gold */
+  --tonal-a: var(--heat-core);
+  --tonal-b: var(--heat-main);
+  --accent: var(--heat-main);
+  --ink-day: color-mix(in srgb, var(--heat-core) 84%, #000);
 }
 
 /* ── Day intro header — the day THEME + 추천 대상 ──
@@ -64,7 +62,7 @@
   max-width: 1180px;
   margin-inline: auto;
   margin-bottom: clamp(36px, 5vh, 64px);
-  padding-inline: clamp(20px, 5vw, 56px);
+  padding-inline: clamp(24px, 5vw, 56px);
 }
 /* 상단 가로 실선 제거(클라이언트 요청) — 여백만으로 안착. */
 .dayHead {
@@ -195,7 +193,7 @@
   z-index: 1;
   max-width: 1180px;
   margin-inline: auto;
-  padding-inline: clamp(20px, 5vw, 56px);
+  padding-inline: clamp(24px, 5vw, 56px);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: clamp(18px, 2.5vw, 30px);
@@ -233,13 +231,11 @@
     0 30px 60px -34px rgba(70, 30, 0, 0.4);
 }
 /* Per-day glass edge — a faint warm hairline only (no warm fill). */
-.d1 .card {
-  --card-fill: rgba(255, 255, 255, 0.66);
-  --card-line: color-mix(in srgb, var(--ds-red-deep) 26%, rgba(255, 255, 255, 0.55));
-}
+/* 카드 헤어라인도 메인 컬러로 통일(d2 골드 제거). */
+.d1 .card,
 .d2 .card {
-  --card-fill: rgba(255, 255, 255, 0.7);
-  --card-line: color-mix(in srgb, var(--ds-gold) 30%, rgba(255, 255, 255, 0.55));
+  --card-fill: rgba(255, 255, 255, 0.68);
+  --card-line: color-mix(in srgb, var(--heat-core) 24%, rgba(255, 255, 255, 0.55));
 }
 
 /* Card header — 좌측 정렬 프로필: 원형 사진 + "이름 | 스튜디오 직책" 한 줄. */
@@ -500,68 +496,42 @@
   border-radius: 4px;
 }
 
-/* ── 섹션 끝 per-day 신청 CTA ── */
-.dayCta {
+/* ── per-day 신청 — 박스 없이 좌정렬 텍스트 링크(추천 대상 아래·카드 위). ── */
+.dayCtaLink {
   position: relative;
   z-index: 1;
-  max-width: 1180px;
-  margin: clamp(28px, 4vh, 52px) auto 0;
-  padding-inline: clamp(20px, 5vw, 56px);
-  display: flex;
-  justify-content: center;
-}
-.dayCtaBtn {
-  /* 깔끔한 채움 알약 — 텍스트 왼쪽 / ↗ 오른쪽. 데이 컬러는 hover 채움에만 은은히. */
-  position: relative;
-  overflow: hidden;
   display: inline-flex;
   align-items: center;
-  justify-content: space-between;
-  gap: clamp(28px, 4vw, 56px);
-  min-width: clamp(240px, 26vw, 320px);
-  padding: clamp(14px, 1.7vh, 18px) clamp(22px, 2.6vw, 30px);
-  border-radius: 12px;
+  gap: 8px;
+  margin-top: clamp(22px, 3.2vh, 34px);
   font-family: var(--font-kr);
-  font-size: clamp(14px, 1.1vw, 16px);
-  font-weight: 600;
+  font-size: clamp(17px, 1.6vw, 21px);
+  font-weight: 700;
   letter-spacing: -0.01em;
   text-decoration: none;
-  color: var(--white, #fff);
-  background: color-mix(in oklab, var(--ink) 86%, var(--heat-core) 14%);
-  box-shadow: 0 12px 28px -20px rgba(40, 16, 6, 0.7);
-  transition:
-    transform 0.22s var(--ease-heat, ease),
-    box-shadow 0.22s var(--ease-heat, ease);
+  color: var(--accent);
+  transition: color var(--dur-touch, 0.2s) var(--ease-heat, ease);
 }
-.dayCtaBtn::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: linear-gradient(135deg, var(--heat-core), var(--heat-main));
-  transform: translateY(101%);
-  transition: transform 0.42s var(--ease-heat, ease);
+/* 모바일 전용 하단 신청(연사 카드 뒤) — 데스크톱 숨김. */
+.dayCtaBottom {
+  display: none;
 }
-.dayCtaBtn span {
-  position: relative;
-  z-index: 1;
+.dayCtaArrow {
+  font-size: 1.02em;
+  transition: transform var(--dur-touch, 0.2s) var(--ease-heat, ease);
 }
-.dayCtaBtn::after {
-  content: "↗";
-  position: relative;
-  z-index: 1;
-  font-weight: 500;
-  transition: transform 0.22s var(--ease-heat, ease);
+.dayCtaLink:hover,
+.dayCtaLink:focus-visible {
+  color: color-mix(in srgb, var(--accent) 78%, var(--ink));
 }
-.dayCtaBtn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 22px 48px -18px rgba(200, 70, 20, 0.65);
+.dayCtaLink:hover .dayCtaArrow,
+.dayCtaLink:focus-visible .dayCtaArrow {
+  transform: translate(2px, -2px);
 }
-.dayCtaBtn:hover::before {
-  transform: translateY(0);
-}
-.dayCtaBtn:hover::after {
-  transform: translate(3px, -3px);
+.dayCtaLink:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 2px;
 }
 
 /* ── Mobile 390px: single column ── */
@@ -585,6 +555,18 @@
     right: -18%;
     width: 54vw;
     height: 54vw;
+  }
+  /* 모바일에서만 연사 카드 뒤 신청 링크 노출 — 중앙 정렬(클라이언트 요청). */
+  .dayCtaBottom {
+    display: flex;
+    justify-content: center;
+    max-width: 1180px;
+    margin: clamp(26px, 4vh, 40px) auto 0;
+    padding-inline: clamp(24px, 5vw, 56px);
+  }
+  /* 하단 링크는 자체 margin-top 으로 간격을 잡으므로 중복 제거. */
+  .dayCtaBottom .dayCtaLink {
+    margin-top: 0;
   }
 }
 

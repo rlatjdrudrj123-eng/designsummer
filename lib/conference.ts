@@ -95,10 +95,10 @@ export const conference = {
     info: [
       { label: "Host", value: "한국이앤엑스 K-PRINT 사무국" },
       { label: "Partner", value: "디자인하우스" },
-      { label: "Date", value: "2026. 08. 20 (목) – 08. 21 (금)" },
+      { label: "Date", value: "2026.08.20. 목 - 08.21. 금" },
       { label: "Venue", value: "KINTEX 제2전시장 3층" },
-      { label: "Pass", value: "20,000원 (1일권)" },
-      { label: "Seats", value: "일 150명 (사전등록 마감 시 현장 접수 불가)" },
+      { label: "Pass", value: "얼리버드 20,000원 (정상가 50,000원 · 1일권)" },
+      { label: "Seats", value: "일 150명" },
     ],
   },
 

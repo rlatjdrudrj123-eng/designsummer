@@ -288,6 +288,19 @@ export default function Lineup({ day }: { day: 1 | 2 }) {
             ))}
           </ul>
         </div>
+
+        {/* 신청 — 박스 없이 좌정렬 텍스트 링크, 연사 카드 위(클라이언트 요청). */}
+        <a
+          className={styles.dayCtaLink}
+          href={dayUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          section {section} 신청하기
+          <span aria-hidden="true" className={styles.dayCtaArrow}>
+            ↗
+          </span>
+        </a>
       </header>
 
       <div className={styles.cards}>
@@ -298,15 +311,18 @@ export default function Lineup({ day }: { day: 1 | 2 }) {
         ))}
       </div>
 
-      {/* 그 날 라인업을 다 본 뒤 자연스러운 신청 지점 — 섹션 끝 per-day CTA. */}
-      <div className={styles.dayCta}>
+      {/* 모바일 전용 — 연사 소개를 다 본 뒤 한 번 더 신청 지점(클라이언트 요청). */}
+      <div className={styles.dayCtaBottom}>
         <a
-          className={styles.dayCtaBtn}
+          className={styles.dayCtaLink}
           href={dayUrl}
           target="_blank"
           rel="noopener noreferrer"
         >
-          <span>section {section} 신청하기</span>
+          section {section} 신청하기
+          <span aria-hidden="true" className={styles.dayCtaArrow}>
+            ↗
+          </span>
         </a>
       </div>
 

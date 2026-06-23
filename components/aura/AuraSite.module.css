@@ -27,6 +27,8 @@
   position: relative;
   isolation: isolate;
   background: var(--seam-cream);
+  /* 어떤 자식(블리드 그래픽 등)도 가로로 뷰포트를 넘겨 흰 여백을 만들지 않도록 클립. */
+  overflow-x: clip;
 }
 
 /* The spot: a SUBTLE, SMALL light wash, fixed at the viewport and transform-

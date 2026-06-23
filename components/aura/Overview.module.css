@@ -6,14 +6,14 @@
   /* 전 섹션·히어로 거터와 동일한 1180(정렬 일관성). */
   max-width: 1180px;
   margin-inline: auto;
-  padding-inline: clamp(20px, 5vw, 56px);
+  padding-inline: clamp(24px, 5vw, 56px);
   display: flex;
   flex-direction: column;
   /* 하단 패딩을 줄여 바로 아래 타임테이블 표가 자연스럽게 붙도록(상단은 유지). */
   padding-block: clamp(72px, 11vh, 160px) clamp(36px, 5vh, 64px);
 }
 .overview:global(.shell) {
-  padding-inline: clamp(20px, 5vw, 56px);
+  padding-inline: clamp(24px, 5vw, 56px);
 }
 
 /* 헤딩 + 슬로건(콜론) — 슬로건은 타이틀과 동일 폰트(옴니고딕)·동일 굵기(500),

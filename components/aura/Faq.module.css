@@ -5,7 +5,7 @@
   /* 정규 캐노니컬 컨테이너 — 전 섹션 동일 좌우 라인. */
   max-width: 1180px;
   margin-inline: auto;
-  padding-inline: clamp(20px, 5vw, 56px);
+  padding-inline: clamp(24px, 5vw, 56px);
   padding-block: clamp(72px, 11vh, 160px);
   color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
 }

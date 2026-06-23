@@ -103,56 +103,52 @@
   transform: scaleX(1);
 }
 
-/* K-PRINT 바로가기 — 알약(999) 대신 바 톤에 맞춘 차분한 사각 라인 버튼.
-   잉크 아웃라인 + 투명 배경으로 글래스 바에 녹아들되, hover 에서 잉크로 채워
-   명확한 클릭 어포던스를 준다. */
+/* K-PRINT 바로가기 — 박스 없이 텍스트 + 화살표만(클라이언트 요청).
+   hover 시 메인 컬러로 + 화살표 살짝 이동. */
 .cta {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   font-family: var(--font-kr);
   font-size: clamp(13px, 1.05vw, 15px);
   font-weight: 600;
   color: var(--ink);
-  background: transparent;
-  border: 1.5px solid color-mix(in srgb, var(--ink) 28%, transparent);
-  padding: 8px 15px;
-  border-radius: 9px;
+  background: none;
+  border: 0;
+  padding: 4px 0;
   text-decoration: none;
   white-space: nowrap;
-  transition:
-    color var(--dur-touch) var(--ease-heat),
-    border-color var(--dur-touch) var(--ease-heat),
-    background var(--dur-touch) var(--ease-heat);
+  transition: color var(--dur-touch) var(--ease-heat);
 }
 .cta:hover,
 .cta:focus-visible {
-  color: var(--white);
-  border-color: transparent;
-  background: color-mix(in oklab, var(--ink) 86%, var(--heat-core) 14%);
+  color: var(--heat-main);
 }
 .cta span {
   font-size: 1.02em;
+  transition: transform var(--dur-touch) var(--ease-heat);
+}
+.cta:hover span,
+.cta:focus-visible span {
+  transform: translate(2px, -2px);
 }
 
 @media (max-width: 640px) {
-  /* 모바일: 브랜드·구분선 감추고 앵커 + 바로가기만(공간 확보). */
-  .brand,
+  /* 모바일: 5개 앵커가 좁은 바에서 겹치고 짤려 → 앵커·구분선 숨기고
+     브랜드(맨 위로) + K-PRINT 바로가기만 남겨 깔끔하게(원페이지라 앵커는 보조). */
+  .nav,
   .divider {
     display: none;
   }
-  .nav {
-    gap: 13px;
-  }
-  .navLink {
-    font-size: 13px;
+  .brand {
+    display: inline-block;
+    font-size: 15px;
   }
   .cta {
-    font-size: 12px;
-    padding: 7px 12px;
+    font-size: 13px;
   }
   .inner {
-    padding-inline: clamp(14px, 4vw, 20px);
+    padding-inline: clamp(16px, 5vw, 20px);
   }
 }
 
