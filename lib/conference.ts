@@ -196,7 +196,7 @@ export const conference = {
       {
         title: "K-PRINT invitation",
         amount: "2만원 상당",
-        body: "최신 산업 트렌드를 한눈에 확인할 수 있는 'K-PRINT 2026' 전시회 초대권 2매를 함께 제공합니다.",
+        body: "최신 인쇄 산업 트렌드를 한눈에 확인할 수 있는 'K-PRINT 2026' 전시회 초대권 2매를 함께 제공합니다.",
         imageKey: "event-invitation",
       },
     ],

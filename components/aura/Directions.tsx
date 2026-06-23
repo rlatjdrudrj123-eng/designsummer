@@ -13,7 +13,7 @@ export default function Directions() {
 
   return (
     <section id="venue" className={styles.venue}>
-      <h2 className={styles.heading}>location &amp; contact</h2>
+      <h2 className={styles.heading}>contact &amp; location</h2>
 
       <dl className={styles.facts}>
         <div className={styles.fact}>
