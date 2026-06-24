@@ -1,15 +1,8 @@
 {
   "applyUrl": "https://kprint.kr/",
   "dates": ["2026-08-20", "2026-08-21"],
-  "time": "13:00 ~ 17:00",
   "venue": "KINTEX 제2전시장 3층 301호",
-  "address": "경기도 고양시 일산서구 킨텍스로 217-59, KINTEX 제2전시장 3층 301호",
-  "parking": "제2전시장 지하 주차장 이용 가능 (주차권은 별도로 지원되지 않으므로 가급적 대중교통 이용을 권장합니다.)",
   "capacity": 150,
-  "price": "20,000원",
-  "badge": "K-PRINT 2026 동시 개최 컨퍼런스",
-  "eventName": "Design Summer 2026",
-  "tagline": "시각의 전환, 실무의 확장",
   "edition": "2026",
   "title": "디자인 썸머 일산",
   "intro": {
