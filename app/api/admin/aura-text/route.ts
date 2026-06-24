@@ -43,7 +43,7 @@ export async function POST(req: Request) {
     req.headers.get("x-forwarded-proto") ??
     new URL(req.url).protocol.replace(":", "");
   const origin = fwdHost ? `${fwdProto}://${fwdHost}` : new URL(req.url).origin;
-  if (!checkAuth(req)) {
+  if (!(await checkAuth(req))) {
     return NextResponse.redirect(new URL("/admin/login", origin), 303);
   }
 
