@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Instrument_Sans } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 /* 영문·숫자 디스플레이 서체. --font-instrument 변수로 노출 →
@@ -77,28 +78,28 @@ export default function RootLayout({
               '(function(d){var config={kitId:"bln8piq",scriptTimeout:3000,async:true};var tk=d.createElement("script"),f=false,a;tk.src="https://use.typekit.net/"+config.kitId+".js";tk.async=true;tk.onload=tk.onreadystatechange=function(){a=this.readyState;if(f||a&&a!="complete"&&a!="loaded")return;f=true;try{Typekit.load(config)}catch(e){}};(d.head||d.getElementsByTagName("head")[0]).appendChild(tk);})(document);',
           }}
         />
-        {/* Microsoft Clarity — 히트맵·세션 분석 (프로젝트 xba8fe7crb). */}
+        {/* 분석 스크립트 origin 은 미리 연결만(스크립트 자체는 afterInteractive 로 지연). */}
         <link rel="preconnect" href="https://www.clarity.ms" />
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              '(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","xba8fe7crb");',
-          }}
-        />
-        {/* Google Analytics 4 (gtag) — 측정 ID G-FLZEZ9Z2MV. */}
         <link rel="preconnect" href="https://www.googletagmanager.com" />
-        <script
-          async
-          src="https://www.googletagmanager.com/gtag/js?id=G-FLZEZ9Z2MV"
-        />
-        <script
-          dangerouslySetInnerHTML={{
-            __html:
-              "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-FLZEZ9Z2MV');",
-          }}
-        />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+
+        {/* ── 분석 — 초기 렌더 경로에서 분리(afterInteractive). 하이드레이션 후 로드돼
+            FCP/LCP·대역폭 경합을 줄인다. ───────────────────────────────────────── */}
+        {/* Microsoft Clarity (프로젝트 xba8fe7crb) */}
+        <Script id="ms-clarity" strategy="afterInteractive">
+          {`(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window,document,"clarity","script","xba8fe7crb");`}
+        </Script>
+        {/* Google Analytics 4 (gtag) — 측정 ID G-FLZEZ9Z2MV */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-FLZEZ9Z2MV"
+          strategy="afterInteractive"
+        />
+        <Script id="ga4-init" strategy="afterInteractive">
+          {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-FLZEZ9Z2MV');`}
+        </Script>
+      </body>
     </html>
   );
 }
