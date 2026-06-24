@@ -32,9 +32,13 @@ export default function Timetable() {
     });
 
   return (
-    <section id="schedule" className={`${styles.timetable} shell`}>
+    <section id="schedule" className={`${styles.timetable} shell`} aria-labelledby="schedule-heading">
       <Reveal>
-        {/* '상세 프로그램' 헤딩 제거(클라이언트 요청) — 표만 개요 아래에 자연스럽게 붙는다. */}
+        {/* '상세 프로그램' 헤딩 제거(클라이언트 요청) — 표만 개요 아래에 자연스럽게 붙는다.
+            화면에는 숨기되(클라이언트 디자인 유지), 헤딩 계층·검색엔진용으로 sr-only h2 유지. */}
+        <h2 id="schedule-heading" className="srOnly">
+          디자인 썸머 일산 상세 프로그램 (타임테이블)
+        </h2>
         <div className={styles.table} role="table" aria-label="상세 프로그램">
           {/* 헤더 행 */}
           <div className={`${styles.headRow}`} role="row">

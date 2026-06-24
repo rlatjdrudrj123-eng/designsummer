@@ -53,7 +53,7 @@ function SpeakerCard({
           <div className={styles.portrait}>
             <Image
               src={portrait}
-              alt={`${s.studio} ${s.name}`}
+              alt={`${s.name} ${s.studio} ${s.role} 프로필 사진`}
               fill
               sizes="56px"
               loading="lazy"
@@ -112,7 +112,7 @@ function SpeakerCard({
                     <Image
                       className={styles.work}
                       src={src}
-                      alt={`${s.studio} 대표작 ${i + 1}`}
+                      alt={`${s.name} ${s.studio} 대표작 ${i + 1}`}
                       fill
                       sizes="64px"
                       loading="lazy"

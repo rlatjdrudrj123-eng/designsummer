@@ -10,8 +10,12 @@ export default function EventInfo() {
   const { info } = conference.overview;
 
   return (
-    <section className={`${styles.overview} ${styles.afterTable} shell`}>
+    <section className={`${styles.overview} ${styles.afterTable} shell`} aria-labelledby="info-heading">
       <Reveal>
+        {/* Information 블록 헤딩 — 화면엔 숨김, 헤딩 계층·검색엔진용 sr-only h2. */}
+        <h2 id="info-heading" className="srOnly">
+          디자인 썸머 일산 행사 정보
+        </h2>
         <dl className={styles.facts}>
           {info.map((f) => (
             <div key={f.label} className={styles.fact}>

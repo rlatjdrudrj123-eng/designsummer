@@ -12,8 +12,12 @@ export default function Benefits() {
   const { events } = conference.benefits;
 
   return (
-    <section id="benefits" className={`${styles.benefits} shell`}>
+    <section id="benefits" className={`${styles.benefits} shell`} aria-labelledby="benefits-heading">
       <Reveal>
+        {/* 섹션 헤딩은 화면에서 숨김(클라이언트 요청) — 헤딩 계층·검색엔진용 sr-only h2 유지. */}
+        <h2 id="benefits-heading" className="srOnly">
+          디자인 썸머 일산 참가 혜택
+        </h2>
         <ul className={styles.banners}>
           {events.map((e, i) => {
             const img = imageUrl(e.imageKey);
@@ -27,7 +31,7 @@ export default function Benefits() {
                   {img ? (
                     <Image
                       src={img}
-                      alt={e.title}
+                      alt={`디자인 썸머 일산 참가 혜택 — ${e.title} (${e.amount})`}
                       fill
                       sizes="(max-width: 760px) 90vw, 240px"
                       style={{ objectFit: "contain" }}

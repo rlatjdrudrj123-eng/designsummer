@@ -5,6 +5,8 @@ import AuraSite from "@/components/aura/AuraSite";
    editing /aura never affects /develop or the develop tabs. */
 export const metadata = {
   title: "Design Summer 2026 · Aura",
+  // 미완성 시안 라우트 — 검색 색인 차단 (정식 출시 대상은 `/` 하나).
+  robots: { index: false, follow: false },
 };
 
 export default function AuraPage() {
