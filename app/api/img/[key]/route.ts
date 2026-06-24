@@ -40,8 +40,8 @@ export async function GET(
     return new Response(new Uint8Array(buf), {
       headers: {
         "Content-Type": TYPES[ext] ?? "application/octet-stream",
-        // 교체 업로드 즉시 반영 우선 — 거의 캐시하지 않음(next/image 도 minimumCacheTTL=1).
-        "Cache-Control": "public, max-age=1, must-revalidate",
+        // 60s 캐시 — next/image 옵티마이저가 이 주기로 원본을 재취득(교체 ~1분 내 반영).
+        "Cache-Control": "public, max-age=60, must-revalidate",
       },
     });
   } catch {
