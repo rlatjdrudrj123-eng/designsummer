@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <!-- the creative heatwave — 열원 블롭 파비콘 (첨부 PNG를 스케일 가능한 SVG로 재현) -->
+  <defs>
+    <radialGradient id="heat" cx="50%" cy="50%" r="52%">
+      <stop offset="0%" stop-color="#E8461E"/>
+      <stop offset="34%" stop-color="#EA521B"/>
+      <stop offset="60%" stop-color="#F2811E"/>
+      <stop offset="82%" stop-color="#F9B85A"/>
+      <stop offset="96%" stop-color="#FCE6BE"/>
+      <stop offset="100%" stop-color="#FFF7EC" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="32" height="32" fill="url(#heat)"/>
+</svg>
