@@ -13,6 +13,19 @@
     "url": ""
   },
   "aurg": {
+    "studio": "아우라지 디자인",
+    "name": "박진택",
+    "role": "디렉터",
+    "sessionTitle": "컨셉을 관통하는 창의적인 브랜드 비주얼",
+    "sessionDesc": "좋은 브랜드 디자인은 유연해야 합니다. 브랜드 에센스를 창의적인 시각 컨셉과 키비주얼로 번역하고, 그것이 브랜드 전반으로 확장되는 과정을 소개합니다.",
+    "credentials": [
+      "마녀공장, 메디힐, 에이블리 PB",
+      "athe, 리엔케이, LG, 정관장 등",
+      "다양한 B2C 브랜딩 프로젝트 진행"
+    ],
+    "url": "https://www.aurg.kr/"
+  },
+  "ohseven": {
     "studio": "오세븐",
     "name": "배수규",
     "role": "대표",
@@ -26,19 +39,6 @@
       "2012 IDEA Finalist"
     ],
     "url": "https://ohseven.co.kr/"
-  },
-  "ohseven": {
-    "studio": "아우라지 디자인",
-    "name": "박진택",
-    "role": "디렉터",
-    "sessionTitle": "컨셉을 관통하는 창의적인 브랜드 비주얼",
-    "sessionDesc": "좋은 브랜드 디자인은 유연해야 합니다. 브랜드 에센스를 창의적인 시각 컨셉과 키비주얼로 번역하고, 그것이 브랜드 전반으로 확장되는 과정을 소개합니다.",
-    "credentials": [
-      "마녀공장, 메디힐, 에이블리 PB",
-      "athe, 리엔케이, LG, 정관장 등",
-      "다양한 B2C 브랜딩 프로젝트 진행"
-    ],
-    "url": "https://www.aurg.kr/"
   },
   "ordinarypeople": {
     "studio": "오디너리피플",
