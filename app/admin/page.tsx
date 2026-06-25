@@ -1,3 +1,4 @@
+import Link from "next/link";
 import styles from "./admin.module.css";
 import { speakers } from "@/lib/content";
 import { auraSpeakers } from "@/lib/auraContent";
@@ -70,11 +71,16 @@ export default async function AdminPage() {
     <div className={styles.wrap}>
       <header className={styles.head}>
         <h1 className={styles.title}>Design Summer · 이미지 관리</h1>
-        <form method="post" action="/api/admin/logout">
-          <button className={styles.logout} type="submit">
-            로그아웃
-          </button>
-        </form>
+        <div style={{ display: "flex", gap: 10 }}>
+          <Link className={styles.logout} href="/admin/stats">
+            테스트 통계 →
+          </Link>
+          <form method="post" action="/api/admin/logout">
+            <button className={styles.logout} type="submit">
+              로그아웃
+            </button>
+          </form>
+        </div>
       </header>
       <p className={styles.note}>
         텍스트(연사·세션·크레덴셜)는 <code>content/speakers.json</code> 을 직접

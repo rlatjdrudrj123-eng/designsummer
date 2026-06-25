@@ -1,0 +1,1052 @@
+/* 디자이너 동물상 테스트 — 진입 요소(페이지) + 모달(테스트 실행).
+
+   페이지엔 임팩트 있는 진입 요소 하나만: 따뜻한 크림 그라운드(AuraSite .body)
+   위에 텍스트(좌) + 끓는 열덩이(우). 카드/박스 없이 그라운드에 직접 얹고,
+   헤딩=옴니고딕·본문=Pretendard, 텍스트=섹션 잉크, 주황(--heat-core)은
+   '클릭되는 것'(버튼)에만. 실제 테스트(문항/리빌/결과)는 모달 오버레이에서.
+
+   모달은 오버레이라 자체 surface(크림/페이퍼 톤)를 쓴다 — 그래야 결과의 리소
+   캐릭터 PNG(크림 배경)가 박스처럼 안 뜨고 multiply로 자연스럽게 얹힌다. */
+
+.section {
+  /* 전 aura 섹션과 동일한 캐노니컬 컨테이너 — Benefits/Overview/Faq 와 같은 라인. */
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: clamp(24px, 5vw, 56px);
+  display: flex;
+  flex-direction: column;
+  padding-block: clamp(64px, 10vh, 140px);
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+}
+.section:global(.shell) {
+  padding-inline: clamp(24px, 5vw, 56px);
+}
+
+/* 공통 텍스트 색 변수 — 다른 섹션의 잉크 단계를 그대로 매핑. */
+.section {
+  --t-ink: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --t-body: color-mix(in srgb, var(--ink) 82%, transparent);
+  --t-muted: color-mix(in srgb, var(--ink) 60%, transparent);
+  --t-faint: color-mix(in srgb, var(--ink) 45%, transparent);
+  --t-line: color-mix(in srgb, var(--ink) 13%, transparent);
+  /* 모달 surface — 진입 그라운드보다 한 톤 밝은 크림/페이퍼. multiply 호환. */
+  --surface: #fff3e8;
+}
+
+/* ── 진입 요소 (페이지에 보이는 단 하나) ─────────────────────────────────── */
+.entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr clamp(220px, 36%, 420px);
+  align-items: center;
+  gap: clamp(28px, 5vw, 72px);
+}
+.entryText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(12px, 1.8vh, 18px);
+  min-width: 0;
+}
+/* 영문 소문자 아이브로우 — Directions 의 'contact & location' 톤. */
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  text-transform: lowercase;
+  font-weight: 600;
+  color: var(--heat-core);
+}
+/* 헤딩 = 옴니고딕 디스플레이 — 진입 임팩트. */
+.title {
+  margin: 0;
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(28px, 5vw, 64px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.22;
+  word-break: keep-all;
+  color: var(--t-ink);
+}
+.lead {
+  margin: clamp(4px, 0.8vh, 8px) 0 clamp(8px, 1.6vh, 16px);
+  max-width: 46ch;
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.3vw, 19px);
+  font-weight: 400;
+  line-height: 1.75;
+  word-break: keep-all;
+  color: var(--t-body);
+}
+.meta {
+  margin: clamp(10px, 1.6vh, 14px) 0 0;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  color: var(--t-faint);
+}
+
+/* 진입 비주얼 = 큰 끓는 열덩이(시선 앵커). 박스 없이 그라운드 위에 떠 있음. */
+.entryVisual {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+}
+.heatBlob {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: clamp(180px, 32vw, 360px);
+  aspect-ratio: 1;
+  animation: boil 4.5s ease-in-out infinite;
+  filter: drop-shadow(0 24px 60px rgba(200, 70, 20, 0.28));
+}
+.heatBlobCore {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  background: radial-gradient(
+    circle at 50% 46%,
+    #fff7ec 0%,
+    var(--heat-edge) 28%,
+    var(--heat-mid) 52%,
+    var(--heat-main) 76%,
+    rgba(255, 247, 236, 0) 100%
+  );
+  box-shadow:
+    0 0 90px -10px rgba(255, 150, 70, 0.65),
+    inset 0 0 60px rgba(255, 240, 200, 0.55);
+}
+
+/* 진입 CTA — 타이틀 아래(넉넉한 간격). 사이트 신청 CTA(.dayCtaLink)와 동일 색(--accent)·굵기. */
+.entryCta {
+  margin-top: clamp(18px, 3vh, 34px);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--heat-main);
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.7vw, 22px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+}
+.entryCta span {
+  display: inline-block;
+  transition: transform 0.2s var(--ease-heat, ease);
+}
+.entryCta:hover span {
+  transform: translateX(5px);
+}
+.entryCta:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ── 2순위: 공유하기 — 유일하게 박스 허용. 네모(살짝 라운드) + 얇은 회색 테두리,
+   채움 없음 → 무겁지도 두껍지도 않게. hover 시 주황 테두리·글자. ── */
+.shareLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  padding: clamp(8px, 1.1vh, 11px) clamp(14px, 1.8vw, 20px);
+  border: 1px solid color-mix(in srgb, var(--ink) 26%, transparent);
+  border-radius: 8px;
+  background: none;
+  color: var(--t-body);
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.2vw, 16px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: border-color 0.18s ease, color 0.18s ease;
+}
+.shareLink span {
+  display: inline-block;
+  transition: transform 0.2s var(--ease-heat, ease);
+}
+.shareLink:hover {
+  border-color: var(--heat-core);
+  color: var(--heat-core);
+}
+.shareLink:hover span {
+  transform: translateX(4px);
+}
+.shareLink:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ── 3순위: 다시 하기 — 공유와 한 쌍(잉크 톤), 단 weight 낮춰 부차적. ── */
+.ghost {
+  padding: 0;
+  border: none;
+  background: none;
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.1vw, 15px);
+  font-weight: 600;
+  color: var(--t-muted);
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.ghost:hover {
+  color: var(--heat-core);
+}
+.ghost:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ════════════════════════════════════════════════════════════════════════
+   모달 (테스트 실행) — 포털로 body 직속. 백드롭(어둡게+blur) + 크림 surface.
+   ════════════════════════════════════════════════════════════════════════ */
+.scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(0px, 4vh, 40px) clamp(0px, 4vw, 40px);
+  background: rgba(28, 12, 6, 0.42);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  animation: scrimIn 0.25s var(--ease-heat, ease) both;
+}
+@keyframes scrimIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.dialog {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: min(920px, 100%);
+  max-height: 100%;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  background: #fff3e8;
+  color: var(--t-ink);
+  border-radius: clamp(0px, 4vw, 24px);
+  padding: clamp(48px, 6vw, 64px) clamp(22px, 4vw, 48px)
+    clamp(28px, 4vw, 48px);
+  box-shadow: 0 40px 90px -30px rgba(60, 20, 8, 0.55);
+  /* surface 변수도 잉크/라인 톤을 진입과 동일하게 재선언(모달 내부용). */
+  --t-ink: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --t-body: color-mix(in srgb, var(--ink) 82%, transparent);
+  --t-muted: color-mix(in srgb, var(--ink) 60%, transparent);
+  --t-faint: color-mix(in srgb, var(--ink) 45%, transparent);
+  --t-line: color-mix(in srgb, var(--ink) 14%, transparent);
+  animation: dialogIn 0.32s var(--ease-heat, ease) both;
+}
+@keyframes dialogIn {
+  from { opacity: 0; transform: translateY(16px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.dialog:focus {
+  outline: none;
+}
+
+/* 닫기(X) 버튼 — 우상단. */
+.close {
+  position: absolute;
+  top: clamp(12px, 2vw, 18px);
+  right: clamp(12px, 2vw, 18px);
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border: none;
+  background: none;
+  color: var(--t-muted);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: color 0.18s ease, transform 0.18s ease;
+}
+.close:hover {
+  color: var(--heat-core);
+  transform: scale(1.08);
+}
+.close:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 2px;
+}
+
+/* ── 퀴즈 ────────────────────────────────────────────────────────────────── */
+.quiz {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(18px, 3vh, 28px);
+  width: 100%;
+}
+.progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.progressBar {
+  flex: 1;
+  height: 6px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 12%, transparent);
+  overflow: hidden;
+}
+.progressFill {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--heat-core);
+  transition: width 0.3s var(--ease-heat, ease);
+}
+.progressText {
+  flex: none;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  font-weight: 600;
+  letter-spacing: var(--tracking-meta);
+  color: var(--t-muted);
+}
+.question {
+  margin: 0;
+  font-family: "omnigothic", var(--font-kr);
+  /* 데스크톱: 가장 긴 질문(35자)도 920px 모달 본문(≈824px)에 한 줄로 들어가게
+     상한을 20~21px로 낮춤. nowrap 은 ≥761px 에서만 적용(아래 미디어쿼리). */
+  font-size: clamp(16px, 1.9vw, 21px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+  word-break: keep-all;
+  color: var(--t-ink);
+}
+/* 데스크톱(모달 풀폭)에선 질문을 한 줄로 강제. */
+@media (min-width: 761px) {
+  .question {
+    white-space: nowrap;
+  }
+}
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+/* 선택지 = 헤어라인 행(보더만), 호버 시 열 색 강조. 짙은 칩 배경 없이 가볍게. */
+.choice {
+  width: 100%;
+  text-align: left;
+  padding: clamp(14px, 1.8vh, 18px) clamp(16px, 2vw, 22px);
+  border-radius: 14px;
+  border: 1px solid var(--t-line);
+  background: color-mix(in srgb, #fff 40%, transparent);
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.3vw, 16px);
+  line-height: 1.45;
+  word-break: keep-all;
+  color: var(--t-ink);
+  cursor: pointer;
+  transition:
+    border-color 0.18s var(--ease-heat, ease),
+    background 0.18s ease,
+    transform 0.12s ease;
+}
+.choice:hover {
+  border-color: var(--heat-core);
+  background: color-mix(in srgb, #fff 75%, transparent);
+}
+.choice:active {
+  transform: scale(0.99);
+}
+.choice:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 2px;
+}
+/* 이전 질문 — 텍스트 링크 톤. */
+.backLink {
+  align-self: flex-start;
+  margin-top: 2px;
+  padding: 6px 2px;
+  border: none;
+  background: none;
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.1vw, 14px);
+  font-weight: 500;
+  color: var(--t-muted);
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+.backLink:hover {
+  color: var(--heat-core);
+}
+.backLink:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── 리빌 (열구) ─────────────────────────────────────────────────────────── */
+.reveal {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(20px, 4vh, 36px);
+  padding-block: clamp(16px, 4vh, 40px);
+  min-height: 320px;
+  justify-content: center;
+  text-align: center;
+}
+.revealHint {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.4vw, 18px);
+  line-height: 1.65;
+  word-break: keep-all;
+  color: var(--t-body);
+}
+.revealHint strong {
+  color: var(--heat-core);
+  font-weight: 700;
+}
+
+/* 끓는 열덩이 — 밝은 옐로-화이트 코어가 빛난다(파비콘/열 그라데이션 톤).
+   --taps(0~10)/--frac(0~1) 에 비례해 칠수록 백열(white-hot)로 달아오른다.
+   .blob 은 '점층(슬로우 트랜지션)' 레이어, 안쪽 .blobCore 가 '펀치(즉발 바운스)'
+   레이어를 맡아 두 타임스케일이 안 싸우게 분리했다. */
+.blob {
+  position: relative;
+  width: clamp(150px, 40vw, 200px);
+  height: clamp(150px, 40vw, 200px);
+  border-radius: 50%;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  /* 점층: 밝기·채도·크기·글로우가 탭마다 한 단계씩 더 오른다(부드럽게 보간). */
+  filter: brightness(calc(1 + var(--frac, 0) * 0.22))
+    saturate(calc(1 + var(--frac, 0) * 0.18));
+  transform: scale(calc(1 + var(--frac, 0) * 0.14));
+  transition:
+    transform 0.45s var(--ease-heat, ease),
+    filter 0.45s ease;
+  animation: boil calc(2.6s - var(--frac, 0) * 1.1s) ease-in-out infinite;
+}
+.blob:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 6px;
+}
+.blobCore {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  /* 후반으로 갈수록 중심 흰점이 커지고 가장자리가 더 멀리 번진다(백열). */
+  background: radial-gradient(
+    circle at 50% 46%,
+    #fffdf6 0%,
+    #fff7ec calc(8% + var(--frac, 0) * 6%),
+    var(--heat-edge) calc(30% + var(--frac, 0) * 8%),
+    var(--heat-mid) 56%,
+    var(--heat-main) 80%,
+    rgba(255, 247, 236, 0) 100%
+  );
+  box-shadow:
+    0 0 calc(60px + var(--frac, 0) * 40px) -8px
+      rgba(255, 150, 70, calc(0.7 + var(--frac, 0) * 0.15)),
+    0 0 calc(var(--frac, 0) * 28px) calc(var(--frac, 0) * 3px)
+      rgba(255, 220, 170, calc(var(--frac, 0) * 0.3)),
+    inset 0 0 40px rgba(255, 240, 200, 0.6);
+}
+/* 끓는 둥실거림 */
+@keyframes boil {
+  0%, 100% {
+    border-radius: 48% 52% 53% 47% / 50% 48% 52% 50%;
+  }
+  33% {
+    border-radius: 54% 46% 48% 52% / 46% 54% 46% 54%;
+  }
+  66% {
+    border-radius: 47% 53% 51% 49% / 53% 47% 53% 47%;
+  }
+}
+
+/* ── 펀치(탭마다 즉발 반응) ───────────────────────────────────────────────
+   data-shake 속성이 바뀔 때마다 .blob 의 shake + .blobCore 의 punch 가
+   '새 애니메이션'으로 재생되도록, 짝/홀 셀렉터로 같은 키프레임을 번갈아
+   걸어 같은 값 재탭에도 재시작시킨다(리플로우/리마운트 없이). 진폭은
+   --frac 에 비례해 커진다. */
+.blob[data-shake]:not([data-shake="0"]) .blobCore {
+  animation: corePunchA 0.16s var(--ease-heat, ease);
+}
+.blob[data-shake="2"] .blobCore,
+.blob[data-shake="4"] .blobCore,
+.blob[data-shake="6"] .blobCore,
+.blob[data-shake="8"] .blobCore,
+.blob[data-shake="10"] .blobCore {
+  animation: corePunchB 0.16s var(--ease-heat, ease);
+}
+@keyframes corePunchA {
+  0% { transform: scale(0.9); filter: brightness(1.5) saturate(1.25); }
+  45% { transform: scale(1.13); filter: brightness(1.2); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+@keyframes corePunchB {
+  0% { transform: scale(0.87); filter: brightness(1.55) saturate(1.25); }
+  45% { transform: scale(1.14); filter: brightness(1.2); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* 흔들림 — 탭마다 재생, 횟수 늘수록 진폭↑(--frac 로 스케일). 짝/홀 두 변형을
+   번갈아 적용해 같은 횟수 표시여도 새로 재생되게(연타 대응). */
+.blob[data-shake]:not([data-shake="0"]) {
+  animation:
+    boil calc(2.6s - var(--frac, 0) * 1.1s) ease-in-out infinite,
+    shakeA 0.34s ease;
+}
+.blob[data-shake="2"],
+.blob[data-shake="4"],
+.blob[data-shake="6"],
+.blob[data-shake="8"],
+.blob[data-shake="10"] {
+  animation:
+    boil calc(2.6s - var(--frac, 0) * 1.1s) ease-in-out infinite,
+    shakeB 0.34s ease;
+}
+@keyframes shakeA {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  20% { translate: calc(-12px - var(--frac, 0) * 22px) 0; rotate: -2.5deg; }
+  40% { translate: calc(11px + var(--frac, 0) * 19px) -4px; rotate: 2.5deg; }
+  60% { translate: calc(-8px - var(--frac, 0) * 15px) 3px; rotate: -2deg; }
+  80% { translate: calc(6px + var(--frac, 0) * 11px) 0; rotate: 1.2deg; }
+}
+@keyframes shakeB {
+  0%, 100% { translate: 0 0; rotate: 0deg; }
+  20% { translate: calc(12px + var(--frac, 0) * 22px) 0; rotate: 2.5deg; }
+  40% { translate: calc(-11px - var(--frac, 0) * 19px) 4px; rotate: -2.5deg; }
+  60% { translate: calc(8px + var(--frac, 0) * 15px) -3px; rotate: 2deg; }
+  80% { translate: calc(-6px - var(--frac, 0) * 11px) 0; rotate: -1.2deg; }
+}
+
+/* ── 균열(crack) — 탭이 늘수록 갈라짐이 번진다 ───────────────────────────── */
+.cracks {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  overflow: visible;
+  /* 후반에 또렷해지도록 그룹 전체 불투명도를 --frac 에 연동. */
+  opacity: calc(var(--frac, 0) * 1.1);
+  filter: drop-shadow(0 0 2px rgba(255, 245, 220, 0.7));
+}
+.crackLines path {
+  /* 각 가지는 data-from(등장 시점) 이후에 0→1 로 그려진다. SVG 의 pathLength=1
+     속성으로 길이를 정규화해 dashoffset 1→0 으로 '자라나는' 효과를 준다.
+     기본은 숨김; data-shake 단계가 from 이상이면 그려진다. */
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 0.28s var(--ease-heat, ease);
+}
+/* taps 단계별로 누적해서 가지를 드러낸다(>= data-from 이면 그려짐). */
+.blob[data-shake="2"] .crackLines path[data-from="2"],
+.blob[data-shake="3"] .crackLines path[data-from="2"],
+.blob[data-shake="3"] .crackLines path[data-from="3"] { stroke-dashoffset: 0; }
+.blob[data-shake="4"] .crackLines path[data-from="2"],
+.blob[data-shake="4"] .crackLines path[data-from="3"],
+.blob[data-shake="4"] .crackLines path[data-from="4"],
+.blob[data-shake="5"] .crackLines path[data-from="2"],
+.blob[data-shake="5"] .crackLines path[data-from="3"],
+.blob[data-shake="5"] .crackLines path[data-from="4"],
+.blob[data-shake="5"] .crackLines path[data-from="5"] { stroke-dashoffset: 0; }
+.blob[data-shake="6"] .crackLines path,
+.blob[data-shake="7"] .crackLines path,
+.blob[data-shake="8"] .crackLines path,
+.blob[data-shake="9"] .crackLines path,
+.blob[data-shake="10"] .crackLines path { stroke-dashoffset: 0; }
+/* 후반: 갈라진 틈 사이로 백열 빛이 새어나오게 stroke 를 밝게. */
+.blob[data-shake="8"] .crackLines,
+.blob[data-shake="9"] .crackLines,
+.blob[data-shake="10"] .crackLines {
+  stroke: rgba(255, 240, 200, 0.95);
+}
+
+/* ── 스파크/링 burst — pulse 마다 새 노드(key)로 마운트되어 1회 재생 ──────── */
+.burst {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 220, 160, 0.9);
+  opacity: 0;
+}
+.burst[data-active] .ring {
+  animation: ringFlash 0.4s var(--ease-heat, ease);
+}
+@keyframes ringFlash {
+  0% { transform: scale(0.55); opacity: 0.9; border-width: 4px; }
+  100% { transform: scale(1.55); opacity: 0; border-width: 0.5px; }
+}
+.spark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: clamp(5px, 1.6vw, 8px);
+  height: clamp(5px, 1.6vw, 8px);
+  margin: calc(-1 * clamp(5px, 1.6vw, 8px) / 2);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff7e6 0%, var(--heat-edge) 55%, var(--heat-main) 100%);
+  box-shadow: 0 0 8px rgba(255, 190, 110, 0.9);
+  opacity: 0;
+  /* 각도 --a 방향으로 바깥으로 튀어나간다. 진폭은 --frac 로 후반에 더 멀리. */
+  transform: rotate(var(--a)) translateY(0) scale(0.4);
+}
+.burst[data-active] .spark {
+  animation: sparkFly 0.42s var(--ease-heat, ease);
+}
+@keyframes sparkFly {
+  0% {
+    opacity: 1;
+    transform: rotate(var(--a)) translateY(calc(-30px - var(--frac, 0) * 20px)) scale(0.5);
+  }
+  60% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateY(calc(-78px - var(--frac, 0) * 70px)) scale(0.1);
+  }
+}
+
+/* ── 마지막 깨짐(10탭) — 강한 플래시 + 팽창 + 파편 흩뿌림 + 페이드 ────────── */
+.blobBreak {
+  animation: pop 0.9s var(--ease-heat, ease) forwards;
+  pointer-events: none;
+}
+.blobBreak .blobCore {
+  animation: coreBlast 0.9s var(--ease-heat, ease) forwards;
+}
+/* 깨질 때 균열 사이로 빛이 폭발하듯 터지고, 스파크는 사방으로 멀리 흩뿌려진다. */
+.blobBreak .cracks {
+  animation: crackBlast 0.5s var(--ease-heat, ease) forwards;
+}
+.blobBreak .burst[data-active] .spark {
+  animation: shardFly 0.85s var(--ease-heat, ease) forwards;
+}
+.blobBreak .burst[data-active] .ring {
+  animation: ringBlast 0.7s var(--ease-heat, ease) forwards;
+}
+@keyframes pop {
+  0% { transform: scale(1.16); opacity: 1; }
+  18% {
+    transform: scale(0.94);
+    filter: brightness(3) saturate(0.4);
+    opacity: 1;
+  }
+  42% {
+    transform: scale(1.5);
+    filter: brightness(4.5) blur(2px);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2.6);
+    filter: brightness(5) blur(14px);
+    opacity: 0;
+  }
+}
+@keyframes coreBlast {
+  0% { transform: scale(1); filter: brightness(1); }
+  20% { transform: scale(0.92); }
+  44% { transform: scale(1.45); filter: brightness(3); }
+  100% { transform: scale(1.9); filter: brightness(6); opacity: 0; }
+}
+@keyframes crackBlast {
+  0% { opacity: 1; transform: scale(1); }
+  40% { opacity: 1; transform: scale(1.2); }
+  100% { opacity: 0; transform: scale(1.8); }
+}
+@keyframes shardFly {
+  0% { opacity: 1; transform: rotate(var(--a)) translateY(-40px) scale(0.7); }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(-260px) scale(0.05); }
+}
+@keyframes ringBlast {
+  0% { transform: scale(0.6); opacity: 1; border-width: 6px; }
+  100% { transform: scale(2.6); opacity: 0; border-width: 0; }
+}
+
+/* ── 결과 — 상단 2단(이미지+유형명 / 텍스트) + 하단 세션 CTA 스트립 ────────── */
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  text-align: left;
+  animation: bloomIn 0.5s var(--ease-heat, ease) both;
+}
+@keyframes bloomIn {
+  from { opacity: 0; filter: blur(10px); }
+  to { opacity: 1; filter: blur(0); }
+}
+/* 상단 2단: 이미지+유형명 칼럼(좌, 넓게) / 텍스트 칼럼(우). 상단정렬. */
+.resultMain {
+  display: grid;
+  grid-template-columns: clamp(240px, 44%, 420px) 1fr;
+  align-items: start;
+  gap: clamp(24px, 4vw, 48px);
+}
+.resultMedia {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 1.6vh, 16px);
+  min-width: 0;
+}
+.animalImg {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  /* 리소 PNG의 크림 배경이 모달 크림 surface(--surface)에 녹아들게(박스 제거).
+     밝은 종이는 surface색으로 사라지고 빨강/청록 라인만 '인쇄'된 느낌으로 남음.
+     surface가 크림 톤이므로 multiply가 자연스럽다(흰 surface였다면 톤 어긋남). */
+  mix-blend-mode: multiply;
+}
+.resultText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(8px, 1.4vh, 14px);
+  min-width: 0;
+}
+/* °C — 박스 없이 큰 타이포 숫자(열 색). 텍스트 칼럼 맨 위. */
+.temp {
+  margin: 0;
+  text-align: left;
+  font-family: "omnigothic", var(--font-display);
+  font-size: clamp(38px, 6.2vw, 58px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--heat-core);
+}
+.temp span {
+  font-size: 0.38em;
+  font-weight: 700;
+  margin-left: 0.06em;
+  vertical-align: 0.6em;
+}
+/* 유형명 — 이미지 바로 아래 라인(중앙 정렬, 이미지와 한 묶음). */
+.resultLead {
+  margin: 0;
+  text-align: center;
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(17px, 2vw, 23px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  word-break: keep-all;
+  color: var(--t-ink);
+}
+.oneLiner {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(17px, 1.9vw, 22px);
+  font-weight: 600;
+  color: var(--heat-core);
+  word-break: keep-all;
+}
+.desc {
+  margin: clamp(4px, 0.8vh, 8px) 0 0;
+  max-width: 52ch;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.45vw, 18px);
+  line-height: 1.7;
+  word-break: keep-all;
+  color: var(--t-body);
+}
+/* 궁합 — 박스 없이 두 줄(잘 맞는 / 안 맞는). 각 줄: 라벨 + 동물 + 이유. */
+.match {
+  margin: clamp(10px, 1.8vh, 16px) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.4vh, 12px);
+  font-family: var(--font-kr);
+  word-break: keep-all;
+}
+.matchRow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  column-gap: clamp(8px, 1vw, 12px);
+}
+/* 백조(히든) — 라벨 + 문구 한 줄. */
+.matchSwan {
+  margin: clamp(10px, 1.8vh, 16px) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: clamp(8px, 1vw, 12px);
+  row-gap: 2px;
+  font-family: var(--font-kr);
+  word-break: keep-all;
+}
+/* 라벨(dt) — 옅은 메타 톤. */
+.matchKey {
+  font-family: var(--font-display);
+  font-size: clamp(11px, 0.9vw, 13px);
+  font-weight: 600;
+  letter-spacing: var(--tracking-meta);
+  color: var(--t-faint);
+  white-space: nowrap;
+}
+/* 값(dd) — 동물명 + 이유 한 줄. */
+.matchVal {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.55em;
+  row-gap: 2px;
+}
+.matchAnimal {
+  font-size: clamp(15px, 1.4vw, 17px);
+  font-weight: 700;
+  color: var(--t-ink);
+}
+.matchWhy {
+  font-size: clamp(13px, 1.15vw, 15px);
+  font-weight: 500;
+  color: var(--t-muted);
+}
+/* ② 공유 / ③ 다시 하기 — 궁합 바로 아래 작은 텍스트 CTA 행(헤어라인 없음). */
+.minorActions {
+  margin-top: clamp(10px, 1.8vh, 16px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  gap: clamp(18px, 3vw, 28px);
+}
+
+/* ① 세션 CTA(핵심 전환) — 결과 맨 하단 전체 폭 스트립(일자). 상단 헤어라인으로
+   분리하고, 주황 + 강한 weight 로 하단이라도 또렷하게. 박스/pill 없이 텍스트+화살표. */
+.sessionStrip {
+  margin-top: clamp(22px, 3.6vh, 36px);
+  padding-top: clamp(18px, 2.8vh, 26px);
+  border-top: 1px solid var(--t-line);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  column-gap: clamp(8px, 1.4vw, 14px);
+  row-gap: 4px;
+  text-decoration: none;
+}
+.sessionCta {
+  flex: none;
+  color: var(--heat-core);
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.5vw, 19px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+/* 괄호 속 섹션 — CTA 와 동일 폰트 크기, weight·색만 낮춰 보조로. */
+.sessionMeta {
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.5vw, 19px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  word-break: keep-all;
+  color: var(--t-muted);
+}
+/* 바로가기 + 화살표 — 링크 액션(주황). */
+.sessionGo {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  color: var(--heat-core);
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.5vw, 19px);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.sessionGo span {
+  display: inline-block;
+  transition: transform 0.2s var(--ease-heat, ease);
+}
+.sessionStrip:hover .sessionGo span {
+  transform: translateX(5px);
+}
+.sessionStrip:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* 토스트 */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: clamp(20px, 6vh, 48px);
+  transform: translateX(-50%);
+  z-index: 220;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--font-kr);
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.5);
+  animation: toastIn 0.25s var(--ease-heat, ease) both;
+}
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* ── 태블릿/모바일 ───────────────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  /* 진입: 헤딩 → 열덩이(적당히, 중앙) → CTA 흐름. entryText 를 contents 로 풀어
+     자식(헤딩·CTA)을 .entry 직속으로 만들고 순서를 잡는다. */
+  .entry {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: clamp(16px, 3.5vh, 28px);
+  }
+  .entryText {
+    display: contents;
+  }
+  .title {
+    order: 1;
+  }
+  .entryVisual {
+    order: 2;
+    align-self: center;
+    width: 100%;
+  }
+  .entryCta {
+    order: 3;
+    position: static;
+    align-self: center;
+  }
+  .heatBlob {
+    width: clamp(150px, 46vw, 230px);
+  }
+
+  /* 모바일: 세로 길이 절감 — 이미지를 작은 썸네일로 줄여 헤더(유형명+°C)와
+     한 줄(상단 행)로 묶고, 본문(한줄평·설명·궁합·CTA)은 그 아래 풀폭으로 흐른다.
+     이미지를 float 시켜 헤더가 옆으로 붙고 desc 가 풀폭을 쓰게 한다. */
+  /* 모바일 결과 — 억지 좌정렬 없이 중앙 정렬 스택으로 예쁘게.
+     이미지(중간 크기) → 유형명 → °C → 한줄평 → 설명 → 궁합 → CTA 를 가운데로. */
+  .resultMain {
+    display: block;
+  }
+  .resultMedia {
+    width: 100%;
+    margin: 0 0 clamp(8px, 1.6vh, 14px);
+    gap: clamp(6px, 1.4vh, 12px);
+  }
+  .animalImg {
+    width: clamp(160px, 46vw, 230px);
+    max-width: 100%;
+  }
+  .resultLead {
+    font-size: clamp(17px, 4.4vw, 22px);
+  }
+  /* 텍스트 칼럼도 중앙 정렬. */
+  .resultText {
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  /* 모바일 °C — 과대 방지(중앙). */
+  .temp {
+    text-align: center;
+    font-size: clamp(32px, 10vw, 46px);
+  }
+  .desc {
+    line-height: 1.62;
+  }
+  /* 궁합 — 라벨+동물+이유를 가운데로 모은다(grid → 중앙 flex). */
+  .matchRow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 0.5em;
+  }
+  .matchVal,
+  .matchSwan {
+    justify-content: center;
+  }
+  .minorActions {
+    justify-content: center;
+  }
+  /* 모바일 — 한 줄로 퍼지지 않게 가운데 세로 스택(섹션명 / 괄호 / 바로가기). */
+  .sessionStrip {
+    margin-top: clamp(16px, 3vh, 24px);
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    row-gap: 5px;
+  }
+}
+@media (max-width: 480px) {
+  .minorActions {
+    gap: 20px;
+  }
+}
+
+/* ── 모션 줄이기 ─────────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  /* 흔들림·끓음·펀치·스파크·강한 플래시 전부 정지. 탭 카운트(균열/밝기)는
+     '채워지는' 정적 상태로만 남고, 깨질 때는 부드러운 페이드로 결과 전환. */
+  .heatBlob,
+  .blob,
+  .blob[data-shake],
+  .blob[data-shake] .blobCore,
+  .blob[data-shake] .crackLines path {
+    animation: none !important;
+  }
+  /* crack 가지는 단계 표시로 즉시(트랜지션 없이) 보이게만. */
+  .crackLines path {
+    transition: none;
+  }
+  /* 스파크/링 burst 완전 비표시. */
+  .burst {
+    display: none;
+  }
+  /* 깨짐: 팽창/플래시 없이 부드러운 페이드아웃만. */
+  .blobBreak,
+  .blobBreak .blobCore {
+    animation: none !important;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .scrim,
+  .dialog,
+  .result {
+    animation: none;
+  }
+}

@@ -1,0 +1,449 @@
+/* ============================================================================
+ * 결과 전용 페이지 `/r?a={id}` — standalone 결과 카드(모달 아님).
+ * 사이트 톤: 따뜻한 크림 그라운드 위에 텍스트(박스/pill 없음), 헤딩=옴니고딕,
+ * 주황(--heat-core)은 CTA·온도 같은 '뜨거운' 것에만. AnimalTest 결과 톤 재사용.
+ * ========================================================================== */
+
+.page {
+  min-height: 100dvh;
+  background: #fff3e8; /* 모달 surface 와 동일한 크림 — 리소 PNG multiply 호환 */
+  color: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  display: flex;
+  flex-direction: column;
+  /* 공통 텍스트 색 변수 — AnimalTest 섹션과 동일한 잉크 단계 매핑. */
+  --t-ink: color-mix(in oklab, var(--ink) 90%, var(--heat-core) 10%);
+  --t-body: color-mix(in srgb, var(--ink) 82%, transparent);
+  --t-muted: color-mix(in srgb, var(--ink) 60%, transparent);
+  --t-faint: color-mix(in srgb, var(--ink) 45%, transparent);
+  --t-line: color-mix(in srgb, var(--ink) 13%, transparent);
+}
+
+.shell {
+  width: 100%;
+  max-width: 980px;
+  margin-inline: auto;
+  padding-inline: clamp(24px, 5vw, 56px);
+  padding-block: clamp(48px, 9vh, 96px);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(28px, 5vh, 48px);
+}
+
+/* 상단 브랜드 — 행사명(홈 링크). 공유받은 사람이 어디서 온 결과인지 보이게. */
+.brandTop {
+  margin: 0;
+  width: fit-content;
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(15px, 1.5vw, 18px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--t-ink);
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.brandTop:hover {
+  color: var(--heat-core);
+}
+.brandTop:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ── 결과 카드 — 상단 2단(이미지+유형명 / 텍스트) + 하단 세션 CTA 스트립.
+   모달 result 와 동일 구조. ── */
+.result {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  text-align: left;
+}
+/* 상단 2단: 이미지+유형명 칼럼(좌, 넓게) / 텍스트 칼럼(우). 상단정렬. */
+.resultMain {
+  display: grid;
+  grid-template-columns: clamp(240px, 44%, 420px) 1fr;
+  align-items: start;
+  gap: clamp(24px, 4vw, 56px);
+}
+.resultMedia {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(10px, 1.6vh, 16px);
+  min-width: 0;
+}
+.animalImg {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  /* 리소 PNG 크림 배경이 크림 surface 에 녹아들게(박스 제거) — 빨강/청록만 인쇄된 느낌. */
+  mix-blend-mode: multiply;
+}
+/* 유형명 — 이미지 바로 아래 라인(중앙 정렬, 이미지와 한 묶음). 모달 result 와 동일. */
+.resultLead {
+  margin: 0;
+  text-align: center;
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(18px, 2.1vw, 24px);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  word-break: keep-all;
+  color: var(--t-ink);
+}
+.resultText {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(8px, 1.4vh, 14px);
+  min-width: 0;
+}
+/* °C — 박스 없이 큰 타이포 숫자(열 색). 텍스트 칼럼 맨 위. */
+.temp {
+  margin: 0;
+  text-align: left;
+  font-family: "omnigothic", var(--font-display);
+  font-size: clamp(40px, 6.6vw, 62px);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--heat-core);
+}
+.temp span {
+  font-size: 0.38em;
+  font-weight: 700;
+  margin-left: 0.06em;
+  vertical-align: 0.6em;
+}
+.oneLiner {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(17px, 1.9vw, 22px);
+  font-weight: 600;
+  color: var(--heat-core);
+  word-break: keep-all;
+}
+.desc {
+  margin: clamp(4px, 0.8vh, 8px) 0 0;
+  max-width: 52ch;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.45vw, 18px);
+  line-height: 1.7;
+  word-break: keep-all;
+  color: var(--t-body);
+}
+/* 궁합 — 박스 없이 두 줄(잘 맞는 / 안 맞는). */
+.match {
+  margin: clamp(10px, 1.8vh, 16px) 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.4vh, 12px);
+  font-family: var(--font-kr);
+  word-break: keep-all;
+}
+.matchRow {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  column-gap: clamp(8px, 1vw, 12px);
+}
+.matchSwan {
+  margin: clamp(10px, 1.8vh, 16px) 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: clamp(8px, 1vw, 12px);
+  row-gap: 2px;
+  font-family: var(--font-kr);
+  word-break: keep-all;
+}
+.matchKey {
+  font-family: var(--font-display);
+  font-size: clamp(11px, 0.9vw, 13px);
+  font-weight: 600;
+  letter-spacing: var(--tracking-meta);
+  color: var(--t-faint);
+  white-space: nowrap;
+}
+.matchVal {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.55em;
+  row-gap: 2px;
+}
+.matchAnimal {
+  font-size: clamp(15px, 1.4vw, 17px);
+  font-weight: 700;
+  color: var(--t-ink);
+}
+.matchWhy {
+  font-size: clamp(13px, 1.15vw, 15px);
+  font-weight: 500;
+  color: var(--t-muted);
+}
+
+/* ② 재진입(나도 측정하기) — 궁합 바로 아래 작은 텍스트 CTA 행(헤어라인 없음). */
+.minorActions {
+  margin-top: clamp(10px, 1.8vh, 16px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: clamp(18px, 3vw, 28px);
+}
+
+/* ① 세션 CTA(핵심 전환) — 결과 맨 하단 전체 폭 스트립(일자). 상단 헤어라인으로
+   분리하고, 주황 + 강한 weight 로 하단이라도 또렷하게. 박스/pill 없이 텍스트+화살표.
+   모달 sessionStrip 과 동일. */
+.sessionStrip {
+  margin-top: clamp(22px, 3.6vh, 36px);
+  padding-top: clamp(18px, 2.8vh, 26px);
+  border-top: 1px solid var(--t-line);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  column-gap: clamp(8px, 1.4vw, 14px);
+  row-gap: 4px;
+  text-decoration: none;
+}
+.sessionCta {
+  flex: none;
+  color: var(--heat-core);
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.6vw, 21px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+/* 괄호 속 섹션 — CTA 와 동일 폰트 크기, weight·색만 낮춰 보조로. */
+.sessionMeta {
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.6vw, 21px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+  word-break: keep-all;
+  color: var(--t-muted);
+}
+/* 바로가기 + 화살표 — 링크 액션(주황). */
+.sessionGo {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  color: var(--heat-core);
+  font-family: var(--font-kr);
+  font-size: clamp(16px, 1.6vw, 21px);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.sessionGo span {
+  display: inline-block;
+  transition: transform 0.2s var(--ease-heat, ease);
+}
+.sessionStrip:hover .sessionGo span {
+  transform: translateX(5px);
+}
+.sessionStrip:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+.retryLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  color: var(--t-ink);
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.2vw, 16px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: color 0.18s ease;
+}
+.retryLink span {
+  display: inline-block;
+  transition: transform 0.2s var(--ease-heat, ease);
+}
+.retryLink:hover {
+  color: var(--heat-core);
+}
+.retryLink:hover span {
+  transform: translateX(4px);
+}
+.retryLink:focus-visible {
+  outline: 2px solid var(--heat-core);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+/* ── 행사 요약(디자인 썸머 일산) — 결과 하단 컨텍스트. ───────────────────── */
+.event {
+  margin-top: clamp(28px, 5vh, 48px);
+  padding-top: clamp(24px, 4vh, 40px);
+  border-top: 1px solid var(--t-line);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(10px, 1.6vh, 16px);
+  max-width: 660px;
+}
+.eventTitle {
+  margin: 0;
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(20px, 2.4vw, 28px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--t-ink);
+}
+.eventDesc {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.3vw, 16px);
+  line-height: 1.7;
+  word-break: keep-all;
+  color: var(--t-body);
+}
+.eventInfo {
+  margin: clamp(6px, 1.2vh, 10px) 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px clamp(16px, 3vw, 36px);
+}
+.eventInfo > div {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.eventInfo dt {
+  font-family: var(--font-display);
+  font-size: clamp(11px, 0.9vw, 13px);
+  letter-spacing: var(--tracking-meta);
+  color: var(--t-faint);
+}
+.eventInfo dd {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.2vw, 16px);
+  color: var(--t-ink);
+  word-break: keep-all;
+}
+@media (max-width: 560px) {
+  .eventInfo {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── 연사 명단 — 누가 오는지(소속 — 이름). 2열(섹션) → 모바일 1열, 박스 없음. ── */
+.lineup {
+  margin: clamp(8px, 1.6vh, 14px) 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(16px, 3vw, 36px);
+}
+.lineupCol {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(8px, 1.4vh, 12px);
+  min-width: 0;
+}
+.lineupLabel {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(11px, 0.9vw, 13px);
+  letter-spacing: var(--tracking-meta);
+  color: var(--t-faint);
+  word-break: keep-all;
+}
+.lineupList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(5px, 0.9vh, 8px);
+}
+.lineupItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.4em;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.2vw, 16px);
+  line-height: 1.4;
+  word-break: keep-all;
+}
+.lineupStudio {
+  color: var(--t-muted);
+  font-weight: 500;
+}
+.lineupDash {
+  color: var(--t-faint);
+}
+.lineupName {
+  color: var(--t-ink);
+  font-weight: 600;
+}
+@media (max-width: 560px) {
+  .lineup {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── 태블릿/모바일 — 세로 길이 절감(모달 result 와 동일 전략). ──────────────
+   이미지를 작은 썸네일로 float 시켜 헤더(유형명+°C)와 한 줄로 묶고, 본문은 그
+   아래 풀폭으로 흐른다. 요소 간 간격도 타이트하게. ── */
+@media (max-width: 760px) {
+  /* 모바일 결과 — 억지 좌정렬 없이 중앙 정렬 스택으로 예쁘게(모달 result 와 동일). */
+  .resultMain {
+    display: block;
+  }
+  .resultMedia {
+    width: 100%;
+    margin: 0 0 clamp(8px, 1.6vh, 14px);
+    gap: clamp(6px, 1.4vh, 12px);
+  }
+  .animalImg {
+    width: clamp(160px, 46vw, 230px);
+    max-width: 100%;
+  }
+  .resultLead {
+    font-size: clamp(17px, 4.4vw, 22px);
+  }
+  .resultText {
+    display: flex;
+    align-items: center;
+    text-align: center;
+  }
+  /* 모바일 °C — 과대 방지(중앙). */
+  .temp {
+    text-align: center;
+    font-size: clamp(32px, 10vw, 46px);
+  }
+  .desc {
+    line-height: 1.62;
+  }
+  .matchRow {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 0.5em;
+  }
+  .matchVal,
+  .matchSwan {
+    justify-content: center;
+  }
+  .minorActions {
+    justify-content: center;
+  }
+  /* 모바일 — 한 줄로 퍼지지 않게 가운데 세로 스택(섹션명 / 괄호 / 바로가기). */
+  .sessionStrip {
+    margin-top: clamp(16px, 3vh, 24px);
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    row-gap: 5px;
+  }
+}

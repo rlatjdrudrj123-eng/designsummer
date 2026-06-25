@@ -26,6 +26,7 @@ import Timetable from "./Timetable";
 import EventInfo from "./EventInfo";
 import Lineup from "./Lineup";
 import Benefits from "./Benefits";
+import AnimalTest from "./AnimalTest";
 import TempTest from "./TempTest";
 import Directions from "./Directions";
 import Faq from "./Faq";
@@ -209,6 +210,7 @@ export default function AuraSite() {
           <div id="day2" className={styles.dayAnchor}>
             <Lineup day={2} />
           </div>
+          <AnimalTest />
           <Benefits />
           {/* 온도 테스트 — 일단 숨김(클라이언트 요청). 나중에 다시 노출. */}
           {/* <TempTest /> */}
