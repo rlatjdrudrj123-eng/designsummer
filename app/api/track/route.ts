@@ -118,12 +118,33 @@ export async function GET(req: Request): Promise<Response> {
   if (url.searchParams.get("diag") !== "ds-diag-7x") {
     return new Response("not found", { status: 404 });
   }
+  let fbConfigProjectId: string | null = null;
+  try {
+    if (process.env.FIREBASE_CONFIG) {
+      fbConfigProjectId =
+        JSON.parse(process.env.FIREBASE_CONFIG).projectId ?? null;
+    }
+  } catch {
+    /* ignore */
+  }
+  let appProjectId: string | null = null;
+  try {
+    const { getApps, getApp } = await import("firebase-admin/app");
+    appProjectId = getApps().length
+      ? (getApp().options.projectId ?? null)
+      : null;
+  } catch {
+    /* ignore */
+  }
+
   const out: Record<string, unknown> = {
     env: {
       GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT ?? null,
       GCLOUD_PROJECT: process.env.GCLOUD_PROJECT ?? null,
       FIREBASE_CONFIG: process.env.FIREBASE_CONFIG ? "(set)" : null,
     },
+    firebaseConfigProjectId: fbConfigProjectId,
+    appProjectId,
   };
 
   try {
