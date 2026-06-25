@@ -79,8 +79,8 @@
   {
     "id": "aurg",
     "day": 2,
-    "order": 1,
-    "time": "13:00–13:45",
+    "order": 2,
+    "time": "13:55–14:40",
     "studio": "아우라지디자인",
     "studioEn": "AURG",
     "name": "박진택",
@@ -95,8 +95,8 @@
   {
     "id": "ohseven",
     "day": 2,
-    "order": 2,
-    "time": "13:55–14:40",
+    "order": 1,
+    "time": "13:00–13:45",
     "studio": "오세븐",
     "studioEn": "ohSeven",
     "name": "배수규",
