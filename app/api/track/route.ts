@@ -110,3 +110,51 @@ export async function POST(req: Request): Promise<Response> {
   }
   return noContent();
 }
+
+/* ── 임시 진단(GET ?diag=ds-diag-7x) — 통계 미적재 원인 파악용. 확인 후 제거. ──
+   실행 중인 서비스계정·프로젝트·Firestore 쓰기 에러를 그대로 노출한다. */
+export async function GET(req: Request): Promise<Response> {
+  const url = new URL(req.url);
+  if (url.searchParams.get("diag") !== "ds-diag-7x") {
+    return new Response("not found", { status: 404 });
+  }
+  const out: Record<string, unknown> = {
+    env: {
+      GOOGLE_CLOUD_PROJECT: process.env.GOOGLE_CLOUD_PROJECT ?? null,
+      GCLOUD_PROJECT: process.env.GCLOUD_PROJECT ?? null,
+      FIREBASE_CONFIG: process.env.FIREBASE_CONFIG ? "(set)" : null,
+    },
+  };
+
+  try {
+    const r = await fetch(
+      "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/email",
+      { headers: { "Metadata-Flavor": "Google" } },
+    );
+    out.runtimeServiceAccount = r.ok ? await r.text() : `metadata ${r.status}`;
+  } catch (e) {
+    out.runtimeServiceAccount = `metadata error: ${(e as Error).message}`;
+  }
+
+  const db = getDb();
+  out.dbNull = db === null;
+  if (db) {
+    try {
+      await db
+        .doc(STATS_DOC)
+        .set({ _diag: FieldValue.increment(1) }, { merge: true });
+      const snap = await db.doc(STATS_DOC).get();
+      out.writeOk = true;
+      out.docExists = snap.exists;
+      out.diagValue = snap.get("_diag") ?? null;
+    } catch (e) {
+      out.writeOk = false;
+      out.writeError = `${(e as Error).name}: ${(e as Error).message}`;
+    }
+  }
+
+  return new Response(JSON.stringify(out, null, 2), {
+    status: 200,
+    headers: { "content-type": "application/json" },
+  });
+}
