@@ -22,7 +22,25 @@ let cached: Firestore | null | undefined;
 export function getDb(): Firestore | null {
   if (cached !== undefined) return cached;
   try {
-    const app: App = getApps().length ? getApp() : initializeApp();
+    // 프로젝트를 명시적으로 박는다 — App Hosting 런타임에서 GOOGLE_CLOUD_PROJECT 가
+    // 비어 있어 Firestore 가 프로젝트를 추측하다 (default) DB 를 못 찾는(5 NOT_FOUND)
+    // 문제를 막는다. projectId 는 FIREBASE_CONFIG 에서 우선 파싱.
+    let projectId: string | undefined;
+    try {
+      projectId = process.env.FIREBASE_CONFIG
+        ? JSON.parse(process.env.FIREBASE_CONFIG).projectId
+        : undefined;
+    } catch {
+      /* ignore */
+    }
+    projectId =
+      projectId ||
+      process.env.GOOGLE_CLOUD_PROJECT ||
+      process.env.GCLOUD_PROJECT ||
+      undefined;
+    const app: App = getApps().length
+      ? getApp()
+      : initializeApp(projectId ? { projectId } : undefined);
     cached = getFirestore(app);
   } catch {
     cached = null;
