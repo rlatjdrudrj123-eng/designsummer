@@ -170,7 +170,18 @@ export async function GET(req: Request): Promise<Response> {
       out.diagValue = snap.get("_diag") ?? null;
     } catch (e) {
       out.writeOk = false;
-      out.writeError = `${(e as Error).name}: ${(e as Error).message}`;
+      const err = e as Error & {
+        code?: unknown;
+        details?: unknown;
+        metadata?: unknown;
+      };
+      out.writeError = `${err.name}: ${err.message}`;
+      out.errCode = err.code ?? null;
+      out.errDetails = err.details ?? null;
+      out.errFull = JSON.stringify(
+        err,
+        Object.getOwnPropertyNames(err),
+      ).slice(0, 1200);
     }
   }
 
