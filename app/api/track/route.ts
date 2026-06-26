@@ -46,7 +46,10 @@ export async function POST(req: Request): Promise<Response> {
     const db = getDb();
     if (!db) return noContent(); // 로컬/빌드: 자격증명 없음 → no-op
 
-    const updates: Record<string, FirebaseFirestore.FieldValue> = {};
+    // 중첩 객체로 쌓는다 — Firestore set(merge)는 점(.) 문자열 키를 통짜 필드명으로
+    // 저장하므로(중첩 경로 X), result/q/cta 는 반드시 실제 중첩 객체로 만들어야
+    // 대시보드(data.result.{id}, data.q.{qi}.{ci})가 읽을 수 있다.
+    const updates: Record<string, unknown> = {};
     const inc = () => FieldValue.increment(1);
 
     const animalId =
@@ -56,15 +59,17 @@ export async function POST(req: Request): Promise<Response> {
 
     switch (body.event) {
       case "start": {
-        updates["starts"] = inc();
+        updates.starts = inc();
         break;
       }
       case "complete": {
-        updates["completes"] = inc();
-        if (animalId) updates[`result.${animalId}`] = inc();
+        updates.completes = inc();
+        if (animalId) updates.result = { [animalId]: inc() };
         // answers: index=문항i, 값=선택지i. 길이 ≤17 캡, qi/ci 범위 검증.
         if (Array.isArray(body.answers)) {
           const answers = body.answers.slice(0, NUM_QUESTIONS);
+          const q: Record<string, Record<string, FirebaseFirestore.FieldValue>> =
+            {};
           answers.forEach((ci, qi) => {
             if (
               typeof ci === "number" &&
@@ -74,15 +79,16 @@ export async function POST(req: Request): Promise<Response> {
               ci >= 0 &&
               ci < MAX_CHOICES
             ) {
-              updates[`q.${qi}.${ci}`] = inc();
+              q[String(qi)] = { [String(ci)]: inc() };
             }
           });
+          if (Object.keys(q).length > 0) updates.q = q;
         }
         break;
       }
       case "share": {
-        updates["shares"] = inc();
-        if (animalId) updates[`shareResult.${animalId}`] = inc();
+        updates.shares = inc();
+        if (animalId) updates.shareResult = { [animalId]: inc() };
         break;
       }
       case "cta": {
@@ -90,8 +96,8 @@ export async function POST(req: Request): Promise<Response> {
           typeof body.section === "string" && SECTION_KEYS.has(body.section)
             ? body.section
             : null;
-        if (section) updates[`cta.${section}`] = inc();
-        if (animalId) updates[`ctaResult.${animalId}`] = inc();
+        if (section) updates.cta = { [section]: inc() };
+        if (animalId) updates.ctaResult = { [animalId]: inc() };
         break;
       }
       default:
