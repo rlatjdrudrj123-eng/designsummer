@@ -2,9 +2,13 @@
    node:crypto 대신 Web Crypto(crypto.subtle)만 사용해 미들웨어(Edge 런타임)와
    API 라우트(Node 런타임)에서 동일하게 import 가능. (node:fs 의존성을 끌어오지 않음)
 
-   쿠키에는 ADMIN_PASSWORD 평문 대신 HMAC-SHA256 서명값(hex)만 저장한다.
-   시크릿은 SESSION_SECRET 가 있으면 그것을, 없으면 ADMIN_PASSWORD 자체를 키로 쓴다.
-   (ADMIN_PASSWORD 가 곧 비밀이므로 별도 시크릿이 없어도 평문 노출은 막을 수 있다.) */
+   쿠키에는 HMAC-SHA256 서명값(hex)만 저장한다. 시크릿은 SESSION_SECRET 가 있으면
+   그것을, 없으면 ADMIN_PASSWORD 를 키로 쓴다.
+
+   토큰 페이로드는 '고정 상수'다 — 비밀번호 값에 의존하지 않는다. 비번 변경 기능
+   때문에 실제 비번은 Firestore(admin/auth)로 옮겨졌고, 미들웨어(Edge)는 Firestore 를
+   못 읽으므로 토큰은 SESSION_SECRET(=env, 안정적)만으로 서명·검증해야 한다.
+   로그인 시 비번 검증은 lib/adminPassword.ts(Node)가 하고, 통과하면 이 토큰을 발급한다. */
 
 const COOKIE_NAME = "ds_admin";
 
@@ -18,11 +22,11 @@ function toHex(buf: ArrayBuffer): string {
     .join("");
 }
 
-/** 현재 비밀번호에 대응하는 세션 토큰(hex). ADMIN_PASSWORD 미설정 시 빈 문자열. */
+/** 어드민 세션 토큰(hex). 시크릿(SESSION_SECRET||ADMIN_PASSWORD) 미설정 시 빈 문자열.
+    페이로드는 고정 상수라 비번을 바꿔도 토큰은 그대로 유효하다. */
 export async function sessionToken(): Promise<string> {
-  const password = process.env.ADMIN_PASSWORD || "";
   const secret = hmacSecret();
-  if (!password || !secret) return "";
+  if (!secret) return "";
   const enc = new TextEncoder();
   const cryptoKey = await crypto.subtle.importKey(
     "raw",
@@ -34,7 +38,7 @@ export async function sessionToken(): Promise<string> {
   const sig = await crypto.subtle.sign(
     "HMAC",
     cryptoKey,
-    enc.encode(`${COOKIE_NAME}:v1:${password}`),
+    enc.encode(`${COOKIE_NAME}:v2:session`),
   );
   return toHex(sig);
 }

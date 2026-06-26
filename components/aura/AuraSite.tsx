@@ -33,9 +33,16 @@ import Faq from "./Faq";
 import ScrollCue from "./ScrollCue";
 import FloatingBar from "./FloatingBar";
 import PostHeroRegion from "@/components/develop/PostHeroRegion";
+import { type Speaker } from "@/lib/content";
 import styles from "./AuraSite.module.css";
 
-export default function AuraSite() {
+export default function AuraSite({
+  day1Speakers,
+  day2Speakers,
+}: {
+  day1Speakers: Speaker[];
+  day2Speakers: Speaker[];
+}) {
   /* ── CURSOR LIGHT-SPOT (역발상) ─────────────────────────────────────────────
    * A soft warm-cream radial follows the pointer over the below-hero content and
    * gently LIGHTENS the busy warm aura locally so text reads cleaner. A single
@@ -202,13 +209,13 @@ export default function AuraSite() {
           }
         >
           <Overview />
-          <Timetable />
+          <Timetable sp1List={day1Speakers} sp2List={day2Speakers} />
           <EventInfo />
           <div id="day1" className={styles.dayAnchor}>
-            <Lineup day={1} />
+            <Lineup day={1} speakers={day1Speakers} />
           </div>
           <div id="day2" className={styles.dayAnchor}>
-            <Lineup day={2} />
+            <Lineup day={2} speakers={day2Speakers} />
           </div>
           {/* 동물상 바이럴 테스트 — Benefits 위. */}
           <AnimalTest />

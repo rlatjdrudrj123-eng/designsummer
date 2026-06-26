@@ -26,7 +26,6 @@ import Image from "next/image";
 import styles from "./Lineup.module.css";
 import DayKV from "./DayKV";
 import Reveal from "@/components/develop/Reveal";
-import { auraSpeakersByDay } from "@/lib/auraContent";
 import { type Speaker } from "@/lib/content";
 import { imageUrl, workImages } from "@/lib/images";
 import { conference } from "@/lib/conference";
@@ -229,8 +228,14 @@ function Lightbox({
   );
 }
 
-export default function Lineup({ day }: { day: 1 | 2 }) {
-  const list = auraSpeakersByDay(day);
+export default function Lineup({
+  day,
+  speakers,
+}: {
+  day: 1 | 2;
+  speakers: Speaker[];
+}) {
+  const list = speakers;
   const [lightbox, setLightbox] = useState<LightboxState>(null);
 
   const onOpen = useCallback((src: string, alt: string) => {

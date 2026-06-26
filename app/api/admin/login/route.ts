@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { COOKIE_NAME, sessionToken, timingSafeEqual } from "@/lib/adminAuth";
+import { COOKIE_NAME, sessionToken } from "@/lib/adminAuth";
+import { verifyAdminPassword } from "@/lib/adminPassword";
 
 export const runtime = "nodejs";
 
@@ -14,9 +15,9 @@ export async function POST(req: Request) {
   const origin = fwdHost ? `${fwdProto}://${fwdHost}` : new URL(req.url).origin;
   const form = await req.formData();
   const pw = String(form.get("password") ?? "");
-  const adminPw = process.env.ADMIN_PASSWORD || "";
-  // 비밀번호는 상수시간 비교, 쿠키엔 평문이 아니라 서명 토큰만 저장.
-  if (!adminPw || !timingSafeEqual(pw, adminPw)) {
+  // 비번 검증은 Firestore(admin/auth) 우선, 없으면 env ADMIN_PASSWORD 폴백.
+  // 쿠키엔 평문이 아니라 SESSION_SECRET 기반 서명 토큰만 저장.
+  if (!(await verifyAdminPassword(pw))) {
     return NextResponse.redirect(new URL("/admin/login?e=1", origin), 303);
   }
   const token = await sessionToken();

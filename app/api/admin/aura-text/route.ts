@@ -1,41 +1,14 @@
 import { NextResponse } from "next/server";
-import { promises as fs } from "node:fs";
-import path from "node:path";
+import { revalidatePath } from "next/cache";
 import { checkAuth } from "@/lib/serverImages";
+import { writeAuraOverride } from "@/lib/auraOverrides";
+import type { AuraOverride } from "@/lib/auraContent";
 
 export const runtime = "nodejs";
 
-/* /aura 전용 연사 텍스트 저장. content/auraSpeakers.json 에 id 별 필드 병합 후 기록.
-   (이미지 라우트와 동일하게 x-forwarded-host 오리진 패턴으로 리다이렉트.) */
-
-const STORE = path.join(process.cwd(), "content", "auraSpeakers.json");
-
-type Override = {
-  studio?: string;
-  name?: string;
-  role?: string;
-  sessionTitle?: string;
-  sessionDesc?: string;
-  credentials?: string[];
-  url?: string;
-};
-
-async function readStore(): Promise<Record<string, Override>> {
-  try {
-    return JSON.parse(await fs.readFile(STORE, "utf8"));
-  } catch {
-    return {};
-  }
-}
-
-async function writeStore(data: Record<string, Override>) {
-  const sorted = Object.fromEntries(
-    Object.keys(data)
-      .sort()
-      .map((k) => [k, data[k]]),
-  );
-  await fs.writeFile(STORE, JSON.stringify(sorted, null, 2) + "\n");
-}
+/* /aura 연사 텍스트 저장 — Firestore(content/auraSpeakers) 의 overrides.{id} 에 병합.
+   (App Hosting 은 FS 가 휘발성이라 파일 저장은 안 남음 → Firestore 영구 저장.)
+   저장 후 홈·결과 페이지 캐시를 무효화해 즉시 반영한다. */
 
 export async function POST(req: Request) {
   const fwdHost = req.headers.get("x-forwarded-host") ?? req.headers.get("host");
@@ -54,7 +27,7 @@ export async function POST(req: Request) {
       .split(/\r?\n/)
       .map((c) => c.trim())
       .filter(Boolean);
-    const entry: Override = {
+    const entry: AuraOverride = {
       studio: String(form.get("studio") ?? "").trim(),
       name: String(form.get("name") ?? "").trim(),
       role: String(form.get("role") ?? "").trim(),
@@ -63,9 +36,16 @@ export async function POST(req: Request) {
       credentials,
       url: String(form.get("url") ?? "").trim(),
     };
-    const store = await readStore();
-    store[id] = { ...store[id], ...entry };
-    await writeStore(store);
+    const ok = await writeAuraOverride(id, entry);
+    if (ok) {
+      revalidatePath("/");
+      revalidatePath("/r");
+      revalidatePath("/aura");
+    }
+    return NextResponse.redirect(
+      new URL(ok ? "/admin?saved=1" : "/admin?saved=err", origin),
+      303,
+    );
   }
 
   return NextResponse.redirect(new URL("/admin", origin), 303);

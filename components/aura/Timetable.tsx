@@ -1,7 +1,7 @@
 import styles from "./Timetable.module.css";
 import Reveal from "@/components/develop/Reveal";
 import { conference } from "@/lib/conference";
-import { auraSpeakersByDay } from "@/lib/auraContent";
+import { type Speaker } from "@/lib/content";
 
 /* 타임테이블 (Aura 전용 포크) — 하나의 통합 표.
    (forked from components/aura1/Timetable.tsx — independent of /aura1.)
@@ -13,14 +13,18 @@ import { auraSpeakersByDay } from "@/lib/auraContent";
       가운데 정렬 라벨 한 줄로 렌더.
    2) 세션(session): Day1 셀은 day1, Day2 셀은 day2 의 스튜디오·연사·세션 제목
       (설명 desc 는 표시하지 않음). */
-export default function Timetable() {
+export default function Timetable({
+  sp1List,
+  sp2List,
+}: {
+  sp1List: Speaker[];
+  sp2List: Speaker[];
+}) {
   const { day1, day2 } = conference.timetable;
-  // 연사 정보(스튜디오·이름·직급·세션명)는 '연사 카드'와 동일 소스에서 끌어온다
-  // (auraSpeakersByDay = speakers.json + auraSpeakers.json). 표와 카드가 절대 어긋나지
-  // 않게 — conference.timetable 의 studio/speaker/title 은 안전용 폴백으로만 남긴다.
-  const sp1List = auraSpeakersByDay(1);
-  const sp2List = auraSpeakersByDay(2);
-  const cardLabel = (sp: (typeof sp1List)[number] | undefined) =>
+  // 연사 정보(스튜디오·이름·직급·세션명)는 '연사 카드'와 동일 소스(props 로 전달받은
+  // 병합 연사 목록)에서 끌어온다. 표와 카드가 절대 어긋나지 않게 —
+  // conference.timetable 의 studio/speaker/title 은 안전용 폴백으로만 남긴다.
+  const cardLabel = (sp: Speaker | undefined) =>
     sp ? [sp.name, sp.role].filter(Boolean).join(" ") : "";
   // 컬럼 헤더 컨셉 라벨(개요와 동일 소스): "creative day" / "craft day".
   const [ov1, ov2] = conference.overview.days;

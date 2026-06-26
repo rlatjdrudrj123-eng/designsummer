@@ -1,4 +1,6 @@
 import AuraSite from "@/components/aura/AuraSite";
+import { getAuraOverrides } from "@/lib/auraOverrides";
+import { auraSpeakersByDayWith } from "@/lib/auraContent";
 
 /* /aura — standalone Aura-ground site. Now INDEPENDENT of /develop: it renders
    AuraSite (components/aura/), which forks Hero / Chapter / DayBlock / Apply so
@@ -9,10 +11,16 @@ export const metadata = {
   robots: { index: false, follow: false },
 };
 
-export default function AuraPage() {
+export const revalidate = 300;
+
+export default async function AuraPage() {
+  const ov = await getAuraOverrides();
+  const day1Speakers = auraSpeakersByDayWith(1, ov);
+  const day2Speakers = auraSpeakersByDayWith(2, ov);
+
   return (
     <main>
-      <AuraSite />
+      <AuraSite day1Speakers={day1Speakers} day2Speakers={day2Speakers} />
     </main>
   );
 }

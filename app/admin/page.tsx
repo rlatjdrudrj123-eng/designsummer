@@ -1,7 +1,8 @@
 import Link from "next/link";
 import styles from "./admin.module.css";
 import { speakers } from "@/lib/content";
-import { auraSpeakers } from "@/lib/auraContent";
+import { auraSpeakersWith } from "@/lib/auraContent";
+import { readAuraOverrides } from "@/lib/auraOverrides";
 import { readManifest } from "@/lib/serverImages";
 import { WORK_SLOTS } from "@/lib/images";
 
@@ -10,9 +11,29 @@ export const metadata = { title: "이미지 관리 · Design Summer" };
 
 type Slot = { key: string; label: string };
 
-export default async function AdminPage() {
+/* 저장 결과 안내(쿼리스트링) → 사람이 읽는 한 줄. */
+const STATUS: Record<string, { ok: boolean; msg: string }> = {
+  "saved=1": { ok: true, msg: "연사 텍스트를 저장했어요. 사이트에 곧 반영됩니다." },
+  "saved=err": { ok: false, msg: "저장 실패 — 잠시 후 다시 시도해주세요." },
+  "pw=ok": { ok: true, msg: "비밀번호를 변경했어요." },
+  "pw=current": { ok: false, msg: "현재 비밀번호가 일치하지 않습니다." },
+  "pw=short": { ok: false, msg: "새 비밀번호는 4자 이상이어야 합니다." },
+  "pw=err": { ok: false, msg: "비밀번호 변경 실패 — 잠시 후 다시 시도해주세요." },
+};
+
+export default async function AdminPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const sp = await searchParams;
+  const statusKey =
+    (sp.saved ? `saved=${sp.saved}` : sp.pw ? `pw=${sp.pw}` : "") || "";
+  const status = STATUS[statusKey];
+
   const m = await readManifest();
-  const auraList = auraSpeakers();
+  const ov = await readAuraOverrides();
+  const auraList = auraSpeakersWith(ov);
 
   const groups: { title: string; hint: string; items: Slot[] }[] = [
     {
@@ -82,11 +103,66 @@ export default async function AdminPage() {
           </form>
         </div>
       </header>
+
+      {status && (
+        <p
+          className={styles.note}
+          style={{
+            borderLeft: `3px solid ${status.ok ? "#2f8f4e" : "#c43d1c"}`,
+            paddingLeft: 10,
+            color: status.ok ? "#2f8f4e" : "#c43d1c",
+            fontWeight: 600,
+          }}
+        >
+          {status.msg}
+        </p>
+      )}
+
       <p className={styles.note}>
-        텍스트(연사·세션·크레덴셜)는 <code>content/speakers.json</code> 을 직접
-        수정합니다. 이 화면은 <strong>이미지만</strong> 관리합니다. 업로드 후
-        같은 키의 기존 파일은 교체됩니다.
+        이미지 업로드(같은 키는 교체)와 <strong>연사·세션 텍스트</strong>를 이
+        화면에서 직접 관리합니다. 텍스트 수정은 저장 즉시 라이브 사이트에 반영돼요.
       </p>
+
+      {/* ── 비밀번호 변경 ─────────────────────────────────────────────────── */}
+      <section className={styles.group}>
+        <div className={styles.groupHead}>
+          <h2 className={styles.groupTitle}>비밀번호 변경</h2>
+          <span className={styles.groupHint}>
+            현재 비밀번호 확인 후 새 비밀번호로 변경(4자 이상)
+          </span>
+        </div>
+        <form
+          className={styles.textForm}
+          method="post"
+          action="/api/admin/password"
+          style={{ maxWidth: 420 }}
+        >
+          <label className={styles.field}>
+            <span>현재 비밀번호</span>
+            <input
+              className={styles.text}
+              type="password"
+              name="current"
+              autoComplete="current-password"
+              required
+            />
+          </label>
+          <label className={styles.field}>
+            <span>새 비밀번호</span>
+            <input
+              className={styles.text}
+              type="password"
+              name="next"
+              autoComplete="new-password"
+              minLength={4}
+              required
+            />
+          </label>
+          <button className={styles.upload} type="submit">
+            비밀번호 변경
+          </button>
+        </form>
+      </section>
 
       {groups.map((g) => (
         <section key={g.title} className={styles.group}>
@@ -150,11 +226,10 @@ export default async function AdminPage() {
       <section className={styles.group}>
         <div className={styles.groupHead}>
           <h2 className={styles.groupTitle}>
-            Aura 연사 내용 (이 페이지에서 직접 수정)
+            연사·세션 텍스트 (이 페이지에서 직접 수정)
           </h2>
           <span className={styles.groupHint}>
-            <code>/aura</code> 페이지에만 반영 · 저장 시{" "}
-            <code>content/auraSpeakers.json</code>
+            저장 시 라이브 사이트(연사 카드·타임테이블)에 즉시 반영 · 영구 저장
           </span>
         </div>
         <div className={styles.textForms}>

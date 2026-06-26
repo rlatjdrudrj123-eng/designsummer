@@ -1,6 +1,12 @@
 import AuraSite from "@/components/aura/AuraSite";
 import { conference } from "@/lib/conference";
 import { speakers } from "@/lib/content";
+import { getAuraOverrides } from "@/lib/auraOverrides";
+import { auraSpeakersByDayWith } from "@/lib/auraContent";
+
+/* 어드민(Firestore)에서 수정한 연사 텍스트를 반영하기 위해 ISR — 5분마다 재생성하고,
+   어드민 저장 시 revalidateTag/revalidatePath 로 즉시 갱신한다. */
+export const revalidate = 300;
 
 /* 메인 `/` = 확정된 Aura 디자인(딜리버러블).
    실제 사이트 본문은 components/aura/ (AuraSite) + 콘텐츠(lib/conference, content/auraSpeakers.json, 업로드 이미지)에서 작업한다.
@@ -167,7 +173,11 @@ const organizationJsonLd = {
   sameAs: ["https://kprint.kr/"],
 } as const;
 
-export default function Home() {
+export default async function Home() {
+  const ov = await getAuraOverrides();
+  const day1Speakers = auraSpeakersByDayWith(1, ov);
+  const day2Speakers = auraSpeakersByDayWith(2, ov);
+
   return (
     <>
       {/* Event 구조화 데이터 — 검색 리치결과(일정/장소/가격/연사) 표시용 */}
@@ -185,7 +195,7 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
-      <AuraSite />
+      <AuraSite day1Speakers={day1Speakers} day2Speakers={day2Speakers} />
     </>
   );
 }

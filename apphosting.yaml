@@ -11,9 +11,17 @@ runConfig:
   concurrency: 80
   cpu: 1
   memoryMiB: 512
-# admin 통계 대시보드(/admin/stats) 인증 비밀번호.
-# NOTE: 단순 평문 값(보안 약함) — 통계 열람용 임시 비번. 필요 시 Secret Manager
-#   (secret: ADMIN_PASSWORD)로 다시 강화할 것.
+# admin 인증.
+# - ADMIN_PASSWORD: 부트스트랩/폴백 비밀번호. 어드민에서 비번 변경 시 Firestore
+#   (admin/auth)에 저장되고 그 값이 우선한다. (평문 값 = 약한 보안, 임시)
+# - SESSION_SECRET(선택, 미설정): 세션 쿠키 서명 키. 미설정 시 ADMIN_PASSWORD 로
+#   서명한다 — 동작은 하지만 공개된 비번값으로 세션 위조가 가능(약한 보안).
+#   강화하려면 Secret Manager 로 등록 후 secret: 으로 주입할 것(값을 repo 에 박지 말 것):
+#     firebase apphosting:secrets:set SESSION_SECRET   # 32바이트 랜덤 hex 입력
+#   그리고 아래에:
+#     - variable: SESSION_SECRET
+#       secret: SESSION_SECRET
+#       availability: [RUNTIME]
 env:
   - variable: ADMIN_PASSWORD
     value: "1234"

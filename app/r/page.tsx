@@ -20,16 +20,10 @@ import {
   type Animal,
   type AnimalId,
 } from "@/lib/animalTest";
-import { auraSpeakersByDay } from "@/lib/auraContent";
+import { auraSpeakersByDayWith } from "@/lib/auraContent";
+import { getAuraOverrides } from "@/lib/auraOverrides";
 import CtaStrip from "./CtaStrip";
 import styles from "./page.module.css";
-
-/* 행사 요약 연사 명단 — 홈 라인업과 동일 소스(auraSpeakersByDay = speakers.json +
-   auraSpeakers.json 머지). day 1 → section A, day 2 → section B. 표시는 studio — name. */
-const LINEUP = [
-  { ...SECTIONS.A, speakers: auraSpeakersByDay(1) },
-  { ...SECTIONS.B, speakers: auraSpeakersByDay(2) },
-] as const;
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
 
@@ -95,6 +89,14 @@ export default async function ResultPage({
   const { a } = await searchParams;
   const animal = resolveAnimal(a);
   if (!animal) redirect("/");
+
+  /* 행사 요약 연사 명단 — 홈 라인업과 동일 소스(번들 + Firestore override 머지).
+     day 1 → section A, day 2 → section B. 표시는 studio — name. */
+  const ov = await getAuraOverrides();
+  const LINEUP = [
+    { ...SECTIONS.A, speakers: auraSpeakersByDayWith(1, ov) },
+    { ...SECTIONS.B, speakers: auraSpeakersByDayWith(2, ov) },
+  ] as const;
 
   return (
     <main className={styles.page}>
