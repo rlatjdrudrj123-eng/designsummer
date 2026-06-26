@@ -152,7 +152,7 @@ export const ANIMALS: Record<ScoredAnimalId, Animal> = {
     temp: 87,
     tempLabel: "87",
     tieOrder: 7,
-    name: "장비충 수달",
+    name: "장비 덕후 수달",
     oneLiner: "세팅 끝나면 효율은 제가 1등",
     desc: "단축키·플러그인·툴 세팅이 완벽해야 비로소 작업 시작. 폴더 구조·네이밍 장인. 손은 느려 보여도 세팅만 끝나면 미친 효율. 준비되면 후끈 풀가동.",
     good: { animal: "호랑이", emoji: "🐯", why: "세팅 + 추진력 환상 콤비" },
@@ -220,7 +220,7 @@ export const TEST_COPY = {
   revealLead: "측정 거의 끝. 결과가 이 안에 있어요.",
   revealAction: "톡톡 두드려 꺼내보세요",
   /** "부족한 1%" 블록 — 결과의 핵심 전환. 결핍 문구(animal.gap) + 추천 섹션 신청. */
-  gapTitle: "당신에게 필요한 부족한 1%",
+  gapTitle: "당신에게 필요한 1%",
   gapCta: "신청하기",
   /** 결과 액션 버튼. */
   shareCta: "결과 공유하기",
@@ -335,9 +335,9 @@ export const QUESTIONS: Question[] = [
   {
     q: '"요즘은 그거 다 AI로 뚝딱 만들던데요?"라는 말을 들었을 때',
     choices: [
-      { label: '"안 쓰면 손해죠" 미드저니부터 챗GPT까지 프롬프트 깎는 AI 활용파', animal: "chameleon", points: 2 },
+      { label: '"요즘 핫한 AI 툴? 일단 다 써봐야 직성 풀림" 신문물 얼리어답터', animal: "chameleon", points: 2 },
       { label: '"디자인은 손맛과 오리지널리티가 본질" 꿋꿋한 전통 작업 사수파', animal: "alpaca", points: 2 },
-      { label: "이미 내 워크플로우에 AI 확장·자동화 세팅 완비. 효율 최고", animal: "otter", points: 2 },
+      { label: '"AI는 그냥 효율 도구일 뿐" 단축키처럼 워크플로우에 박아두고 굴림', animal: "otter", points: 2 },
       { label: "조용히 소스용으로 잘 쓰고 있지만, 굳이 남에게 말 안 함", animal: "owl", points: 2 },
     ],
   },
