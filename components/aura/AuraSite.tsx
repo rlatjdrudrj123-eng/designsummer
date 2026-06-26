@@ -210,8 +210,8 @@ export default function AuraSite() {
           <div id="day2" className={styles.dayAnchor}>
             <Lineup day={2} />
           </div>
-          {/* 동물상 바이럴 테스트 — 일단 라이브에서 숨김(작업 중). 내일 이어서 켠다. */}
-          {/* <AnimalTest /> */}
+          {/* 동물상 바이럴 테스트 — Benefits 위. */}
+          <AnimalTest />
           <Benefits />
           {/* 온도 테스트 — 일단 숨김(클라이언트 요청). 나중에 다시 노출. */}
           {/* <TempTest /> */}

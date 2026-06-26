@@ -845,59 +845,63 @@
   gap: clamp(18px, 3vw, 28px);
 }
 
-/* ① 세션 CTA(핵심 전환) — 결과 맨 하단 전체 폭 스트립(일자). 상단 헤어라인으로
-   분리하고, 주황 + 강한 weight 로 하단이라도 또렷하게. 박스/pill 없이 텍스트+화살표. */
-.sessionStrip {
+/* ① "부족한 1%"(핵심 전환) — 결과 맨 하단 블록. 상단 헤어라인으로 분리.
+   아이브로우(accent 소프트) → 결핍 문구(본문, 2문장) → 추천 섹션 신청 링크(주황).
+   박스 없음 — 사이트 톤 그대로 텍스트로만. */
+.gapBlock {
   margin-top: clamp(22px, 3.6vh, 36px);
   padding-top: clamp(18px, 2.8vh, 26px);
   border-top: 1px solid var(--t-line);
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  justify-content: flex-end;
-  column-gap: clamp(8px, 1.4vw, 14px);
-  row-gap: 4px;
-  text-decoration: none;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: clamp(8px, 1.4vh, 12px);
 }
-.sessionCta {
-  flex: none;
-  color: var(--heat-core);
-  font-family: var(--font-kr);
-  font-size: clamp(15px, 1.5vw, 19px);
-  font-weight: 800;
-  letter-spacing: -0.01em;
-  white-space: nowrap;
-}
-/* 괄호 속 섹션 — CTA 와 동일 폰트 크기, weight·색만 낮춰 보조로. */
-.sessionMeta {
-  font-family: var(--font-kr);
-  font-size: clamp(15px, 1.5vw, 19px);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
-  word-break: keep-all;
-  color: var(--t-muted);
-}
-/* 바로가기 + 화살표 — 링크 액션(주황). */
-.sessionGo {
-  flex: none;
+/* 아이브로우(🎟️ + 타이틀) — 작게, accent 컬러. */
+.gapTitle {
+  margin: 0;
   display: inline-flex;
-  align-items: center;
+  align-items: baseline;
+  gap: 0.4em;
+  font-family: var(--font-display);
+  font-size: var(--type-meta);
+  letter-spacing: var(--tracking-meta);
+  font-weight: 600;
+  color: var(--heat-core);
+}
+/* 결핍 문구 — 본문 톤, 2문장이라 줄간격 넉넉히. */
+.gapText {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.45vw, 18px);
+  font-weight: 500;
+  line-height: 1.72;
+  word-break: keep-all;
+  color: var(--t-body);
+}
+/* 추천 섹션 신청 링크 — 주황 + 강한 weight. 박스/pill 없이 텍스트+화살표. */
+.gapCta {
+  margin-top: clamp(4px, 0.8vh, 8px);
+  display: inline-flex;
+  align-items: baseline;
   gap: 0.3em;
   color: var(--heat-core);
   font-family: var(--font-kr);
   font-size: clamp(15px, 1.5vw, 19px);
   font-weight: 800;
-  white-space: nowrap;
+  letter-spacing: -0.01em;
+  line-height: 1.4;
+  word-break: keep-all;
+  text-decoration: none;
 }
-.sessionGo span {
+.gapCta span {
   display: inline-block;
   transition: transform 0.2s var(--ease-heat, ease);
 }
-.sessionStrip:hover .sessionGo span {
+.gapCta:hover span {
   transform: translateX(5px);
 }
-.sessionStrip:focus-visible {
+.gapCta:focus-visible {
   outline: 2px solid var(--heat-core);
   outline-offset: 4px;
   border-radius: 4px;
@@ -940,6 +944,8 @@
   }
   .title {
     order: 1;
+    /* 모바일 — 줄바꿈 완화 위해 더 작게(데스크톱 clamp 하한 28px → 모바일 축소). */
+    font-size: clamp(20px, 5.6vw, 28px);
   }
   .entryVisual {
     order: 2;
@@ -1003,13 +1009,17 @@
   .minorActions {
     justify-content: center;
   }
-  /* 모바일 — 한 줄로 퍼지지 않게 가운데 세로 스택(섹션명 / 괄호 / 바로가기). */
-  .sessionStrip {
+  /* 모바일 — "부족한 1%" 블록 가운데 정렬 세로 스택(아이브로우 / 문구 / 신청). */
+  .gapBlock {
     margin-top: clamp(16px, 3vh, 24px);
-    flex-direction: column;
     align-items: center;
     text-align: center;
-    row-gap: 5px;
+  }
+  .gapText {
+    line-height: 1.66;
+  }
+  .gapCta {
+    justify-content: center;
   }
 }
 @media (max-width: 480px) {

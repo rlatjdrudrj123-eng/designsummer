@@ -22,7 +22,6 @@ import {
   scoreTest,
   SECTIONS,
   TEST_COPY,
-  oppositeSection,
   type Animal,
 } from "@/lib/animalTest";
 
@@ -442,7 +441,7 @@ function TestModal({ onClose }: { onClose: () => void }) {
                 ) : (
                   <dl className={styles.match}>
                     <div className={styles.matchRow}>
-                      <dt className={styles.matchKey}>잘 맞는</dt>
+                      <dt className={styles.matchKey}>찰떡</dt>
                       <dd className={styles.matchVal}>
                         <span className={styles.matchAnimal}>
                           {result.good?.emoji} {result.good?.animal}
@@ -451,7 +450,7 @@ function TestModal({ onClose }: { onClose: () => void }) {
                       </dd>
                     </div>
                     <div className={styles.matchRow}>
-                      <dt className={styles.matchKey}>안 맞는</dt>
+                      <dt className={styles.matchKey}>상극</dt>
                       <dd className={styles.matchVal}>
                         <span className={styles.matchAnimal}>
                           {result.worst?.emoji} {result.worst?.animal}
@@ -482,29 +481,30 @@ function TestModal({ onClose }: { onClose: () => void }) {
               </div>
             </div>
 
-            {/* ① 세션 CTA(핵심 전환) — 결과 맨 하단 전체 폭 스트립(일자). */}
+            {/* ① "부족한 1%"(핵심 전환) — 아이브로우 + 결핍 문구 + 추천 섹션 신청.
+                섹션은 animal.section 직접 사용(결핍을 채워줄 곳). */}
             {(() => {
-              const recKey = oppositeSection(result.section); // 추천 섹션 A/B
-              const rec = SECTIONS[recKey];
+              const rec = SECTIONS[result.section]; // 추천 섹션 A/B
               return (
-                <a
-                  className={styles.sessionStrip}
-                  href={rec.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  // 외부 이동이라 sendBeacon 우선(track 내부) — fire-and-forget.
-                  onClick={() => track("cta", { animalId: result.id, section: recKey })}
-                >
-                  <span className={styles.sessionCta}>
-                    {TEST_COPY.speakerCta}
-                  </span>
-                  <span className={styles.sessionMeta}>
-                    ({rec.key} · {rec.title})
-                  </span>
-                  <span className={styles.sessionGo}>
-                    바로가기 <span aria-hidden="true">→</span>
-                  </span>
-                </a>
+                <div className={styles.gapBlock}>
+                  <p className={styles.gapTitle}>
+                    <span aria-hidden="true">🎟️</span> {TEST_COPY.gapTitle}
+                  </p>
+                  <p className={styles.gapText}>{result.gap}</p>
+                  <a
+                    className={styles.gapCta}
+                    href={rec.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    // 외부 이동이라 sendBeacon 우선(track 내부) — fire-and-forget.
+                    onClick={() =>
+                      track("cta", { animalId: result.id, section: result.section })
+                    }
+                  >
+                    {rec.date} · {rec.key} · {rec.title} {TEST_COPY.gapCta}{" "}
+                    <span aria-hidden="true">→</span>
+                  </a>
+                </div>
               );
             })()}
 

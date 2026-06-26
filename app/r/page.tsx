@@ -17,7 +17,6 @@ import {
   SECTIONS,
   SWAN,
   TEST_COPY,
-  oppositeSection,
   type Animal,
   type AnimalId,
 } from "@/lib/animalTest";
@@ -136,7 +135,7 @@ export default async function ResultPage({
               ) : (
                 <dl className={styles.match}>
                   <div className={styles.matchRow}>
-                    <dt className={styles.matchKey}>잘 맞는</dt>
+                    <dt className={styles.matchKey}>찰떡</dt>
                     <dd className={styles.matchVal}>
                       <span className={styles.matchAnimal}>
                         {animal.good?.emoji} {animal.good?.animal}
@@ -145,7 +144,7 @@ export default async function ResultPage({
                     </dd>
                   </div>
                   <div className={styles.matchRow}>
-                    <dt className={styles.matchKey}>안 맞는</dt>
+                    <dt className={styles.matchKey}>상극</dt>
                     <dd className={styles.matchVal}>
                       <span className={styles.matchAnimal}>
                         {animal.worst?.emoji} {animal.worst?.animal}
@@ -165,25 +164,26 @@ export default async function ResultPage({
             </div>
           </div>
 
-          {/* ① 세션 CTA(핵심 전환) — 결과 맨 하단 전체 폭 스트립(일자). */}
+          {/* ① "부족한 1%"(핵심 전환) — 아이브로우 + 결핍 문구 + 추천 섹션 신청.
+              섹션은 animal.section 직접 사용(결핍을 채워줄 곳). */}
           {(() => {
-            const recKey = oppositeSection(animal.section); // 추천 섹션 A/B
-            const rec = SECTIONS[recKey];
+            const rec = SECTIONS[animal.section]; // 추천 섹션 A/B
             return (
-              <CtaStrip
-                className={styles.sessionStrip}
-                href={rec.url}
-                animalId={animal.id}
-                section={recKey}
-              >
-                <span className={styles.sessionCta}>{TEST_COPY.speakerCta}</span>
-                <span className={styles.sessionMeta}>
-                  ({rec.key} · {rec.title})
-                </span>
-                <span className={styles.sessionGo}>
-                  바로가기 <span aria-hidden="true">→</span>
-                </span>
-              </CtaStrip>
+              <div className={styles.gapBlock}>
+                <p className={styles.gapTitle}>
+                  <span aria-hidden="true">🎟️</span> {TEST_COPY.gapTitle}
+                </p>
+                <p className={styles.gapText}>{animal.gap}</p>
+                <CtaStrip
+                  className={styles.gapCta}
+                  href={rec.url}
+                  animalId={animal.id}
+                  section={animal.section}
+                >
+                  {rec.date} · {rec.key} · {rec.title} {TEST_COPY.gapCta}{" "}
+                  <span aria-hidden="true">→</span>
+                </CtaStrip>
+              </div>
             );
           })()}
         </article>
