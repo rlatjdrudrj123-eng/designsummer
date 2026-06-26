@@ -23,8 +23,7 @@ export function getDb(): Firestore | null {
   if (cached !== undefined) return cached;
   try {
     // 프로젝트를 명시적으로 박는다 — App Hosting 런타임에서 GOOGLE_CLOUD_PROJECT 가
-    // 비어 있어 Firestore 가 프로젝트를 추측하다 (default) DB 를 못 찾는(5 NOT_FOUND)
-    // 문제를 막는다. projectId 는 FIREBASE_CONFIG 에서 우선 파싱.
+    // 비어 있어 Firestore 가 프로젝트를 추측하는 걸 막는다. FIREBASE_CONFIG 우선 파싱.
     let projectId: string | undefined;
     try {
       projectId = process.env.FIREBASE_CONFIG
@@ -41,7 +40,10 @@ export function getDb(): Firestore | null {
     const app: App = getApps().length
       ? getApp()
       : initializeApp(projectId ? { projectId } : undefined);
-    cached = getFirestore(app);
+    // 이 프로젝트의 Firestore 는 관례적 `(default)` 가 아니라 "default" 라는
+    // 이름의 명명된 DB 로 생성돼 있다. SDK 기본값 `(default)` 로는 5 NOT_FOUND 가
+    // 나므로 DB 이름을 명시한다.
+    cached = getFirestore(app, "default");
   } catch {
     cached = null;
   }
