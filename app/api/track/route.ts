@@ -157,6 +157,27 @@ export async function GET(req: Request): Promise<Response> {
     out.runtimeServiceAccount = `metadata error: ${(e as Error).message}`;
   }
 
+  // ── REST 직접 확인: 이 SA 가 실제로 무슨 DB 를 보는가(확정 진단) ──
+  try {
+    const tokRes = await fetch(
+      "http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token",
+      { headers: { "Metadata-Flavor": "Google" } },
+    );
+    const tok = ((await tokRes.json()) as { access_token?: string })
+      .access_token;
+    const proj =
+      (typeof fbConfigProjectId === "string" && fbConfigProjectId) ||
+      "designsummer-1ca4a";
+    const listRes = await fetch(
+      `https://firestore.googleapis.com/v1/projects/${proj}/databases`,
+      { headers: { Authorization: `Bearer ${tok}` } },
+    );
+    out.dbListStatus = listRes.status;
+    out.dbList = (await listRes.text()).slice(0, 1500);
+  } catch (e) {
+    out.dbList = `err: ${(e as Error).message}`;
+  }
+
   const db = getDb();
   out.dbNull = db === null;
   if (db) {
