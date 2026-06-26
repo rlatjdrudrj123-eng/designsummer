@@ -335,10 +335,10 @@ export const QUESTIONS: Question[] = [
   {
     q: '"요즘은 그거 다 AI로 뚝딱 만들던데요?"라는 말을 들었을 때',
     choices: [
-      { label: '"요즘 핫한 AI 툴? 일단 다 써봐야 직성 풀림" 신문물 얼리어답터', animal: "chameleon", points: 2 },
-      { label: '"디자인은 손맛과 오리지널리티가 본질" 꿋꿋한 전통 작업 사수파', animal: "alpaca", points: 2 },
+      { label: '"트렌드인데 안 탈 이유가요?" 남들 다 쓰면 나도 올라타는 빠른 적응파', animal: "chameleon", points: 2 },
+      { label: '"디자인은 손맛이 본질" 다들 AI로 찍어낼 때 굳이 손으로 가는 고집파', animal: "alpaca", points: 2 },
       { label: '"AI는 그냥 효율 도구일 뿐" 단축키처럼 워크플로우에 박아두고 굴림', animal: "otter", points: 2 },
-      { label: "조용히 소스용으로 잘 쓰고 있지만, 굳이 남에게 말 안 함", animal: "owl", points: 2 },
+      { label: "유행에 휩쓸리지 않고 혼자 차분히 관망. 필요할 때만 조용히 씀", animal: "owl", points: 2 },
     ],
   },
 ];
