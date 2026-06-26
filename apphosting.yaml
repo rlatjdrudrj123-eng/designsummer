@@ -11,9 +11,10 @@ runConfig:
   concurrency: 80
   cpu: 1
   memoryMiB: 512
-# admin 통계 대시보드(/admin/stats) 인증 비밀번호 — Secret Manager 에 등록된
-# ADMIN_PASSWORD 를 런타임에 주입. (firebase apphosting:secrets:set ADMIN_PASSWORD 로 등록)
+# admin 통계 대시보드(/admin/stats) 인증 비밀번호.
+# NOTE: 단순 평문 값(보안 약함) — 통계 열람용 임시 비번. 필요 시 Secret Manager
+#   (secret: ADMIN_PASSWORD)로 다시 강화할 것.
 env:
   - variable: ADMIN_PASSWORD
-    secret: ADMIN_PASSWORD
+    value: "1234"
     availability: [RUNTIME]
