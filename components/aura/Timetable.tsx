@@ -1,6 +1,7 @@
 import styles from "./Timetable.module.css";
 import Reveal from "@/components/develop/Reveal";
 import { conference } from "@/lib/conference";
+import { auraSpeakersByDay } from "@/lib/auraContent";
 
 /* 타임테이블 (Aura 전용 포크) — 하나의 통합 표.
    (forked from components/aura1/Timetable.tsx — independent of /aura1.)
@@ -14,6 +15,13 @@ import { conference } from "@/lib/conference";
       (설명 desc 는 표시하지 않음). */
 export default function Timetable() {
   const { day1, day2 } = conference.timetable;
+  // 연사 정보(스튜디오·이름·직급·세션명)는 '연사 카드'와 동일 소스에서 끌어온다
+  // (auraSpeakersByDay = speakers.json + auraSpeakers.json). 표와 카드가 절대 어긋나지
+  // 않게 — conference.timetable 의 studio/speaker/title 은 안전용 폴백으로만 남긴다.
+  const sp1List = auraSpeakersByDay(1);
+  const sp2List = auraSpeakersByDay(2);
+  const cardLabel = (sp: (typeof sp1List)[number] | undefined) =>
+    sp ? [sp.name, sp.role].filter(Boolean).join(" ") : "";
   // 컬럼 헤더 컨셉 라벨(개요와 동일 소스): "creative day" / "craft day".
   const [ov1, ov2] = conference.overview.days;
   // 일자별 사전등록 URL(히어로 register 와 동일 소스).
@@ -23,12 +31,18 @@ export default function Timetable() {
 
   // 두 날의 rows 는 동일한 time 슬롯을 공유한다 → time 기준으로 병합.
   // 중간 브레이크(14:40-14:50) 행은 표에서 숨긴다(클라이언트 요청). 데이터는 유지.
+  let sessionIdx = -1;
   const slots = day1.rows
     .filter((r1) => (r1.kind ?? "session") !== "break")
     .map((r1, i) => {
       const r2 = day2.rows.find((r) => r.time === r1.time) ?? day2.rows[i];
       const kind = r1.kind ?? "session";
-      return { time: r1.time, kind, r1, r2 };
+      // 세션 행만 순서대로 그날의 연사 카드와 1:1 매칭(등록·휴식 제외).
+      const isSession = kind === "session";
+      if (isSession) sessionIdx += 1;
+      const sp1 = isSession ? sp1List[sessionIdx] : undefined;
+      const sp2 = isSession ? sp2List[sessionIdx] : undefined;
+      return { time: r1.time, kind, r1, r2, sp1, sp2 };
     });
 
   return (
@@ -88,12 +102,16 @@ export default function Timetable() {
                       role="cell"
                     >
                       <span className={styles.cellHint}>Section A</span>
-                      <span className={styles.studio}>{slot.r1.studio}</span>
-                      {slot.r1.speaker && (
-                        <span className={styles.speaker}>{slot.r1.speaker}</span>
+                      <span className={styles.studio}>
+                        {slot.sp1?.studio ?? slot.r1.studio}
+                      </span>
+                      {(slot.sp1 ? cardLabel(slot.sp1) : slot.r1.speaker) && (
+                        <span className={styles.speaker}>
+                          {slot.sp1 ? cardLabel(slot.sp1) : slot.r1.speaker}
+                        </span>
                       )}
                       <span className={styles.sessionTitle}>
-                        {slot.r1.title}
+                        {slot.sp1?.sessionTitle ?? slot.r1.title}
                       </span>
                     </span>
 
@@ -102,12 +120,16 @@ export default function Timetable() {
                       role="cell"
                     >
                       <span className={styles.cellHint}>Section B</span>
-                      <span className={styles.studio}>{slot.r2.studio}</span>
-                      {slot.r2.speaker && (
-                        <span className={styles.speaker}>{slot.r2.speaker}</span>
+                      <span className={styles.studio}>
+                        {slot.sp2?.studio ?? slot.r2.studio}
+                      </span>
+                      {(slot.sp2 ? cardLabel(slot.sp2) : slot.r2.speaker) && (
+                        <span className={styles.speaker}>
+                          {slot.sp2 ? cardLabel(slot.sp2) : slot.r2.speaker}
+                        </span>
                       )}
                       <span className={styles.sessionTitle}>
-                        {slot.r2.title}
+                        {slot.sp2?.sessionTitle ?? slot.r2.title}
                       </span>
                     </span>
                   </>
