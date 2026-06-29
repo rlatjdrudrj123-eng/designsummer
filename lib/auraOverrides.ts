@@ -33,8 +33,19 @@ export async function readAuraOverrides(): Promise<AuraOverrideMap> {
   }
 }
 
-/** 공개 페이지용 별칭(의미 구분). */
-export const getAuraOverrides = readAuraOverrides;
+/* 공개 페이지(/ , /aura)는 force-dynamic 이라 요청마다 호출된다. 스파이크 시 매
+   요청 Firestore 직격을 막기 위해 인스턴스별 짧은 메모리 캐시(10초)를 둔다.
+   어드민(readAuraOverrides)은 캐시 없이 항상 최신값을 읽는다. */
+const MEMO_TTL_MS = 10_000;
+let memo: { at: number; data: AuraOverrideMap } | null = null;
+
+export async function getAuraOverrides(): Promise<AuraOverrideMap> {
+  const now = Date.now();
+  if (memo && now - memo.at < MEMO_TTL_MS) return memo.data;
+  const data = await readAuraOverrides();
+  memo = { at: now, data };
+  return data;
+}
 
 /** 한 연사 id 의 override 를 Firestore 에 병합 저장. 성공 시 true. */
 export async function writeAuraOverride(

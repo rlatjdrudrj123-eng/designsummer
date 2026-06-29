@@ -4,9 +4,11 @@ import { speakers } from "@/lib/content";
 import { getAuraOverrides } from "@/lib/auraOverrides";
 import { auraSpeakersByDayWith } from "@/lib/auraContent";
 
-/* 어드민(Firestore)에서 수정한 연사 텍스트를 반영하기 위해 ISR — 5분마다 재생성하고,
-   어드민 저장 시 revalidateTag/revalidatePath 로 즉시 갱신한다. */
-export const revalidate = 300;
+/* 어드민(Firestore)에서 수정한 연사 텍스트가 항상 반영되도록 요청 시 렌더(동적).
+   ISR/정적 프리렌더는 빌드 시 Firestore 를 못 읽어 '원본(번들)'으로 구워지고,
+   인스턴스 재시작·캐시 만료 때 그 원본으로 되돌아가는 문제가 있어 동적으로 둔다.
+   (스파이크는 getAuraOverrides 의 짧은 메모리 캐시로 DB 직격을 완화) */
+export const dynamic = "force-dynamic";
 
 /* 메인 `/` = 확정된 Aura 디자인(딜리버러블).
    실제 사이트 본문은 components/aura/ (AuraSite) + 콘텐츠(lib/conference, content/auraSpeakers.json, 업로드 이미지)에서 작업한다.
