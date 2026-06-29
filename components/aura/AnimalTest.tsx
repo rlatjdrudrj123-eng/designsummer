@@ -83,7 +83,7 @@ export default function AnimalTest() {
               className={styles.entryCta}
               onClick={openModal}
             >
-              내 동물상 알아보기 <span aria-hidden="true">→</span>
+              내 온도 알아보기 <span aria-hidden="true">→</span>
             </button>
           </div>
 
