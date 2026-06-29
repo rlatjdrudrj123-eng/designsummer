@@ -11,8 +11,10 @@
  * NOTE: 섹션별 사전등록은 K-PRINT 컨퍼런스 페이지로 링크아웃(클라이언트 제공 URL).
  * ──────────────────────────────────────────────────────────────────────────── */
 
-const APPLY_SECTION_A = "https://kprint.kr/ko/conference/32"; // section A (08.20)
-const APPLY_SECTION_B = "https://kprint.kr/ko/conference/30"; // section B (08.21)
+const APPLY_SECTION_A =
+  "https://kprint.kr/ko/conference/32?utm_source=designsummer&utm_medium=button&utm_campaign=4aesn8_46198_general"; // section A (08.20)
+const APPLY_SECTION_B =
+  "https://kprint.kr/ko/conference/30?utm_source=designsummer&utm_medium=button&utm_campaign=4qh8fo_46198_general"; // section B (08.21)
 
 export type TimetableRow = {
   time: string;

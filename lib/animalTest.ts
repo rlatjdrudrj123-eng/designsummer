@@ -29,13 +29,13 @@ export const SECTIONS = {
     key: "section A",
     title: "디자인의 새로운 관점",
     date: "8.20 목",
-    url: "https://kprint.kr/ko/conference/32?utm_source=mainbutton&utm_medium=button&utm_campaign=4aesn8_46198_general",
+    url: "https://kprint.kr/ko/conference/32?utm_source=designsummer&utm_medium=button&utm_campaign=4aesn8_46198_general",
   },
   B: {
     key: "section B",
     title: "디자인 실무의 확장",
     date: "8.21 금",
-    url: "https://kprint.kr/ko/conference/30?utm_source=mainbutton&utm_medium=button&utm_campaign=4qh8fo_46198_general",
+    url: "https://kprint.kr/ko/conference/30?utm_source=designsummer&utm_medium=button&utm_campaign=4qh8fo_46198_general",
   },
 } as const;
 
