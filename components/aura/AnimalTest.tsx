@@ -83,7 +83,7 @@ export default function AnimalTest() {
               className={styles.entryCta}
               onClick={openModal}
             >
-              지금 알아보기 <span aria-hidden="true">→</span>
+              내 동물상 알아보기 <span aria-hidden="true">→</span>
             </button>
           </div>
 
@@ -240,14 +240,26 @@ function TestModal({ onClose }: { onClose: () => void }) {
   const share = async () => {
     // 공유 계측 — 결과 동물 id.
     if (result) track("share", { animalId: result.id });
-    // 결과가 담긴 전용 링크(/r?a={동물 id})를 복사 — 카톡/트위터 미리보기에
-    // 동적 OG 카드가 뜬다. result 가 없으면(이론상 불가) 홈으로 폴백.
-    const url =
+    // 결과가 담긴 전용 링크(/r?a={동물 id}) — 카톡/트위터에 동적 OG 카드가 뜬다.
+    const origin =
       typeof window !== "undefined"
-        ? result
-          ? `${window.location.origin}/r?a=${result.id}`
-          : window.location.origin
+        ? window.location.origin
         : "https://design-summer.kr";
+    const url = result ? `${origin}/r?a=${result.id}` : origin;
+    const text = result
+      ? `나 "${result.name}" 나왔어 — 크리에이티브 온도 ${result.tempLabel}°C 🔥\n너도 1분이면 나옴, 무슨 동물인지 해봐 👇`
+      : "디자이너 동물상 테스트 — 내 크리에이티브 온도는 몇 도?";
+
+    // 모바일: 네이티브 공유 시트(카톡·인스타 등 바로 선택). 미지원/취소 시 클립보드 폴백.
+    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+      try {
+        await navigator.share({ title: "디자이너 동물상 테스트", text, url });
+        return;
+      } catch (e) {
+        // 사용자가 취소(AbortError)면 조용히 종료, 그 외엔 클립보드로 폴백.
+        if ((e as Error)?.name === "AbortError") return;
+      }
+    }
     try {
       await navigator.clipboard.writeText(url);
       setToast(true);

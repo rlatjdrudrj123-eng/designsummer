@@ -124,16 +124,27 @@
   margin-top: clamp(18px, 3vh, 34px);
   display: inline-flex;
   align-items: center;
-  gap: 0.4em;
-  padding: 0;
+  gap: 0.5em;
+  padding: 0.74em 1.55em;
   border: none;
-  background: none;
-  color: var(--heat-main);
+  border-radius: 999px;
+  background: var(--heat-main);
+  color: #fff3e8;
   font-family: var(--font-kr);
-  font-size: clamp(16px, 1.7vw, 22px);
+  font-size: clamp(16px, 1.7vw, 21px);
   font-weight: 800;
   letter-spacing: -0.01em;
   cursor: pointer;
+  box-shadow: 0 6px 20px -6px rgba(232, 74, 32, 0.5);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+.entryCta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 26px -8px rgba(232, 74, 32, 0.6);
+  filter: brightness(1.05);
 }
 .entryCta span {
   display: inline-block;
@@ -145,7 +156,7 @@
 .entryCta:focus-visible {
   outline: 2px solid var(--heat-core);
   outline-offset: 4px;
-  border-radius: 4px;
+  border-radius: 999px;
 }
 
 /* ── 2순위: 공유하기 — 유일하게 박스 허용. 네모(살짝 라운드) + 얇은 회색 테두리,
