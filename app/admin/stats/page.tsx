@@ -82,19 +82,7 @@ const ANIMAL_ORDER: AnimalId[] = [
   "swan",
 ];
 
-export default async function StatsPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
-  const sp = await searchParams;
-  const resetMsg =
-    sp.reset === "1"
-      ? { ok: true, msg: "통계를 초기화했어요. 다음 참여부터 새로 집계됩니다." }
-      : sp.reset === "err"
-        ? { ok: false, msg: "초기화 실패 — 잠시 후 다시 시도해주세요." }
-        : null;
-
+export default async function StatsPage() {
   const { data, available } = await loadStats();
 
   const starts = data.starts ?? 0;
@@ -119,35 +107,10 @@ export default async function StatsPage({
     <div className={styles.wrap}>
       <header className={styles.head}>
         <h1 className={styles.title}>Design Summer · 테스트 통계</h1>
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <form method="post" action="/api/admin/stats-reset">
-            <button
-              className={styles.logout}
-              type="submit"
-              style={{ color: "#c43d1c", borderColor: "#c43d1c" }}
-            >
-              통계 초기화
-            </button>
-          </form>
-          <Link className={styles.logout} href="/admin">
-            ← 이미지 관리
-          </Link>
-        </div>
+        <Link className={styles.logout} href="/admin">
+          ← 이미지 관리
+        </Link>
       </header>
-
-      {resetMsg && (
-        <p
-          className={styles.note}
-          style={{
-            borderLeft: `3px solid ${resetMsg.ok ? "#2f8f4e" : "#c43d1c"}`,
-            paddingLeft: 10,
-            color: resetMsg.ok ? "#2f8f4e" : "#c43d1c",
-            fontWeight: 600,
-          }}
-        >
-          {resetMsg.msg}
-        </p>
-      )}
 
       {!available ? (
         <p className={styles.note}>
