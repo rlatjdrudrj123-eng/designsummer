@@ -22,8 +22,28 @@ export async function POST(req: Request) {
   try {
     await saveUpload(key, file);
   } catch (err) {
+    let bn = "?";
+    try {
+      const { getBucket } = await import("@/lib/firebaseAdmin");
+      bn = getBucket()?.name ?? "null";
+    } catch {
+      /* ignore */
+    }
+    const fbBucket =
+      (() => {
+        try {
+          return process.env.FIREBASE_CONFIG
+            ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+            : null;
+        } catch {
+          return "parse-err";
+        }
+      })() ?? "unset";
     const msg = encodeURIComponent(
-      ((err as Error)?.message || "unknown").slice(0, 200),
+      `[bucket=${bn}][fbcfg=${fbBucket}] ${(err as Error)?.message || "unknown"}`.slice(
+        0,
+        200,
+      ),
     );
     return NextResponse.redirect(
       new URL(`/admin?e=upload&msg=${msg}`, origin),
