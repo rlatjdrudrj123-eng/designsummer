@@ -29,7 +29,19 @@ export default async function AdminPage({
   const sp = await searchParams;
   const statusKey =
     (sp.saved ? `saved=${sp.saved}` : sp.pw ? `pw=${sp.pw}` : "") || "";
-  const status = STATUS[statusKey];
+  let status: { ok: boolean; msg: string } | undefined = STATUS[statusKey];
+  if (sp.e) {
+    const raw = typeof sp.msg === "string" ? sp.msg : "";
+    const friendly = /too large/i.test(raw)
+      ? "파일이 너무 큽니다 (최대 20MB)"
+      : /unsupported|not a recognized/i.test(raw)
+        ? "지원하지 않는 형식입니다 (PNG/JPG/WEBP/GIF/SVG)"
+        : raw || "잠시 후 다시 시도해주세요";
+    status = {
+      ok: false,
+      msg: `${sp.e === "delete" ? "삭제" : "업로드"} 실패 — ${friendly}`,
+    };
+  }
 
   const m = await readManifest();
   const ov = await readAuraOverrides();

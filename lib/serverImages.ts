@@ -19,7 +19,7 @@ const LINKS = path.join(ROOT, "content", "imageLinks.json");
 const IMAGES_DOC = "content/images";
 
 const KEY_RE = /^[a-z0-9][a-z0-9-]*$/;
-const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8MB
+const MAX_UPLOAD_BYTES = 20 * 1024 * 1024; // 20MB (고해상 대표작 대비)
 
 const CONTENT_TYPE: Record<string, string> = {
   png: "image/png",
