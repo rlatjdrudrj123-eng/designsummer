@@ -1,17 +1,34 @@
 import { promises as fs } from "node:fs";
 import path from "node:path";
 import { COOKIE_NAME, verifySessionToken } from "@/lib/adminAuth";
+import { getDb, getBucket } from "@/lib/firebaseAdmin";
+import { FieldValue } from "firebase-admin/firestore";
+import bundledImages from "@/content/images.json";
 
-/* 어드민 이미지 저장 (로컬 FS). public/uploads + content/images.json 갱신.
-   프로덕션은 이 파일들을 커밋해 정적 서빙. (라이브 업로드가 필요해지면 Vercel Blob 으로 교체) */
+/* 어드민 이미지 저장.
+   - 바이트: Cloud Storage(uploads/{key}.{ext}) — App Hosting FS 가 ephemeral 이라 영구 저장.
+   - 매니페스트(key→경로): Firestore 문서 content/images 의 manifest 필드.
+   사이트는 번들 content/images.json(커밋된 baseline) 위에 Firestore manifest 를 머지해
+   읽고, /api/img/[key] 가 값에 따라 로컬(public/uploads) 또는 Storage 에서 서빙한다.
+   매니페스트 값 규약: '/uploads/...'(앞 슬래시) = 번들 로컬, 'uploads/...'(슬래시 없음)
+   = Storage 오브젝트 경로.
+   ※ 이미지별 링크(imageLinks)는 아직 로컬 FS — 별도 후속에서 영구화. */
+
 const ROOT = process.cwd();
-const MANIFEST = path.join(ROOT, "content", "images.json");
 const LINKS = path.join(ROOT, "content", "imageLinks.json");
-const UPLOADS = path.join(ROOT, "public", "uploads");
+const IMAGES_DOC = "content/images";
 
-/* 업로드 제약: 경로 탐색 차단용 key 화이트리스트, 허용 이미지 타입, 크기 상한. */
 const KEY_RE = /^[a-z0-9][a-z0-9-]*$/;
 const MAX_UPLOAD_BYTES = 8 * 1024 * 1024; // 8MB
+
+const CONTENT_TYPE: Record<string, string> = {
+  png: "image/png",
+  jpg: "image/jpeg",
+  gif: "image/gif",
+  webp: "image/webp",
+  avif: "image/avif",
+  svg: "image/svg+xml",
+};
 
 /** key 가 안전한 파일명 토큰인지(경로 탐색·구분자 차단) 검증. */
 export function isValidKey(key: string): boolean {
@@ -39,19 +56,16 @@ function sniffImage(buf: Buffer): string | null {
       buf[3] === 0x38 && (buf[4] === 0x37 || buf[4] === 0x39) && buf[5] === 0x61) {
     return "gif";
   }
-  // WEBP: "RIFF"...."WEBP"
   if (buf.length >= 12 &&
       buf[0] === 0x52 && buf[1] === 0x49 && buf[2] === 0x46 && buf[3] === 0x46 &&
       buf[8] === 0x57 && buf[9] === 0x45 && buf[10] === 0x42 && buf[11] === 0x50) {
     return "webp";
   }
-  // AVIF / HEIC: ftyp 박스 brand 검사
   if (buf.length >= 12 &&
       buf[4] === 0x66 && buf[5] === 0x74 && buf[6] === 0x79 && buf[7] === 0x70) {
     const brand = buf.toString("ascii", 8, 12);
     if (brand === "avif" || brand === "avis") return "avif";
   }
-  // SVG: 텍스트 기반. <svg 또는 <?xml ... <svg 패턴(선두 공백/BOM 허용).
   const head = buf.toString("utf8", 0, Math.min(buf.length, 512)).trimStart();
   if (head.startsWith("<svg") || (head.startsWith("<?xml") && head.includes("<svg"))) {
     return "svg";
@@ -59,32 +73,43 @@ function sniffImage(buf: Buffer): string | null {
   return null;
 }
 
-type Manifest = Record<string, string>;
+export type Manifest = Record<string, string>;
 
+/** 번들 baseline + Firestore manifest 머지(캐시 없음). 어드민·내부용. */
 export async function readManifest(): Promise<Manifest> {
-  try {
-    return JSON.parse(await fs.readFile(MANIFEST, "utf8"));
-  } catch {
-    return {};
-  }
-}
-
-async function writeManifest(m: Manifest) {
-  const sorted = Object.fromEntries(
-    Object.keys(m)
-      .sort()
-      .map((k) => [k, m[k]]),
-  );
-  await fs.writeFile(MANIFEST, JSON.stringify(sorted, null, 2) + "\n");
-}
-
-async function removeKeyFiles(key: string) {
-  assertValidKey(key);
-  const files = await fs.readdir(UPLOADS).catch(() => [] as string[]);
-  for (const f of files) {
-    if (f.startsWith(key + ".")) {
-      await fs.unlink(path.join(UPLOADS, f)).catch(() => {});
+  const db = getDb();
+  let fsm: Manifest = {};
+  if (db) {
+    try {
+      const snap = await db.doc(IMAGES_DOC).get();
+      fsm =
+        (snap.data() as { manifest?: Manifest } | undefined)?.manifest ?? {};
+    } catch {
+      /* ignore → baseline 만 */
     }
+  }
+  return { ...(bundledImages as Manifest), ...fsm };
+}
+
+/* 공개 서빙(/api/img)용 — 인스턴스 10초 메모리 캐시(이미지마다 DB 직격 방지). */
+let manifestMemo: { at: number; data: Manifest } | null = null;
+export async function getManifestCached(): Promise<Manifest> {
+  const now = Date.now();
+  if (manifestMemo && now - manifestMemo.at < 10_000) return manifestMemo.data;
+  const data = await readManifest();
+  manifestMemo = { at: now, data };
+  return data;
+}
+
+/** 같은 key 의 기존 Storage 오브젝트(확장자 무관) 제거. */
+async function removeStorageKey(key: string) {
+  const bucket = getBucket();
+  if (!bucket) return;
+  try {
+    const [files] = await bucket.getFiles({ prefix: `uploads/${key}.` });
+    await Promise.all(files.map((f) => f.delete().catch(() => {})));
+  } catch {
+    /* ignore */
   }
 }
 
@@ -97,35 +122,47 @@ export async function saveUpload(key: string, file: File): Promise<string> {
   if (buf.length === 0 || buf.length > MAX_UPLOAD_BYTES) {
     throw new Error(`invalid file size: ${buf.length}`);
   }
-  // 확장자(file.name) 가 아니라 매직넘버로 이미지인지 확인.
+  // 확장자(file.name)가 아니라 매직넘버로 이미지인지 확인.
   const ext = sniffImage(buf);
   if (!ext) {
     throw new Error("unsupported file type (not a recognized image)");
   }
-  await fs.mkdir(UPLOADS, { recursive: true });
-  await removeKeyFiles(key); // 같은 키의 기존 파일(확장자 무관) 제거
-  const name = `${key}.${ext}`;
-  // 최종 경로가 UPLOADS 밖으로 벗어나지 않는지 한 번 더 방어.
-  const dest = path.join(UPLOADS, name);
-  if (path.dirname(dest) !== UPLOADS) {
-    throw new Error("resolved path escapes uploads dir");
-  }
-  await fs.writeFile(dest, buf);
-  const m = await readManifest();
-  m[key] = `/uploads/${name}`;
-  await writeManifest(m);
-  return m[key];
+  const bucket = getBucket();
+  if (!bucket) throw new Error("storage unavailable");
+  const db = getDb();
+  if (!db) throw new Error("db unavailable");
+
+  await removeStorageKey(key); // 같은 키의 기존 파일(확장자 무관) 제거
+  const objectPath = `uploads/${key}.${ext}`;
+  await bucket.file(objectPath).save(buf, {
+    resumable: false,
+    contentType: CONTENT_TYPE[ext] ?? "application/octet-stream",
+    metadata: { cacheControl: "public, max-age=300" },
+  });
+  await db
+    .doc(IMAGES_DOC)
+    .set({ manifest: { [key]: objectPath } }, { merge: true });
+  manifestMemo = null; // 같은 인스턴스 즉시 반영
+  return objectPath;
 }
 
 export async function deleteUpload(key: string) {
   assertValidKey(key);
-  await removeKeyFiles(key);
-  const m = await readManifest();
-  delete m[key];
-  await writeManifest(m);
+  await removeStorageKey(key);
+  const db = getDb();
+  if (db) {
+    try {
+      await db
+        .doc(IMAGES_DOC)
+        .set({ manifest: { [key]: FieldValue.delete() } }, { merge: true });
+    } catch {
+      /* ignore */
+    }
+  }
+  manifestMemo = null;
 }
 
-/* 이미지별 링크 저장 (로컬 FS). content/imageLinks.json 갱신. */
+/* 이미지별 링크 저장 (아직 로컬 FS — content/imageLinks.json. 후속에서 영구화). */
 type LinkMap = Record<string, string>;
 
 async function readLinks(): Promise<LinkMap> {

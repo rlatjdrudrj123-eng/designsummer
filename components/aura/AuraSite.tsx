@@ -34,14 +34,17 @@ import ScrollCue from "./ScrollCue";
 import FloatingBar from "./FloatingBar";
 import PostHeroRegion from "@/components/develop/PostHeroRegion";
 import { type Speaker } from "@/lib/content";
+import { type ImageMap } from "@/lib/images";
 import styles from "./AuraSite.module.css";
 
 export default function AuraSite({
   day1Speakers,
   day2Speakers,
+  imageManifest,
 }: {
   day1Speakers: Speaker[];
   day2Speakers: Speaker[];
+  imageManifest: ImageMap;
 }) {
   /* ── CURSOR LIGHT-SPOT (역발상) ─────────────────────────────────────────────
    * A soft warm-cream radial follows the pointer over the below-hero content and
@@ -212,10 +215,10 @@ export default function AuraSite({
           <Timetable sp1List={day1Speakers} sp2List={day2Speakers} />
           <EventInfo />
           <div id="day1" className={styles.dayAnchor}>
-            <Lineup day={1} speakers={day1Speakers} />
+            <Lineup day={1} speakers={day1Speakers} imageManifest={imageManifest} />
           </div>
           <div id="day2" className={styles.dayAnchor}>
-            <Lineup day={2} speakers={day2Speakers} />
+            <Lineup day={2} speakers={day2Speakers} imageManifest={imageManifest} />
           </div>
           {/* 동물상 바이럴 테스트 — Benefits 위. */}
           <AnimalTest />

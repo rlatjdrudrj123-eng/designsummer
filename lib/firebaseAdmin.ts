@@ -11,9 +11,27 @@
 
 import { getApps, getApp, initializeApp, type App } from "firebase-admin/app";
 import { getFirestore, type Firestore } from "firebase-admin/firestore";
+import { getStorage } from "firebase-admin/storage";
 
 // 한 번 실패하면 매 요청마다 재시도해 로그를 더럽히지 않도록 결과를 캐시한다.
 let cached: Firestore | null | undefined;
+
+function resolveProjectId(): string | undefined {
+  let projectId: string | undefined;
+  try {
+    projectId = process.env.FIREBASE_CONFIG
+      ? JSON.parse(process.env.FIREBASE_CONFIG).projectId
+      : undefined;
+  } catch {
+    /* ignore */
+  }
+  return (
+    projectId ||
+    process.env.GOOGLE_CLOUD_PROJECT ||
+    process.env.GCLOUD_PROJECT ||
+    undefined
+  );
+}
 
 /**
  * Firestore 인스턴스(있으면). 자격증명/초기화 실패 시 null.
@@ -48,4 +66,36 @@ export function getDb(): Firestore | null {
     cached = null;
   }
   return cached;
+}
+
+/* ── Cloud Storage 버킷(이미지 영구 저장) ──────────────────────────────────
+   업로드 이미지는 Cloud Run FS 가 ephemeral 이라 버킷에 저장한다. 버킷명은
+   FIREBASE_CONFIG.storageBucket → 없으면 {projectId}.firebasestorage.app. */
+type Bucket = ReturnType<ReturnType<typeof getStorage>["bucket"]>;
+let cachedBucket: Bucket | null | undefined;
+
+export function getBucket(): Bucket | null {
+  if (cachedBucket !== undefined) return cachedBucket;
+  try {
+    const projectId = resolveProjectId();
+    const app: App = getApps().length
+      ? getApp()
+      : initializeApp(projectId ? { projectId } : undefined);
+    let bucketName: string | undefined;
+    try {
+      bucketName = process.env.FIREBASE_CONFIG
+        ? JSON.parse(process.env.FIREBASE_CONFIG).storageBucket
+        : undefined;
+    } catch {
+      /* ignore */
+    }
+    bucketName =
+      bucketName || (projectId ? `${projectId}.firebasestorage.app` : undefined);
+    cachedBucket = bucketName
+      ? getStorage(app).bucket(bucketName)
+      : getStorage(app).bucket();
+  } catch {
+    cachedBucket = null;
+  }
+  return cachedBucket;
 }

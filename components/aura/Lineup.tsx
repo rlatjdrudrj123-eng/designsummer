@@ -27,7 +27,7 @@ import styles from "./Lineup.module.css";
 import DayKV from "./DayKV";
 import Reveal from "@/components/develop/Reveal";
 import { type Speaker } from "@/lib/content";
-import { imageUrl, workImages } from "@/lib/images";
+import { imageUrl, workImages, type ImageMap } from "@/lib/images";
 import { conference } from "@/lib/conference";
 
 type LightboxState = { src: string; alt: string } | null;
@@ -35,12 +35,14 @@ type LightboxState = { src: string; alt: string } | null;
 function SpeakerCard({
   s,
   onOpen,
+  manifest,
 }: {
   s: Speaker;
   onOpen: (src: string, alt: string) => void;
+  manifest: ImageMap;
 }) {
-  const portrait = imageUrl(`speaker-${s.id}`);
-  const works = workImages(s.id).slice(0, 4);
+  const portrait = imageUrl(`speaker-${s.id}`, manifest);
+  const works = workImages(s.id, manifest).slice(0, 4);
   const titleLines = s.sessionTitle.split("\n");
   const url = s.url && s.url.trim() ? s.url.trim() : null;
 
@@ -231,9 +233,11 @@ function Lightbox({
 export default function Lineup({
   day,
   speakers,
+  imageManifest,
 }: {
   day: 1 | 2;
   speakers: Speaker[];
+  imageManifest: ImageMap;
 }) {
   const list = speakers;
   const [lightbox, setLightbox] = useState<LightboxState>(null);
@@ -311,7 +315,7 @@ export default function Lineup({
       <div className={styles.cards}>
         {list.map((s) => (
           <Reveal key={s.id} className={styles.entry}>
-            <SpeakerCard s={s} onOpen={onOpen} />
+            <SpeakerCard s={s} onOpen={onOpen} manifest={imageManifest} />
           </Reveal>
         ))}
       </div>

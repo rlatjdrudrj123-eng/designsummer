@@ -3,6 +3,7 @@ import { conference } from "@/lib/conference";
 import { speakers } from "@/lib/content";
 import { getAuraOverrides } from "@/lib/auraOverrides";
 import { auraSpeakersByDayWith } from "@/lib/auraContent";
+import { getManifestCached } from "@/lib/serverImages";
 
 /* 어드민(Firestore)에서 수정한 연사 텍스트가 항상 반영되도록 요청 시 렌더(동적).
    ISR/정적 프리렌더는 빌드 시 Firestore 를 못 읽어 '원본(번들)'으로 구워지고,
@@ -179,6 +180,7 @@ export default async function Home() {
   const ov = await getAuraOverrides();
   const day1Speakers = auraSpeakersByDayWith(1, ov);
   const day2Speakers = auraSpeakersByDayWith(2, ov);
+  const imageManifest = await getManifestCached();
 
   return (
     <>
@@ -197,7 +199,11 @@ export default async function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
       />
-      <AuraSite day1Speakers={day1Speakers} day2Speakers={day2Speakers} />
+      <AuraSite
+        day1Speakers={day1Speakers}
+        day2Speakers={day2Speakers}
+        imageManifest={imageManifest}
+      />
     </>
   );
 }
