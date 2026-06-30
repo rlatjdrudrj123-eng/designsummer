@@ -21,8 +21,14 @@ export async function POST(req: Request) {
   }
   try {
     await saveUpload(key, file);
-  } catch {
-    return NextResponse.redirect(new URL("/admin?e=upload", origin), 303);
+  } catch (err) {
+    const msg = encodeURIComponent(
+      ((err as Error)?.message || "unknown").slice(0, 200),
+    );
+    return NextResponse.redirect(
+      new URL(`/admin?e=upload&msg=${msg}`, origin),
+      303,
+    );
   }
   return NextResponse.redirect(new URL("/admin", origin), 303);
 }
