@@ -190,12 +190,6 @@ export const conference = {
         imageKey: "event-welcome",
       },
       {
-        title: "lucky draw",
-        amount: "100만원 상당",
-        body: "강연 종료 후 현장 추첨을 통해 참석자분들에게 프리미엄 경품을 제공합니다.",
-        imageKey: "event-luckydraw",
-      },
-      {
         title: "K-PRINT invitation",
         amount: "2만원 상당",
         body: "최신 인쇄 산업 트렌드를 한눈에 확인할 수 있는 'K-PRINT 2026' 전시회 초대권 2매를 함께 제공합니다.",
