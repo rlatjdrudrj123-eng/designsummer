@@ -186,7 +186,7 @@ export const conference = {
       {
         title: "welcome goods",
         amount: "2만원 상당",
-        body: "귀한 시간을 내어 참석해 주신 모든 분들께 감사의 마음을 담아 웰컴 패키지를 증정합니다.",
+        body: "귀한 시간을 내어 참석해 주신 모든 분들께 감사의 마음을 담아 웰컴 기프트를 증정합니다.",
         imageKey: "event-welcome",
       },
       {
