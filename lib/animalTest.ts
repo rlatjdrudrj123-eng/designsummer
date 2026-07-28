@@ -393,8 +393,10 @@ export function scoreTest(answers: number[]): Animal {
   const second = sorted[1];
   const scoredCount = SCORED_IDS.filter((id) => scores[id] >= 1).length;
 
-  // 백조: 1·2위가 '정확히' 동점일 때만(시그니처 +1 가중치로 1점 차이는 진짜 차이).
-  if (second && scores[top] - scores[second] === 0 && scoredCount >= 6) {
+  // 백조: 1·2위가 '정확히' 동점 + 득점 동물 7종 이상(넓게 퍼진 동점)일 때만.
+  // ≥6이던 것을 강화 — 라이브 분포에서 백조가 26%(1위)로 남발되고, 동점을 백조가
+  // 가로채는 바람에 뜨거운 동물(호랑이·여우)이 1%대로 말라붙는 문제를 바로잡는다.
+  if (second && scores[top] - scores[second] === 0 && scoredCount >= 7) {
     return SWAN;
   }
   return ANIMALS[top];
