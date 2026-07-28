@@ -2,6 +2,7 @@ import AuraSite from "@/components/aura/AuraSite";
 import { getAuraOverrides } from "@/lib/auraOverrides";
 import { auraSpeakersByDayWith } from "@/lib/auraContent";
 import { getManifestCached } from "@/lib/serverImages";
+import { getLiveTestStats } from "@/lib/testStats";
 
 /* /aura — standalone Aura-ground site. Now INDEPENDENT of /develop: it renders
    AuraSite (components/aura/), which forks Hero / Chapter / DayBlock / Apply so
@@ -19,6 +20,7 @@ export default async function AuraPage() {
   const day1Speakers = auraSpeakersByDayWith(1, ov);
   const day2Speakers = auraSpeakersByDayWith(2, ov);
   const imageManifest = await getManifestCached();
+  const testStats = await getLiveTestStats();
 
   return (
     <main>
@@ -26,6 +28,7 @@ export default async function AuraPage() {
         day1Speakers={day1Speakers}
         day2Speakers={day2Speakers}
         imageManifest={imageManifest}
+        testStats={testStats}
       />
     </main>
   );

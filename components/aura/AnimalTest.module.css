@@ -69,6 +69,40 @@
   word-break: keep-all;
   color: var(--t-ink);
 }
+
+/* 라이브 1위 유형(소셜프루프) — 제목 아래, CTA 위. */
+.entryLive {
+  margin: clamp(12px, 2vh, 18px) 0 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.6vw, 20px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--t-body);
+  word-break: keep-all;
+}
+.entryLive b {
+  color: var(--heat-main);
+  font-weight: 800;
+}
+.liveDot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--heat-main);
+  flex-shrink: 0;
+  animation: livePulse 1.8s ease-out infinite;
+}
+@keyframes livePulse {
+  0% { box-shadow: 0 0 0 0 rgba(232, 74, 32, 0.45); }
+  70% { box-shadow: 0 0 0 10px rgba(232, 74, 32, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(232, 74, 32, 0); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .liveDot { animation: none; }
+}
 .lead {
   margin: clamp(4px, 0.8vh, 8px) 0 clamp(8px, 1.6vh, 16px);
   max-width: 46ch;
@@ -957,6 +991,11 @@
     order: 1;
     /* 모바일 — 줄바꿈 완화 위해 더 작게(데스크톱 clamp 하한 28px → 모바일 축소). */
     font-size: clamp(20px, 5.6vw, 28px);
+  }
+  .entryLive {
+    /* 제목(1)과 같은 order — DOM 순서상 제목 바로 다음에 온다. */
+    order: 1;
+    font-size: clamp(14px, 3.8vw, 17px);
   }
   .entryVisual {
     order: 2;

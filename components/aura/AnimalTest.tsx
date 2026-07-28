@@ -53,7 +53,19 @@ const CRACKS_TO_BREAK = 10; // 열구 깨는 데 필요한 탭 횟수
 // 탭마다 방사형으로 튀는 스파크 각도(도) — 균등 분포 + 살짝 흐트러뜨려 자연스럽게.
 const SPARKS = [8, 52, 96, 140, 184, 228, 272, 316];
 
-export default function AnimalTest() {
+/* 라이브 소셜프루프(진입부) — 서버(lib/testStats)가 Firestore 통계에서 산출해 내려줌.
+   참여자 수는 노출하지 않는다(표본 작음) — 1위 유형과 비율만. */
+export type LiveTestStats = {
+  topEmoji: string;
+  topName: string;
+  topPct: string; // "25.8"
+};
+
+export default function AnimalTest({
+  stats = null,
+}: {
+  stats?: LiveTestStats | null;
+}) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -77,6 +89,13 @@ export default function AnimalTest() {
             <h2 id="animaltest-heading" className={styles.title}>
               당신의 크리에이티브, 지금 몇 도?
             </h2>
+            {stats && (
+              <p className={styles.entryLive}>
+                <span className={styles.liveDot} aria-hidden="true" />
+                지금 1위는 {stats.topEmoji} <b>{stats.topName}</b> — 당신일
+                확률도 <b>{stats.topPct}%</b>
+              </p>
+            )}
             <button
               ref={triggerRef}
               type="button"

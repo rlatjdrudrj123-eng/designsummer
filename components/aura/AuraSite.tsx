@@ -35,16 +35,19 @@ import FloatingBar from "./FloatingBar";
 import PostHeroRegion from "@/components/develop/PostHeroRegion";
 import { type Speaker } from "@/lib/content";
 import { type ImageMap } from "@/lib/images";
+import { type LiveTestStats } from "@/components/aura/AnimalTest";
 import styles from "./AuraSite.module.css";
 
 export default function AuraSite({
   day1Speakers,
   day2Speakers,
   imageManifest,
+  testStats = null,
 }: {
   day1Speakers: Speaker[];
   day2Speakers: Speaker[];
   imageManifest: ImageMap;
+  testStats?: LiveTestStats | null;
 }) {
   /* ── CURSOR LIGHT-SPOT (역발상) ─────────────────────────────────────────────
    * A soft warm-cream radial follows the pointer over the below-hero content and
@@ -220,8 +223,8 @@ export default function AuraSite({
           <div id="day2" className={styles.dayAnchor}>
             <Lineup day={2} speakers={day2Speakers} imageManifest={imageManifest} />
           </div>
-          {/* 동물상 바이럴 테스트 — Benefits 위. */}
-          <AnimalTest />
+          {/* 동물상 바이럴 테스트 — Benefits 위. 라이브 1위 유형은 서버에서 주입. */}
+          <AnimalTest stats={testStats} />
           <Benefits />
           {/* 온도 테스트 — 일단 숨김(클라이언트 요청). 나중에 다시 노출. */}
           {/* <TempTest /> */}
