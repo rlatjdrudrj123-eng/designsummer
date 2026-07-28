@@ -11,8 +11,9 @@ export type { TeaserPoll };
    홈이 force-dynamic 이라 요청마다 불리므로 인스턴스 메모리 60초 캐시.
    표본 부족(완료 30건 미만)·Firestore 불가 시 null → 미표시. */
 
-// 노출할 문항(0-index): Q3(로고 3배), Q7(마감 D-3 진행률)
-const FEATURED_QI = [2, 6];
+// 노출할 문항(0-index): Q10(AI 얘기 들었을 때), Q4(형용사 지옥 피드백)
+// — 응답이 팽팽하게 갈리는 문항일수록 '내 답은?' 심리를 자극(어그로·밈).
+const FEATURED_QI = [9, 3];
 const MIN_COMPLETES = 30;
 const TTL_MS = 60_000;
 let memo: { at: number; data: TeaserPoll[] | null } | null = null;
