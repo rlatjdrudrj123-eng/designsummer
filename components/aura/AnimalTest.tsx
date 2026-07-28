@@ -53,18 +53,17 @@ const CRACKS_TO_BREAK = 10; // 열구 깨는 데 필요한 탭 횟수
 // 탭마다 방사형으로 튀는 스파크 각도(도) — 균등 분포 + 살짝 흐트러뜨려 자연스럽게.
 const SPARKS = [8, 52, 96, 140, 184, 228, 272, 316];
 
-/* 라이브 소셜프루프(진입부) — 서버(lib/testStats)가 Firestore 통계에서 산출해 내려줌.
-   참여자 수는 노출하지 않는다(표본 작음) — 1위 유형과 비율만. */
-export type LiveTestStats = {
-  topEmoji: string;
-  topName: string;
-  topPct: string; // "25.8"
+/* 진입부 미리보기 폴 — 서버(lib/testStats)가 Firestore 응답 분포에서 산출해 내려줌.
+   문항·보기 텍스트는 테스트 원문 그대로, 응답률(%)만 라이브. 참여자 수는 비노출. */
+export type TeaserPoll = {
+  q: string;
+  options: { label: string; pct: string; top: boolean }[];
 };
 
 export default function AnimalTest({
-  stats = null,
+  polls = null,
 }: {
-  stats?: LiveTestStats | null;
+  polls?: TeaserPoll[] | null;
 }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -89,13 +88,6 @@ export default function AnimalTest({
             <h2 id="animaltest-heading" className={styles.title}>
               당신의 크리에이티브, 지금 몇 도?
             </h2>
-            {stats && (
-              <p className={styles.entryLive}>
-                <span className={styles.liveDot} aria-hidden="true" />
-                지금 1위는 {stats.topEmoji} <b>{stats.topName}</b> — 당신일
-                확률도 <b>{stats.topPct}%</b>
-              </p>
-            )}
             <button
               ref={triggerRef}
               type="button"
@@ -112,6 +104,40 @@ export default function AnimalTest({
             </span>
           </div>
         </div>
+
+        {/* ── 미리보기 폴 — 실제 문항 + 실시간 응답률(숫자만 라이브) ────────── */}
+        {polls && polls.length > 0 && (
+          <div className={styles.polls}>
+            {polls.map((p, i) => (
+              <div key={i} className={styles.poll}>
+                <p className={styles.pollLive}>
+                  <span className={styles.liveDot} aria-hidden="true" />
+                  실시간 응답
+                </p>
+                <p className={styles.pollQ}>{p.q}</p>
+                <ul className={styles.pollList}>
+                  {p.options.map((o, j) => (
+                    <li
+                      key={j}
+                      className={`${styles.pollRow} ${o.top ? styles.pollTop : ""}`}
+                    >
+                      <span className={styles.pollLabel}>{o.label}</span>
+                      <span className={styles.pollMeter}>
+                        <span className={styles.pollTrack}>
+                          <span
+                            className={styles.pollFill}
+                            style={{ width: `${o.pct}%` }}
+                          />
+                        </span>
+                        <span className={styles.pollPct}>{o.pct}%</span>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        )}
       </Reveal>
 
       {open && <TestModal onClose={closeModal} />}

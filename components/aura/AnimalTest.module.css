@@ -70,20 +70,94 @@
   color: var(--t-ink);
 }
 
-/* 라이브 1위 유형(소셜프루프) — 제목 아래, CTA 위. */
-.entryLive {
-  margin: clamp(12px, 2vh, 18px) 0 0;
+/* ── 미리보기 폴(진입부 아래) — 실제 문항 + 실시간 응답률 ── */
+.polls {
+  margin-top: clamp(26px, 4.5vh, 46px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(14px, 2vw, 24px);
+}
+.poll {
+  border: 1.5px solid rgba(26, 19, 16, 0.14);
+  border-radius: 16px;
+  padding: clamp(18px, 2.4vw, 26px);
+  background: rgba(255, 255, 255, 0.42);
+}
+.pollLive {
+  margin: 0;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   font-family: var(--font-kr);
-  font-size: clamp(15px, 1.6vw, 20px);
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: var(--heat-main);
+}
+.pollQ {
+  margin: 12px 0 0;
+  font-family: var(--font-kr);
+  font-size: clamp(15px, 1.55vw, 19px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+  word-break: keep-all;
+  color: var(--t-ink);
+}
+.pollList {
+  margin: 16px 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+.pollRow {
+  font-family: var(--font-kr);
+}
+.pollLabel {
+  display: block;
+  font-size: clamp(13px, 1.25vw, 15px);
+  font-weight: 500;
   letter-spacing: -0.01em;
+  line-height: 1.4;
   color: var(--t-body);
   word-break: keep-all;
 }
-.entryLive b {
+.pollMeter {
+  margin-top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.pollTrack {
+  flex: 1;
+  height: 8px;
+  border-radius: 4px;
+  background: rgba(26, 19, 16, 0.08);
+  overflow: hidden;
+}
+.pollFill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+  background: rgba(232, 74, 32, 0.45);
+}
+.pollPct {
+  width: 54px;
+  text-align: right;
+  font-size: clamp(13px, 1.25vw, 15px);
+  font-weight: 700;
+  color: var(--t-muted);
+}
+.pollTop .pollLabel {
+  font-weight: 800;
+  color: var(--t-ink);
+}
+.pollTop .pollFill {
+  background: var(--heat-main);
+}
+.pollTop .pollPct {
   color: var(--heat-main);
   font-weight: 800;
 }
@@ -992,10 +1066,8 @@
     /* 모바일 — 줄바꿈 완화 위해 더 작게(데스크톱 clamp 하한 28px → 모바일 축소). */
     font-size: clamp(20px, 5.6vw, 28px);
   }
-  .entryLive {
-    /* 제목(1)과 같은 order — DOM 순서상 제목 바로 다음에 온다. */
-    order: 1;
-    font-size: clamp(14px, 3.8vw, 17px);
+  .polls {
+    grid-template-columns: 1fr;
   }
   .entryVisual {
     order: 2;
