@@ -311,7 +311,7 @@ export const QUESTIONS: Question[] = [
     choices: [
       { label: "0%. 하지만 마지막 날 풀파워로 기적처럼 끝냄. 마감이 내 영감", animal: "fox", points: 2 },
       { label: "이미 큰 틀은 끝냄. 지금은 1px 자간·행간·곡률 만지는 중", animal: "sloth", points: 2 },
-      { label: "30%. 아직 발동 안 걸림. 삘만 오면 하룻밤에 순삭 가능", animal: "cat", points: 3 },
+      { label: "30%. 아직 발동 안 걸림. 삘만 오면 하룻밤에 순삭 가능", animal: "cat", points: 2 },
       { label: "노캔 이어폰 끼고 잠수. 남들은 모르게 속으로 80% 완성 상태", animal: "owl", points: 2 },
     ],
   },
@@ -331,7 +331,8 @@ export const QUESTIONS: Question[] = [
       { label: "별색(PANTONE) 넘버 찾고, CMYK 배합 수치 다시 계산해 재교정", animal: "otter", points: 2 },
       { label: "내가 원하는 그 색감이 정확히 안착할 때까지 감리 보면서 기장님 괴롭힘", animal: "sloth", points: 3 },
       { label: '"마감 급한데 이 정도면 선방했죠. 그냥 이대로 밀어주세요"', animal: "fox", points: 2 },
-      { label: '"오히려 이 묵직하고 탁한 톤이 더 빈티지하고 힙한데?" 기적의 정신승리', animal: "cat", points: 2 },
+      // 고양이 시그니처(+3) — 인기 보기(Q7② 34.8%)에서 여기(희소·가장 고양이다운 정신승리)로 이동.
+      { label: '"오히려 이 묵직하고 탁한 톤이 더 빈티지하고 힙한데?" 기적의 정신승리', animal: "cat", points: 3 },
     ],
   },
   {
