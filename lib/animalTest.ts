@@ -87,7 +87,8 @@ export const ANIMALS: Record<ScoredAnimalId, Animal> = {
     desc: "절대 서두르지 않는데 결과물은 늘 깔끔함. 1px 어긋난 거 며칠 뒤에도 기억함. 느린 게 아니라 신중한 거라고 우김. 딱 체온만큼만 미지근하게.",
     good: { animal: "고양이", emoji: "🐈", why: "서로 안 닦달하는 느긋 콤비" },
     worst: { animal: "여우", emoji: "🦊", why: "마감 속도가 극과 극" },
-    section: "A",
+    // B(실무의 확장) — gap 의 '디자인의 확장' 워딩과 직결. A 쏠림 완화 겸 이동.
+    section: "B",
     gap: "1px 디테일에 갇혀 디자인의 확장을 놓치고 있진 않나요? AI와 새로운 툴을 도입해 작업의 판을 키울 때입니다.",
   },
   owl: {
@@ -157,7 +158,8 @@ export const ANIMALS: Record<ScoredAnimalId, Animal> = {
     desc: "단축키·플러그인·툴 세팅이 완벽해야 비로소 작업 시작. 폴더 구조·네이밍 장인. 손은 느려 보여도 세팅만 끝나면 미친 효율. 준비되면 후끈 풀가동.",
     good: { animal: "호랑이", emoji: "🐯", why: "세팅 + 추진력 환상 콤비" },
     worst: { animal: "고양이", emoji: "🐈", why: "변덕이 시스템을 흔듦" },
-    section: "A",
+    // B(실무의 확장) — gap 의 '기획력과 브랜드 시각'이 B(브랜드 디자인) 라인업과 직결.
+    section: "B",
     gap: "기능적 세팅은 이미 만렙! 이제 기술적 능숙함을 넘어, 크리에이티브를 단단하게 지탱할 기획력과 브랜드 시각을 채울 차례입니다.",
   },
   fox: {
