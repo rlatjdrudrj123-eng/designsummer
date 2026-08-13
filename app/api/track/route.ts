@@ -78,6 +78,9 @@ export async function POST(req: Request): Promise<Response> {
         ? body.animalId
         : null;
 
+    // 응답 원본 1건(complete 시) — 교차 분석(예: 분야별 응답)용 responses 컬렉션.
+    let responseDoc: Record<string, unknown> | null = null;
+
     // v2 = 설문 개편(설문 3문항 추가) 이후 수집분 — 기존 루트 카운터(누적 전체)와
     // 같은 구조로 미러 저장해, 대시보드에서 개편 전/후를 구분해 본다.
     switch (body.event) {
@@ -153,6 +156,40 @@ export async function POST(req: Request): Promise<Response> {
           }
           if (Object.keys(svUpdates).length > 0) updates.sv = svUpdates;
         }
+
+        // 응답 원본 저장 — 교차 분석용(분야별 결과/응답 분포 등). 검증된 값만.
+        {
+          const cleanAnswers = Array.isArray(body.answers)
+            ? body.answers
+                .slice(0, NUM_QUESTIONS)
+                .map((ci) =>
+                  typeof ci === "number" &&
+                  Number.isInteger(ci) &&
+                  ci >= 0 &&
+                  ci < MAX_CHOICES
+                    ? ci
+                    : null,
+                )
+            : null;
+          const svc: { field?: unknown; aware?: unknown; interests?: unknown } =
+            sv && typeof sv === "object" ? sv : {};
+          responseDoc = {
+            t: FieldValue.serverTimestamp(),
+            animalId: animalId ?? null,
+            answers: cleanAnswers,
+            sv: {
+              field: sanitizeMulti(svc.field, 0),
+              aware:
+                typeof svc.aware === "number" &&
+                Number.isInteger(svc.aware) &&
+                svc.aware >= 0 &&
+                svc.aware < SURVEY_QUESTIONS[1].options.length
+                  ? svc.aware
+                  : null,
+              interests: sanitizeMulti(svc.interests, 2),
+            },
+          };
+        }
         break;
       }
       case "share": {
@@ -179,11 +216,14 @@ export async function POST(req: Request): Promise<Response> {
 
     if (Object.keys(updates).length === 0) return noContent();
 
-    // 단일 update — 문서가 없으면 set(merge) 로 생성, 있으면 increment 누적.
-    await db
-      .doc(STATS_DOC)
-      .set(updates, { merge: true })
-      .catch(() => {});
+    // 카운터 update(문서 없으면 set-merge 생성) + complete 면 응답 원본 add.
+    const writes: Promise<unknown>[] = [
+      db.doc(STATS_DOC).set(updates, { merge: true }).catch(() => {}),
+    ];
+    if (responseDoc) {
+      writes.push(db.collection("responses").add(responseDoc).catch(() => {}));
+    }
+    await Promise.all(writes);
   } catch {
     // 어떤 오류도 클라이언트로 던지지 않는다.
   }

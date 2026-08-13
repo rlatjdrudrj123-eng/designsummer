@@ -58,6 +58,56 @@ function pct(n: number, total: number): string {
   return `${((n / total) * 100).toFixed(1)}%`;
 }
 
+/* ── 분야별 교차 분석 — responses(응답 원본, 개편 이후) 컬렉션 기반 ──────────
+   선택한 분야를 고른 응답만 모아 결과/설문/문항 분포를 재계산한다. */
+type CrossAgg = {
+  n: number;
+  result: Record<string, number>;
+  aware: Record<string, number>;
+  interests: Record<string, number>;
+  q: Record<string, Record<string, number>>;
+};
+
+async function loadFieldCross(fieldIdx: number): Promise<CrossAgg | null> {
+  const db = getDb();
+  if (!db) return null;
+  try {
+    const snap = await db
+      .collection("responses")
+      .where("sv.field", "array-contains", fieldIdx)
+      .limit(2000)
+      .get();
+    const agg: CrossAgg = { n: 0, result: {}, aware: {}, interests: {}, q: {} };
+    snap.forEach((doc) => {
+      const r = doc.data() as {
+        animalId?: string | null;
+        answers?: (number | null)[] | null;
+        sv?: { aware?: number | null; interests?: number[] };
+      };
+      agg.n += 1;
+      if (typeof r.animalId === "string") {
+        agg.result[r.animalId] = (agg.result[r.animalId] ?? 0) + 1;
+      }
+      const aw = r.sv?.aware;
+      if (typeof aw === "number") {
+        agg.aware[String(aw)] = (agg.aware[String(aw)] ?? 0) + 1;
+      }
+      for (const i of r.sv?.interests ?? []) {
+        agg.interests[String(i)] = (agg.interests[String(i)] ?? 0) + 1;
+      }
+      (r.answers ?? []).forEach((ci, qi) => {
+        if (typeof ci !== "number") return;
+        const qk = String(qi);
+        agg.q[qk] = agg.q[qk] ?? {};
+        agg.q[qk][String(ci)] = (agg.q[qk][String(ci)] ?? 0) + 1;
+      });
+    });
+    return agg;
+  } catch {
+    return null;
+  }
+}
+
 /* 동물 이름 — 메인 9종은 ANIMALS, 백조는 SWAN. */
 const ANIMAL_NAME: Record<AnimalId, string> = {
   alpaca: ANIMALS.alpaca.name,
@@ -120,6 +170,17 @@ export default async function StatsPage({
   // 설문(비채점) — 개편 이후에만 존재. 응답자 수 = v2 완료 수.
   const sv = data.sv ?? {};
   const svRespondents = data.v2?.completes ?? 0;
+
+  // 분야별 교차 분석 — ?field=0..6
+  const fieldRaw = typeof sp.field === "string" ? parseInt(sp.field, 10) : NaN;
+  const fieldIdx =
+    Number.isInteger(fieldRaw) &&
+    fieldRaw >= 0 &&
+    fieldRaw < SURVEY_QUESTIONS[0].options.length
+      ? fieldRaw
+      : null;
+  const cross = fieldIdx !== null ? await loadFieldCross(fieldIdx) : null;
+  const eraQs = era === "v2" ? "era=v2&" : "";
 
   const funnel = [
     { label: "시작", value: starts },
@@ -315,6 +376,161 @@ export default async function StatsPage({
             );
           })}
         </div>
+      </section>
+
+      {/* ── 분야별 교차 분석 — "이 분야 디자이너들은 이렇게 응답했다" ──────── */}
+      <section className={styles.group}>
+        <div className={styles.groupHead}>
+          <h2 className={styles.groupTitle}>분야별 교차 분석</h2>
+          <span className={styles.groupHint}>
+            응답 원본 기반 · 설문 개편 이후 응답만 집계
+          </span>
+        </div>
+
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+          {SURVEY_QUESTIONS[0].options.map((label, i) => (
+            <Link
+              key={i}
+              href={`/admin/stats?${eraQs}field=${i}`}
+              className={styles.logout}
+              style={
+                fieldIdx === i
+                  ? {
+                      background: "#1a1310",
+                      color: "#fff",
+                      borderColor: "#1a1310",
+                    }
+                  : undefined
+              }
+            >
+              {label}
+            </Link>
+          ))}
+          {fieldIdx !== null && (
+            <Link
+              href={era === "v2" ? "/admin/stats?era=v2" : "/admin/stats"}
+              className={styles.logout}
+            >
+              ✕ 해제
+            </Link>
+          )}
+        </div>
+
+        {fieldIdx === null ? (
+          <p className={styles.note}>
+            분야를 선택하면 그 분야를 고른 응답자들의 결과·설문·문항 분포를
+            보여줍니다.
+          </p>
+        ) : !cross || cross.n === 0 ? (
+          <p className={styles.note}>
+            ‘{SURVEY_QUESTIONS[0].options[fieldIdx]}’ 분야를 고른 응답이 아직
+            없습니다.
+          </p>
+        ) : (
+          <>
+            <p className={styles.note}>
+              ‘{SURVEY_QUESTIONS[0].options[fieldIdx]}’ 선택 응답자{" "}
+              {cross.n.toLocaleString()}명 기준
+            </p>
+
+            {/* 결과 동물 분포 */}
+            <div className={styles.qBlock}>
+              <p className={styles.qTitle}>결과 동물 분포</p>
+              <div className={styles.barList}>
+                {ANIMAL_ORDER.map((id) => {
+                  const n = cross.result[id] ?? 0;
+                  return (
+                    <div key={id} className={styles.barRow}>
+                      <span className={styles.barName}>
+                        {ANIMAL_EMOJI[id]} {ANIMAL_NAME[id]}
+                      </span>
+                      <span className={styles.barTrack}>
+                        <span
+                          className={styles.barFill}
+                          style={{ width: pct(n, cross.n) }}
+                        />
+                      </span>
+                      <span className={styles.barNum}>
+                        {n.toLocaleString()} · {pct(n, cross.n)}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* 설문(인지·관심) 분포 */}
+            {([1, 2] as const).map((si) => {
+              const sq = SURVEY_QUESTIONS[si];
+              const dist = si === 1 ? cross.aware : cross.interests;
+              const counts = sq.options.map((_, i) => dist[String(i)] ?? 0);
+              const denom = sq.multi
+                ? cross.n
+                : counts.reduce((s, c) => s + c, 0);
+              return (
+                <div key={sq.id} className={styles.qBlock}>
+                  <p className={styles.qTitle}>
+                    {sq.q}
+                    {sq.hint && (
+                      <span className={styles.qTotal}>{sq.hint}</span>
+                    )}
+                  </p>
+                  <div className={styles.barList}>
+                    {sq.options.map((label, i) => (
+                      <div key={i} className={styles.barRow}>
+                        <span className={styles.barName}>{label}</span>
+                        <span className={styles.barTrack}>
+                          <span
+                            className={styles.barFill}
+                            style={{ width: pct(counts[i], denom) }}
+                          />
+                        </span>
+                        <span className={styles.barNum}>
+                          {counts[i].toLocaleString()} · {pct(counts[i], denom)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+
+            {/* 문항별 선택 분포 */}
+            {QUESTIONS.map((question, qi) => {
+              const counts = question.choices.map(
+                (_, ci) => cross.q[String(qi)]?.[String(ci)] ?? 0,
+              );
+              const qTotal = counts.reduce((s, c) => s + c, 0);
+              return (
+                <div key={qi} className={styles.qBlock}>
+                  <p className={styles.qTitle}>
+                    Q{qi + 1}. {question.q}
+                    <span className={styles.qTotal}>
+                      응답 {qTotal.toLocaleString()}
+                    </span>
+                  </p>
+                  <div className={styles.barList}>
+                    {question.choices.map((c, ci) => (
+                      <div key={ci} className={styles.barRow}>
+                        <span className={styles.barName}>{c.label}</span>
+                        <span className={styles.barTrack}>
+                          <span
+                            className={styles.barFill}
+                            style={{ width: pct(counts[ci], qTotal) }}
+                          />
+                        </span>
+                        <span className={styles.barNum}>
+                          {counts[ci].toLocaleString()} ·{" "}
+                          {pct(counts[ci], qTotal)}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              );
+            })}
+          </>
+        )}
       </section>
     </div>
   );
