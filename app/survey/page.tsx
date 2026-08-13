@@ -3,6 +3,8 @@ import Link from "next/link";
 import AnimalTest from "@/components/aura/AnimalTest";
 import { getTeaserPolls } from "@/lib/testStats";
 import { KPRINT_REGISTER_URL } from "@/lib/animalTest";
+import { getManifestCached } from "@/lib/serverImages";
+import { imageUrl } from "@/lib/images";
 import styles from "./page.module.css";
 
 /* /survey — 동물상 테스트 전용 페이지(뉴스레터 랜딩).
@@ -20,13 +22,26 @@ export const metadata: Metadata = {
 
 export default async function SurveyPage() {
   const polls = await getTeaserPolls();
+  // 헤더 우측 K·print 로고 — 어드민 업로드(kprint-logo) 있으면 이미지, 없으면 워드마크.
+  const manifest = await getManifestCached();
+  const logoSrc = imageUrl("kprint-logo", manifest);
 
   return (
     <main className={styles.page}>
       <header className={styles.head}>
-        <Link href="/" className={styles.brand}>
-          디자인 썸머 일산
-        </Link>
+        <div className={styles.headInner}>
+          <Link href="/" className={styles.brand}>
+            디자인 썸머 일산
+          </Link>
+          {logoSrc ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img className={styles.logo} src={logoSrc} alt="K·print" />
+          ) : (
+            <span className={styles.logo} aria-label="K·print">
+              K&middot;print
+            </span>
+          )}
+        </div>
       </header>
 
       <div className={styles.body}>
