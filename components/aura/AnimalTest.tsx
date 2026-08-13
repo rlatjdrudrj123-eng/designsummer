@@ -488,7 +488,7 @@ function TestModal({ onClose }: { onClose: () => void }) {
             ) : stepDef.kind === "contact" ? (
               <>
                 <h3 className={styles.question}>
-                  ☕ 커피 쿠폰을 받으실 정보를 남겨주세요
+                  ☕ 테스트 결과를 확인하고 커피 쿠폰도 받아 가세요!
                 </h3>
                 <div className={styles.contactForm}>
                   <input
