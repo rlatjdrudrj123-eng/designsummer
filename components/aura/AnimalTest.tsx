@@ -20,7 +20,6 @@ import Reveal from "@/components/develop/Reveal";
 import {
   QUESTIONS,
   scoreTest,
-  SECTIONS,
   SURVEY_QUESTIONS,
   TEST_COPY,
   type Animal,
@@ -617,11 +616,11 @@ function TestModal({ onClose }: { onClose: () => void }) {
                   </dl>
                 )}
 
-                {/* ② 공유 / ③ 다시 하기 — 궁합 바로 아래 작은 텍스트 CTA. */}
+                {/* 공유(메인 CTA — 신청 마감으로 세션 신청 대신) + 다시 하기. */}
                 <div className={styles.minorActions}>
                   <button
                     type="button"
-                    className={styles.shareLink}
+                    className={styles.sharePrimary}
                     onClick={share}
                   >
                     {TEST_COPY.shareCta} <span aria-hidden="true">→</span>
@@ -636,33 +635,6 @@ function TestModal({ onClose }: { onClose: () => void }) {
                 </div>
               </div>
             </div>
-
-            {/* ① "부족한 1%"(핵심 전환) — 아이브로우 + 결핍 문구 + 추천 섹션 신청.
-                섹션은 animal.section 직접 사용(결핍을 채워줄 곳). */}
-            {(() => {
-              const rec = SECTIONS[result.section]; // 추천 섹션 A/B
-              return (
-                <div className={styles.gapBlock}>
-                  <p className={styles.gapTitle}>
-                    <span aria-hidden="true">🎟️</span> {TEST_COPY.gapTitle}
-                  </p>
-                  <p className={styles.gapText}>{result.gap}</p>
-                  <a
-                    className={styles.gapCta}
-                    href={rec.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    // 외부 이동이라 sendBeacon 우선(track 내부) — fire-and-forget.
-                    onClick={() =>
-                      track("cta", { animalId: result.id, section: result.section })
-                    }
-                  >
-                    {rec.date} · {rec.key} · {rec.title} {TEST_COPY.gapCta}{" "}
-                    <span aria-hidden="true">→</span>
-                  </a>
-                </div>
-              );
-            })()}
 
             {toast && (
               <div className={styles.toast} role="status">

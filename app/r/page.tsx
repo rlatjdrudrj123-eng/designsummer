@@ -22,7 +22,6 @@ import {
 } from "@/lib/animalTest";
 import { auraSpeakersByDayWith } from "@/lib/auraContent";
 import { getAuraOverrides } from "@/lib/auraOverrides";
-import CtaStrip from "./CtaStrip";
 import styles from "./page.module.css";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
@@ -157,37 +156,14 @@ export default async function ResultPage({
                 </dl>
               )}
 
-              {/* ② 나도 측정하기(재진입) — 궁합 바로 아래 작은 텍스트 CTA. */}
+              {/* 나도 측정하기 — 공유 링크 방문자의 메인 전환(신청 마감으로 세션 CTA 내림). */}
               <div className={styles.minorActions}>
-                <Link href="/#animaltest" className={styles.retryLink}>
+                <Link href="/survey" className={styles.gapCta}>
                   {TEST_COPY.retryCta} <span aria-hidden="true">→</span>
                 </Link>
               </div>
             </div>
           </div>
-
-          {/* ① "부족한 1%"(핵심 전환) — 아이브로우 + 결핍 문구 + 추천 섹션 신청.
-              섹션은 animal.section 직접 사용(결핍을 채워줄 곳). */}
-          {(() => {
-            const rec = SECTIONS[animal.section]; // 추천 섹션 A/B
-            return (
-              <div className={styles.gapBlock}>
-                <p className={styles.gapTitle}>
-                  <span aria-hidden="true">🎟️</span> {TEST_COPY.gapTitle}
-                </p>
-                <p className={styles.gapText}>{animal.gap}</p>
-                <CtaStrip
-                  className={styles.gapCta}
-                  href={rec.url}
-                  animalId={animal.id}
-                  section={animal.section}
-                >
-                  {rec.date} · {rec.key} · {rec.title} {TEST_COPY.gapCta}{" "}
-                  <span aria-hidden="true">→</span>
-                </CtaStrip>
-              </div>
-            );
-          })()}
         </article>
 
         <section className={styles.event}>
