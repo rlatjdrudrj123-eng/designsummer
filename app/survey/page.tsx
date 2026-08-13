@@ -43,7 +43,7 @@ export default async function SurveyPage() {
           rel="noopener noreferrer"
           className={`${styles.footBtn} ${styles.footBtnAlt}`}
         >
-          K-PRINT 2026 바로가기 <span aria-hidden="true">↗</span>
+          K-PRINT 2026 바로가기 <span aria-hidden="true">→</span>
         </a>
       </footer>
     </main>

@@ -106,9 +106,6 @@ export default function AnimalTest({
         {/* ── 진입 요소: 텍스트(좌) + 끓는 열덩이(우) ─────────────────────── */}
         <div className={styles.entry}>
           <div className={styles.entryText}>
-            {variant === "page" && (
-              <p className={styles.pageKicker}>디자이너 동물상 테스트</p>
-            )}
             <h2 id="animaltest-heading" className={styles.title}>
               당신의 크리에이티브, 지금 몇 도?
             </h2>
@@ -131,11 +128,6 @@ export default function AnimalTest({
               내 온도 알아보기 <span aria-hidden="true">→</span>
             </button>
 
-            {variant === "page" && (
-              <p className={styles.pageMeta}>
-                총 {STEPS.length}문항 · 1분이면 끝 · 결과는 바로 확인
-              </p>
-            )}
           </div>
 
           <div className={styles.entryVisual} aria-hidden="true">

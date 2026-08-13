@@ -71,14 +71,6 @@
 }
 
 /* ── /survey 전용 페이지 히어로 ─────────────────────────────────────────── */
-.pageKicker {
-  margin: 0 0 clamp(10px, 1.6vh, 16px);
-  font-family: var(--font-kr);
-  font-size: clamp(13px, 1.2vw, 16px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  color: var(--heat-main);
-}
 .pageLead {
   margin: clamp(14px, 2.2vh, 22px) 0 0;
   font-family: var(--font-kr);
@@ -89,28 +81,21 @@
   color: var(--t-body);
   word-break: keep-all;
 }
-.pageMeta {
-  margin: clamp(12px, 1.8vh, 16px) 0 0;
-  font-family: var(--font-kr);
-  font-size: clamp(12px, 1.15vw, 14px);
-  font-weight: 500;
-  color: var(--t-muted);
-}
 
 /* ── 커피 쿠폰 배너(전용 페이지) — 참여 유인을 크게. ── */
 .couponBanner {
-  margin-top: clamp(30px, 5vh, 56px);
+  margin-top: clamp(26px, 4.5vh, 46px);
   display: flex;
   align-items: center;
-  gap: clamp(14px, 2vw, 24px);
-  padding: clamp(20px, 3vw, 32px) clamp(20px, 3.4vw, 38px);
-  border-radius: 20px;
-  background: var(--heat-main);
-  color: #fff3e8;
-  box-shadow: 0 14px 34px -16px rgba(232, 74, 32, 0.65);
+  gap: clamp(12px, 1.6vw, 18px);
+  padding: clamp(16px, 2.2vw, 24px) clamp(18px, 2.6vw, 28px);
+  border-radius: 16px;
+  border: 1px solid color-mix(in srgb, var(--heat-main) 34%, transparent);
+  background: color-mix(in srgb, var(--heat-main) 7%, transparent);
+  color: var(--t-ink);
 }
 .couponIcon {
-  font-size: clamp(30px, 3.8vw, 48px);
+  font-size: clamp(22px, 2.4vw, 30px);
   line-height: 1;
   flex-shrink: 0;
 }
@@ -120,22 +105,23 @@
 .couponHead {
   margin: 0;
   font-family: var(--font-kr);
-  font-size: clamp(17px, 2.1vw, 27px);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.35;
+  font-size: clamp(15px, 1.5vw, 19px);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
   word-break: keep-all;
 }
 .couponHead b {
-  font-weight: 900;
+  font-weight: 800;
+  color: var(--heat-core);
 }
 .couponSub {
-  margin: 8px 0 0;
+  margin: 5px 0 0;
   font-family: var(--font-kr);
-  font-size: clamp(13px, 1.25vw, 16px);
+  font-size: clamp(12px, 1.15vw, 14px);
   font-weight: 500;
   letter-spacing: -0.02em;
-  color: rgba(255, 243, 232, 0.82);
+  color: var(--t-muted);
   word-break: keep-all;
 }
 
@@ -1266,16 +1252,9 @@
   }
   /* 전용 페이지 히어로 — entryText 가 contents 라 자식들이 .entry 직속이 된다.
      제목(1) → 리드·쿠폰(1) → 열덩이(2) → CTA(3) → 메타(4) 순으로 흐르게. */
-  .pageKicker {
-    order: 0;
-  }
   .pageLead {
     order: 1;
     align-self: flex-start;
-  }
-  .pageMeta {
-    order: 4;
-    align-self: center;
   }
   .couponBanner {
     align-items: flex-start;
