@@ -220,6 +220,8 @@ function TestModal({ onClose }: { onClose: () => void }) {
   const [pulse, setPulse] = useState(0);
   const [breaking, setBreaking] = useState(false);
   const [toast, setToast] = useState(false);
+  // 공유 시트 미지원(주로 PC)일 때 뜨는 대체 공유 메뉴
+  const [shareMenu, setShareMenu] = useState(false);
 
   const dialogRef = useRef<HTMLDivElement>(null);
   const titleId = "animaltest-modal-title";
@@ -391,39 +393,56 @@ function TestModal({ onClose }: { onClose: () => void }) {
     setPulse(0);
     setBreaking(false);
     setToast(false);
+    setShareMenu(false);
     setPhase("quiz");
+  };
+
+  /* 공유할 링크·문구 — 결과 전용 링크(/r?a={id})라 카톡/트위터에 OG 카드가 뜬다. */
+  const shareUrl = (() => {
+    const origin =
+      typeof window !== "undefined"
+        ? window.location.origin
+        : "https://design-summer.kr";
+    return result ? `${origin}/r?a=${result.id}` : origin;
+  })();
+  const shareText = result
+    ? `나 "${result.name}" 나왔어 — 크리에이티브 온도 ${result.tempLabel}°C 🔥\n너도 1분이면 나옴, 무슨 동물인지 해봐 👇`
+    : "디자이너 동물상 테스트 — 내 크리에이티브 온도는 몇 도?";
+
+  const copyLink = async () => {
+    setShareMenu(false);
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      setToast(true);
+      window.setTimeout(() => setToast(false), 2000);
+    } catch {
+      window.prompt("아래 링크를 복사해 공유하세요", shareUrl);
+    }
   };
 
   const share = async () => {
     // 공유 계측 — 결과 동물 id.
     if (result) track("share", { animalId: result.id });
-    // 결과가 담긴 전용 링크(/r?a={동물 id}) — 카톡/트위터에 동적 OG 카드가 뜬다.
-    const origin =
-      typeof window !== "undefined"
-        ? window.location.origin
-        : "https://design-summer.kr";
-    const url = result ? `${origin}/r?a=${result.id}` : origin;
-    const text = result
-      ? `나 "${result.name}" 나왔어 — 크리에이티브 온도 ${result.tempLabel}°C 🔥\n너도 1분이면 나옴, 무슨 동물인지 해봐 👇`
-      : "디자이너 동물상 테스트 — 내 크리에이티브 온도는 몇 도?";
 
-    // 모바일: 네이티브 공유 시트(카톡·인스타 등 바로 선택). 미지원/취소 시 클립보드 폴백.
-    if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+    // 모바일: 네이티브 공유 시트(카톡·메시지·인스타 등 바로 선택).
+    if (
+      typeof navigator !== "undefined" &&
+      typeof navigator.share === "function"
+    ) {
       try {
-        await navigator.share({ title: "디자이너 동물상 테스트", text, url });
+        await navigator.share({
+          title: "디자이너 동물상 테스트",
+          text: shareText,
+          url: shareUrl,
+        });
         return;
       } catch (e) {
-        // 사용자가 취소(AbortError)면 조용히 종료, 그 외엔 클립보드로 폴백.
+        // 사용자가 취소(AbortError)면 조용히 종료, 그 외엔 대체 메뉴로.
         if ((e as Error)?.name === "AbortError") return;
       }
     }
-    try {
-      await navigator.clipboard.writeText(url);
-      setToast(true);
-      window.setTimeout(() => setToast(false), 2000);
-    } catch {
-      window.prompt("아래 링크를 복사해 공유하세요", url);
-    }
+    // 공유 시트 미지원(주로 PC) — 어디로 보낼지 고를 수 있는 메뉴를 연다.
+    setShareMenu(true);
   };
 
   if (!mounted) return null;
@@ -737,6 +756,44 @@ function TestModal({ onClose }: { onClose: () => void }) {
                     {TEST_COPY.again}
                   </button>
                 </div>
+
+                {/* 공유 시트 미지원(PC) — 어디로 보낼지 고르는 대체 메뉴. */}
+                {shareMenu && (
+                  <div className={styles.shareMenu}>
+                    <a
+                      className={styles.shareItem}
+                      href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(
+                        shareText,
+                      )}&url=${encodeURIComponent(shareUrl)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShareMenu(false)}
+                    >
+                      X(트위터)로 공유
+                    </a>
+                    <a
+                      className={styles.shareItem}
+                      href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+                        shareUrl,
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setShareMenu(false)}
+                    >
+                      페이스북으로 공유
+                    </a>
+                    <button
+                      type="button"
+                      className={styles.shareItem}
+                      onClick={copyLink}
+                    >
+                      링크 복사
+                    </button>
+                    <p className={styles.shareHint}>
+                      휴대폰에서 열면 카카오톡·메시지로 바로 보낼 수 있어요
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 
