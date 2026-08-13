@@ -19,7 +19,6 @@ import styles from "./AnimalTest.module.css";
 import Reveal from "@/components/develop/Reveal";
 import { siteContent } from "@/lib/content";
 import {
-  ANIMALS,
   QUESTIONS,
   scoreTest,
   SURVEY_QUESTIONS,
@@ -71,16 +70,6 @@ const STEPS: QuizStep[] = [
 
 const PRIVACY_URL = "https://kprint.kr/ko/term/personal";
 
-/* 전용 페이지 9종 미리보기 — 온도 오름차순. 이름은 마지막 단어(동물명)만 짧게. */
-const ANIMAL_PREVIEW = Object.values(ANIMALS)
-  .slice()
-  .sort((a, b) => a.temp - b.temp)
-  .map((a) => ({
-    id: a.id,
-    tempLabel: a.tempLabel,
-    short: a.name.split(" ").slice(-1)[0],
-  }));
-
 /* 진입부 미리보기 폴 — 서버(lib/testStats)가 Firestore 응답 분포에서 산출해 내려줌.
    문항·보기 텍스트는 테스트 원문 그대로, 응답률(%)만 라이브. 참여자 수는 비노출. */
 export type TeaserPoll = {
@@ -130,10 +119,6 @@ export default function AnimalTest({
                   질문에 답하면 나의 작업 온도와 동물상이 나옵니다. 지금까지
                   참여한 디자이너들의 실제 응답과도 비교해 보세요.
                 </p>
-                <p className={styles.coupon}>
-                  <span aria-hidden="true">☕</span> 참여하고 <b>커피 쿠폰</b>{" "}
-                  받아가세요
-                </p>
               </>
             )}
 
@@ -160,34 +145,20 @@ export default function AnimalTest({
           </div>
         </div>
 
-        {/* ── 9종 미리보기(전용 페이지) — "나는 뭐가 나올까" 궁금증 유발 ──── */}
+        {/* ── 커피 쿠폰 배너(전용 페이지) — 참여 유인을 크게. ─────────────── */}
         {variant === "page" && (
-          <div className={styles.lineup}>
-            <p className={styles.lineupTitle}>
-              9가지 디자이너 유형 <span>+ 히든 1종</span>
-            </p>
-            <ul className={styles.lineupGrid}>
-              {ANIMAL_PREVIEW.map((a) => (
-                <li key={a.id} className={styles.lineupItem}>
-                  <Image
-                    src={`/animals/${a.id}.png`}
-                    alt=""
-                    width={120}
-                    height={120}
-                    className={styles.lineupImg}
-                  />
-                  <span className={styles.lineupName}>{a.short}</span>
-                  <span className={styles.lineupTemp}>{a.tempLabel}°C</span>
-                </li>
-              ))}
-              <li className={`${styles.lineupItem} ${styles.lineupHidden}`}>
-                <span className={styles.lineupQ} aria-hidden="true">
-                  ?
-                </span>
-                <span className={styles.lineupName}>히든 유형</span>
-                <span className={styles.lineupTemp}>???</span>
-              </li>
-            </ul>
+          <div className={styles.couponBanner}>
+            <span className={styles.couponIcon} aria-hidden="true">
+              ☕
+            </span>
+            <div className={styles.couponText}>
+              <p className={styles.couponHead}>
+                끝까지 참여하면 <b>커피 쿠폰</b>을 드립니다
+              </p>
+              <p className={styles.couponSub}>
+                마지막에 남겨주신 연락처로 순차 발송됩니다
+              </p>
+            </div>
           </div>
         )}
 
