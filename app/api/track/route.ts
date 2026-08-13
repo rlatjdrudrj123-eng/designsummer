@@ -23,7 +23,8 @@ const ANIMAL_IDS = new Set<string>([...Object.keys(ANIMALS), "swan"]);
 const NUM_QUESTIONS = QUESTIONS.length; // 17
 const MAX_CHOICES = 4; // 각 문항 4지선다 (ci 0..3)
 
-const SECTION_KEYS = new Set<string>(["A", "B"]);
+// A/B = 세미나 섹션(신청 마감 전), K = K-PRINT 전시 참관 유도(마감 후).
+const SECTION_KEYS = new Set<string>(["A", "B", "K"]);
 
 function noContent(): Response {
   // 본문 없는 204. 클라이언트는 sendBeacon/keepalive 라 응답을 신경 쓰지 않는다.

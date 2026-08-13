@@ -22,6 +22,8 @@ import {
 } from "@/lib/animalTest";
 import { auraSpeakersByDayWith } from "@/lib/auraContent";
 import { getAuraOverrides } from "@/lib/auraOverrides";
+import { siteContent } from "@/lib/content";
+import CtaStrip from "./CtaStrip";
 import styles from "./page.module.css";
 
 type SearchParams = Promise<{ [key: string]: string | string[] | undefined }>;
@@ -163,6 +165,23 @@ export default async function ResultPage({
                 </Link>
               </div>
             </div>
+          </div>
+
+          {/* "부족한 1%" — 결핍 문구 + K-PRINT 전시 참관 유도(세미나 신청 마감). */}
+          <div className={styles.gapBlock}>
+            <p className={styles.gapTitle}>
+              <span aria-hidden="true">🎟️</span> {TEST_COPY.gapTitle}
+            </p>
+            <p className={styles.gapText}>{animal.gap}</p>
+            <CtaStrip
+              className={styles.gapCta}
+              href={siteContent.applyUrl}
+              animalId={animal.id}
+              section="K"
+            >
+              8.19–8.22 KINTEX · K-PRINT 2026 참관등록 바로가기{" "}
+              <span aria-hidden="true">→</span>
+            </CtaStrip>
           </div>
         </article>
 

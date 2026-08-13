@@ -10,7 +10,7 @@
 
 import type { ReactNode } from "react";
 
-function track(animalId: string, section: "A" | "B") {
+function track(animalId: string, section: "A" | "B" | "K") {
   if (typeof window === "undefined") return;
   try {
     const body = JSON.stringify({ event: "cta", animalId, section });
@@ -42,7 +42,8 @@ export default function CtaStrip({
   href: string;
   className: string;
   animalId: string;
-  section: "A" | "B";
+  /** A/B = 세미나 섹션(과거), K = K-PRINT 전시 참관 유도 */
+  section: "A" | "B" | "K";
   children: ReactNode;
 }) {
   return (

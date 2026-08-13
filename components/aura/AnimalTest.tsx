@@ -17,6 +17,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import styles from "./AnimalTest.module.css";
 import Reveal from "@/components/develop/Reveal";
+import { siteContent } from "@/lib/content";
 import {
   QUESTIONS,
   scoreTest,
@@ -634,6 +635,25 @@ function TestModal({ onClose }: { onClose: () => void }) {
                   </button>
                 </div>
               </div>
+            </div>
+
+            {/* "부족한 1%" — 결핍 문구 + K-PRINT 전시 참관 유도(세미나 신청 마감). */}
+            <div className={styles.gapBlock}>
+              <p className={styles.gapTitle}>
+                <span aria-hidden="true">🎟️</span> {TEST_COPY.gapTitle}
+              </p>
+              <p className={styles.gapText}>{result.gap}</p>
+              <a
+                className={styles.gapCta}
+                href={siteContent.applyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                // 외부 이동이라 sendBeacon 우선(track 내부) — fire-and-forget.
+                onClick={() => track("cta", { animalId: result.id, section: "K" })}
+              >
+                8.19–8.22 KINTEX · K-PRINT 2026 참관등록 바로가기{" "}
+                <span aria-hidden="true">→</span>
+              </a>
             </div>
 
             {toast && (

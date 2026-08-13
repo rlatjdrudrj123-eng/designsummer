@@ -29,7 +29,7 @@ type StatsView = {
   starts?: number;
   completes?: number;
   shares?: number;
-  cta?: Partial<Record<"A" | "B", number>>;
+  cta?: Partial<Record<"A" | "B" | "K", number>>;
   result?: Partial<Record<string, number>>;
   q?: Record<string, Record<string, number>>;
 };
@@ -163,6 +163,7 @@ export default async function StatsPage({
   const shares = view.shares ?? 0;
   const ctaA = view.cta?.A ?? 0;
   const ctaB = view.cta?.B ?? 0;
+  const ctaK = view.cta?.K ?? 0;
 
   const result = view.result ?? {};
   const totalResults = ANIMAL_ORDER.reduce((s, id) => s + (result[id] ?? 0), 0);
@@ -189,6 +190,7 @@ export default async function StatsPage({
     { label: "공유", value: shares },
     { label: "CTA · section A", value: ctaA },
     { label: "CTA · section B", value: ctaB },
+    { label: "CTA · K-PRINT", value: ctaK },
   ];
 
   return (
