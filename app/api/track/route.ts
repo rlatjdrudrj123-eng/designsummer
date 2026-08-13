@@ -11,7 +11,7 @@
 
 import { FieldValue } from "firebase-admin/firestore";
 import { getDb } from "@/lib/firebaseAdmin";
-import { ANIMALS, QUESTIONS } from "@/lib/animalTest";
+import { ANIMALS, QUESTIONS, SURVEY_QUESTIONS } from "@/lib/animalTest";
 
 export const runtime = "nodejs";
 
@@ -35,7 +35,28 @@ type TrackBody = {
   animalId?: unknown;
   answers?: unknown;
   section?: unknown;
+  /* 비채점 설문(뉴스레터 설문판) — { field: number[], aware: number|null, interests: number[] } */
+  survey?: unknown;
 };
+
+/* 설문 답 검증 — 옵션 범위 내 정수, 중복 제거, 최대 선택 수 캡. */
+function sanitizeMulti(v: unknown, si: number): number[] {
+  if (!Array.isArray(v)) return [];
+  const sq = SURVEY_QUESTIONS[si];
+  const seen = new Set<number>();
+  for (const x of v) {
+    if (
+      typeof x === "number" &&
+      Number.isInteger(x) &&
+      x >= 0 &&
+      x < sq.options.length
+    ) {
+      seen.add(x);
+    }
+    if (seen.size >= sq.max) break;
+  }
+  return [...seen];
+}
 
 export async function POST(req: Request): Promise<Response> {
   // 어떤 경우에도 클라이언트엔 204. 검증 실패·Firestore 불가는 조용히 무시한다.
@@ -57,19 +78,30 @@ export async function POST(req: Request): Promise<Response> {
         ? body.animalId
         : null;
 
+    // v2 = 설문 개편(설문 3문항 추가) 이후 수집분 — 기존 루트 카운터(누적 전체)와
+    // 같은 구조로 미러 저장해, 대시보드에서 개편 전/후를 구분해 본다.
     switch (body.event) {
       case "start": {
         updates.starts = inc();
+        updates.v2 = { starts: inc() };
         break;
       }
       case "complete": {
         updates.completes = inc();
-        if (animalId) updates.result = { [animalId]: inc() };
-        // answers: index=문항i, 값=선택지i. 길이 ≤17 캡, qi/ci 범위 검증.
+        const v2: Record<string, unknown> = { completes: inc() };
+        if (animalId) {
+          updates.result = { [animalId]: inc() };
+          v2.result = { [animalId]: inc() };
+        }
+        // answers: index=문항i, 값=선택지i. 길이 캡, qi/ci 범위 검증.
         if (Array.isArray(body.answers)) {
           const answers = body.answers.slice(0, NUM_QUESTIONS);
           const q: Record<string, Record<string, FirebaseFirestore.FieldValue>> =
             {};
+          const qv2: Record<
+            string,
+            Record<string, FirebaseFirestore.FieldValue>
+          > = {};
           answers.forEach((ci, qi) => {
             if (
               typeof ci === "number" &&
@@ -80,14 +112,52 @@ export async function POST(req: Request): Promise<Response> {
               ci < MAX_CHOICES
             ) {
               q[String(qi)] = { [String(ci)]: inc() };
+              qv2[String(qi)] = { [String(ci)]: inc() };
             }
           });
-          if (Object.keys(q).length > 0) updates.q = q;
+          if (Object.keys(q).length > 0) {
+            updates.q = q;
+            v2.q = qv2;
+          }
+        }
+        updates.v2 = v2;
+
+        // 비채점 설문 답 — sv.{field|aware|interests}.{옵션 인덱스} 카운트.
+        const sv = body.survey as
+          | { field?: unknown; aware?: unknown; interests?: unknown }
+          | undefined;
+        if (sv && typeof sv === "object") {
+          const svUpdates: Record<
+            string,
+            Record<string, FirebaseFirestore.FieldValue>
+          > = {};
+          const field = sanitizeMulti(sv.field, 0);
+          if (field.length > 0) {
+            svUpdates.field = Object.fromEntries(
+              field.map((i) => [String(i), inc()]),
+            );
+          }
+          if (
+            typeof sv.aware === "number" &&
+            Number.isInteger(sv.aware) &&
+            sv.aware >= 0 &&
+            sv.aware < SURVEY_QUESTIONS[1].options.length
+          ) {
+            svUpdates.aware = { [String(sv.aware)]: inc() };
+          }
+          const interests = sanitizeMulti(sv.interests, 2);
+          if (interests.length > 0) {
+            svUpdates.interests = Object.fromEntries(
+              interests.map((i) => [String(i), inc()]),
+            );
+          }
+          if (Object.keys(svUpdates).length > 0) updates.sv = svUpdates;
         }
         break;
       }
       case "share": {
         updates.shares = inc();
+        updates.v2 = { shares: inc() };
         if (animalId) updates.shareResult = { [animalId]: inc() };
         break;
       }
@@ -96,7 +166,10 @@ export async function POST(req: Request): Promise<Response> {
           typeof body.section === "string" && SECTION_KEYS.has(body.section)
             ? body.section
             : null;
-        if (section) updates.cta = { [section]: inc() };
+        if (section) {
+          updates.cta = { [section]: inc() };
+          updates.v2 = { cta: { [section]: inc() } };
+        }
         if (animalId) updates.ctaResult = { [animalId]: inc() };
         break;
       }

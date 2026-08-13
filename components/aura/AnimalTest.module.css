@@ -483,6 +483,59 @@
   border-color: var(--heat-core);
   background: color-mix(in srgb, #fff 75%, transparent);
 }
+
+/* ── 설문 스텝(비채점) ── */
+/* 선택된 보기 — 복수선택 토글 상태. */
+.choiceOn,
+.choiceOn:hover {
+  border-color: var(--heat-main);
+  background: color-mix(in srgb, var(--heat-main) 12%, #fff 60%);
+  box-shadow: inset 0 0 0 1px var(--heat-main);
+  font-weight: 700;
+}
+/* 질문 옆 안내(복수선택 · 최대 N개) */
+.surveyHint {
+  display: inline-block;
+  margin-left: 10px;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: color-mix(in srgb, var(--heat-main) 12%, transparent);
+  font-size: clamp(12px, 1vw, 13px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--heat-core);
+  vertical-align: middle;
+  white-space: nowrap;
+}
+/* 다음/결과 보기 — 복수선택 스텝 전용 진행 버튼. */
+.surveyNext {
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  margin-top: 4px;
+  padding: 0.65em 1.4em;
+  border: none;
+  border-radius: 999px;
+  background: var(--heat-main);
+  color: #fff3e8;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.3vw, 16px);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    opacity 0.15s ease,
+    transform 0.15s ease,
+    filter 0.15s ease;
+}
+.surveyNext:hover:not(:disabled) {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+.surveyNext:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 .choice:active {
   transform: scale(0.99);
 }

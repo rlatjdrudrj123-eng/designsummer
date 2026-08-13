@@ -11,21 +11,35 @@
 import Link from "next/link";
 import styles from "../admin.module.css";
 import { getDb } from "@/lib/firebaseAdmin";
-import { ANIMALS, SWAN, QUESTIONS, type AnimalId } from "@/lib/animalTest";
+import {
+  ANIMALS,
+  SWAN,
+  QUESTIONS,
+  SURVEY_QUESTIONS,
+  type AnimalId,
+} from "@/lib/animalTest";
 
 export const dynamic = "force-dynamic";
 export const metadata = { title: "테스트 통계 · Design Summer" };
 
-/* Firestore 문서 형태 — 모두 optional(없으면 0). */
-type StatsDoc = {
+/* Firestore 문서 형태 — 모두 optional(없으면 0).
+   루트 = 누적 전체, v2 = 설문 개편(설문 3문항 추가) 이후 수집분 미러,
+   sv = 비채점 설문 답 분포(개편 이후에만 존재). */
+type StatsView = {
   starts?: number;
   completes?: number;
   shares?: number;
   cta?: Partial<Record<"A" | "B", number>>;
   result?: Partial<Record<string, number>>;
+  q?: Record<string, Record<string, number>>;
+};
+type StatsDoc = StatsView & {
   shareResult?: Partial<Record<string, number>>;
   ctaResult?: Partial<Record<string, number>>;
-  q?: Record<string, Record<string, number>>;
+  v2?: StatsView;
+  sv?: Partial<
+    Record<"field" | "aware" | "interests", Record<string, number>>
+  >;
 };
 
 async function loadStats(): Promise<{ data: StatsDoc; available: boolean }> {
@@ -82,17 +96,30 @@ const ANIMAL_ORDER: AnimalId[] = [
   "swan",
 ];
 
-export default async function StatsPage() {
+export default async function StatsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const sp = await searchParams;
+  // era: all = 누적 전체(개편 전+후), v2 = 설문 개편 이후만.
+  const era = sp.era === "v2" ? "v2" : "all";
+
   const { data, available } = await loadStats();
+  const view: StatsView = era === "v2" ? (data.v2 ?? {}) : data;
 
-  const starts = data.starts ?? 0;
-  const completes = data.completes ?? 0;
-  const shares = data.shares ?? 0;
-  const ctaA = data.cta?.A ?? 0;
-  const ctaB = data.cta?.B ?? 0;
+  const starts = view.starts ?? 0;
+  const completes = view.completes ?? 0;
+  const shares = view.shares ?? 0;
+  const ctaA = view.cta?.A ?? 0;
+  const ctaB = view.cta?.B ?? 0;
 
-  const result = data.result ?? {};
+  const result = view.result ?? {};
   const totalResults = ANIMAL_ORDER.reduce((s, id) => s + (result[id] ?? 0), 0);
+
+  // 설문(비채점) — 개편 이후에만 존재. 응답자 수 = v2 완료 수.
+  const sv = data.sv ?? {};
+  const svRespondents = data.v2?.completes ?? 0;
 
   const funnel = [
     { label: "시작", value: starts },
@@ -121,6 +148,34 @@ export default async function StatsPage() {
         <p className={styles.note}>
           동물상 테스트의 자체 수집 통계입니다(Firestore <code>stats/auraTest</code>).
           공개 수집 API 라 일부 수치엔 노이즈가 섞일 수 있습니다.
+        </p>
+      )}
+
+      {/* ── 기간 전환 — 누적 전체 vs 설문 개편(설문 3문항 추가) 이후 ── */}
+      <div style={{ display: "flex", gap: 8, margin: "14px 0 4px" }}>
+        {(
+          [
+            ["all", "누적 전체"],
+            ["v2", "설문 개편 이후"],
+          ] as const
+        ).map(([key, label]) => (
+          <Link
+            key={key}
+            href={key === "all" ? "/admin/stats" : "/admin/stats?era=v2"}
+            className={styles.logout}
+            style={
+              era === key
+                ? { background: "#1a1310", color: "#fff", borderColor: "#1a1310" }
+                : undefined
+            }
+          >
+            {label}
+          </Link>
+        ))}
+      </div>
+      {era === "v2" && (
+        <p className={styles.note}>
+          설문 3문항(분야·인지·관심)이 추가된 개편 이후 수집분만 표시 중입니다.
         </p>
       )}
 
@@ -180,7 +235,7 @@ export default async function StatsPage() {
         <div className={styles.qList}>
           {QUESTIONS.map((question, qi) => {
             const counts = question.choices.map(
-              (_, ci) => data.q?.[String(qi)]?.[String(ci)] ?? 0,
+              (_, ci) => view.q?.[String(qi)]?.[String(ci)] ?? 0,
             );
             const qTotal = counts.reduce((s, c) => s + c, 0);
             return (
@@ -203,6 +258,54 @@ export default async function StatsPage() {
                         </span>
                         <span className={styles.barNum}>
                           {n.toLocaleString()} · {pct(n, qTotal)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* ── 설문 응답(비채점) — 개편 이후 수집분에만 존재 ────────────────── */}
+      <section className={styles.group}>
+        <div className={styles.groupHead}>
+          <h2 className={styles.groupTitle}>설문 응답</h2>
+          <span className={styles.groupHint}>
+            개편 이후 응답자 {svRespondents.toLocaleString()}명 기준 · 복수선택
+            문항은 합계가 100%를 넘을 수 있음
+          </span>
+        </div>
+        <div className={styles.qList}>
+          {SURVEY_QUESTIONS.map((sq) => {
+            const dist = sv[sq.id] ?? {};
+            const counts = sq.options.map((_, i) => dist[String(i)] ?? 0);
+            // 단일 선택은 그 문항 응답 합, 복수선택은 응답자 수를 분모로.
+            const denom = sq.multi
+              ? svRespondents
+              : counts.reduce((s, c) => s + c, 0);
+            return (
+              <div key={sq.id} className={styles.qBlock}>
+                <p className={styles.qTitle}>
+                  {sq.q}
+                  {sq.hint && <span className={styles.qTotal}>{sq.hint}</span>}
+                </p>
+                <div className={styles.barList}>
+                  {sq.options.map((label, i) => {
+                    const n = counts[i];
+                    return (
+                      <div key={i} className={styles.barRow}>
+                        <span className={styles.barName}>{label}</span>
+                        <span className={styles.barTrack}>
+                          <span
+                            className={styles.barFill}
+                            style={{ width: pct(n, denom) }}
+                          />
+                        </span>
+                        <span className={styles.barNum}>
+                          {n.toLocaleString()} · {pct(n, denom)}
                         </span>
                       </div>
                     );

@@ -21,6 +21,7 @@ import {
   QUESTIONS,
   scoreTest,
   SECTIONS,
+  SURVEY_QUESTIONS,
   TEST_COPY,
   type Animal,
 } from "@/lib/animalTest";
@@ -53,6 +54,16 @@ const CRACKS_TO_BREAK = 10; // 열구 깨는 데 필요한 탭 횟수
 // 탭마다 방사형으로 튀는 스파크 각도(도) — 균등 분포 + 살짝 흐트러뜨려 자연스럽게.
 const SPARKS = [8, 52, 96, 140, 184, 228, 272, 316];
 
+/* 퀴즈 플로우 스텝 — 설문[0](분야) → 채점 10문항 → 설문[1](인지) → 설문[2](관심).
+   설문은 결과 산출에 영향 없음(SURVEY_QUESTIONS 참조). */
+type QuizStep = { kind: "scored"; qi: number } | { kind: "survey"; si: number };
+const STEPS: QuizStep[] = [
+  { kind: "survey", si: 0 },
+  ...QUESTIONS.map((_, qi): QuizStep => ({ kind: "scored", qi })),
+  { kind: "survey", si: 1 },
+  { kind: "survey", si: 2 },
+];
+
 /* 진입부 미리보기 폴 — 서버(lib/testStats)가 Firestore 응답 분포에서 산출해 내려줌.
    문항·보기 텍스트는 테스트 원문 그대로, 응답률(%)만 라이브. 참여자 수는 비노출. */
 export type TeaserPoll = {
@@ -73,6 +84,14 @@ export default function AnimalTest({
     setOpen(false);
     // 닫을 때 진입 CTA로 포커스 복귀
     triggerRef.current?.focus();
+  }, []);
+
+  // 뉴스레터 랜딩(/survey → /?survey=1): 진입 즉시 테스트 모달 자동 오픈.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (new URLSearchParams(window.location.search).get("survey") === "1") {
+      setOpen(true);
+    }
   }, []);
 
   return (
@@ -152,8 +171,10 @@ function TestModal({ onClose }: { onClose: () => void }) {
   const [mounted, setMounted] = useState(false);
 
   const [phase, setPhase] = useState<Phase>("quiz");
-  const [step, setStep] = useState(0); // 현재 질문 인덱스
-  const [answers, setAnswers] = useState<number[]>([]);
+  const [step, setStep] = useState(0); // STEPS 인덱스
+  const [answers, setAnswers] = useState<number[]>([]); // 채점 문항(qi 인덱스) 답
+  // 설문 답(문항별 선택 인덱스 배열 — 단일 선택은 길이 1)
+  const [surveyAnswers, setSurveyAnswers] = useState<number[][]>([[], [], []]);
   const [result, setResult] = useState<Animal | null>(null);
 
   // reveal(열구) 상태
@@ -226,23 +247,58 @@ function TestModal({ onClose }: { onClose: () => void }) {
     dialogRef.current?.focus();
   }, [phase, step, mounted]);
 
-  const choose = (choiceIndex: number) => {
-    const next = [...answers];
-    next[step] = choiceIndex;
-    setAnswers(next);
+  // 마지막 스텝(설문[2]) 통과 → 결과 산출 + 완료 계측 + 열구 리빌.
+  const finish = (sv: number[][], scoredAnswers: number[]) => {
+    const scored = scoreTest(scoredAnswers);
+    setResult(scored);
+    // 완료 계측 — 채점 answers + 결과 동물 + 비채점 설문 답.
+    track("complete", {
+      answers: scoredAnswers,
+      animalId: scored.id,
+      survey: {
+        field: sv[0],
+        aware: sv[1][0] ?? null,
+        interests: sv[2],
+      },
+    });
+    setTaps(0);
+    setPulse(0);
+    setBreaking(false);
+    setPhase("reveal");
+  };
 
-    if (step + 1 < QUESTIONS.length) {
-      setStep(step + 1);
+  const stepDef = STEPS[step];
+
+  // 채점 문항 선택 — 즉시 다음 스텝(채점 문항 뒤엔 항상 설문이 있어 finish 아님).
+  const choose = (choiceIndex: number) => {
+    if (stepDef.kind !== "scored") return;
+    const next = [...answers];
+    next[stepDef.qi] = choiceIndex;
+    setAnswers(next);
+    setStep(step + 1);
+  };
+
+  // 설문 다음/완료 — 마지막 스텝이면 finish.
+  const advanceSurvey = (sv: number[][]) => {
+    if (step + 1 < STEPS.length) setStep(step + 1);
+    else finish(sv, answers);
+  };
+
+  // 설문 선택 — 복수는 토글(max 캡), 단일은 선택 즉시 다음으로.
+  const toggleSurvey = (choiceIndex: number) => {
+    if (stepDef.kind !== "survey") return;
+    const sq = SURVEY_QUESTIONS[stepDef.si];
+    const next = surveyAnswers.map((a) => [...a]);
+    const cur = next[stepDef.si];
+    if (sq.multi) {
+      const at = cur.indexOf(choiceIndex);
+      if (at >= 0) cur.splice(at, 1);
+      else if (cur.length < sq.max) cur.push(choiceIndex);
+      setSurveyAnswers(next);
     } else {
-      // 마지막 답 → 결과 미리 산출하고 열구 리빌로
-      const scored = scoreTest(next);
-      setResult(scored);
-      // 완료 계측 — answers(문항별 선택 인덱스) + 결과 동물 id.
-      track("complete", { answers: next, animalId: scored.id });
-      setTaps(0);
-      setPulse(0);
-      setBreaking(false);
-      setPhase("reveal");
+      next[stepDef.si] = [choiceIndex];
+      setSurveyAnswers(next);
+      advanceSurvey(next);
     }
   };
 
@@ -274,6 +330,7 @@ function TestModal({ onClose }: { onClose: () => void }) {
   const restart = () => {
     setStep(0);
     setAnswers([]);
+    setSurveyAnswers([[], [], []]);
     setResult(null);
     setTaps(0);
     setPulse(0);
@@ -344,36 +401,81 @@ function TestModal({ onClose }: { onClose: () => void }) {
           ✕
         </button>
 
-        {/* ── 퀴즈 ─────────────────────────────────────────────────────── */}
+        {/* ── 퀴즈 (채점 문항 + 비채점 설문 스텝) ───────────────────────── */}
         {phase === "quiz" && (
           <div className={styles.quiz}>
             <div className={styles.progress}>
               <div className={styles.progressBar}>
                 <span
                   className={styles.progressFill}
-                  style={{ width: `${((step + 1) / QUESTIONS.length) * 100}%` }}
+                  style={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
                 />
               </div>
               <span className={styles.progressText}>
-                {step + 1} / {QUESTIONS.length}
+                {step + 1} / {STEPS.length}
               </span>
             </div>
 
-            <h3 className={styles.question}>{QUESTIONS[step].q}</h3>
-
-            <ul className={styles.choices}>
-              {QUESTIONS[step].choices.map((c, i) => (
-                <li key={i}>
-                  <button
-                    type="button"
-                    className={styles.choice}
-                    onClick={() => choose(i)}
-                  >
-                    {c.label}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            {stepDef.kind === "scored" ? (
+              <>
+                <h3 className={styles.question}>{QUESTIONS[stepDef.qi].q}</h3>
+                <ul className={styles.choices}>
+                  {QUESTIONS[stepDef.qi].choices.map((c, i) => (
+                    <li key={i}>
+                      <button
+                        type="button"
+                        className={styles.choice}
+                        onClick={() => choose(i)}
+                      >
+                        {c.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : (
+              (() => {
+                const sq = SURVEY_QUESTIONS[stepDef.si];
+                const sel = surveyAnswers[stepDef.si];
+                return (
+                  <>
+                    <h3 className={styles.question}>
+                      {sq.q}
+                      {sq.hint && (
+                        <span className={styles.surveyHint}>{sq.hint}</span>
+                      )}
+                    </h3>
+                    <ul className={styles.choices}>
+                      {sq.options.map((label, i) => (
+                        <li key={i}>
+                          <button
+                            type="button"
+                            className={`${styles.choice} ${
+                              sel.includes(i) ? styles.choiceOn : ""
+                            }`}
+                            aria-pressed={sel.includes(i)}
+                            onClick={() => toggleSurvey(i)}
+                          >
+                            {label}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                    {sq.multi && (
+                      <button
+                        type="button"
+                        className={styles.surveyNext}
+                        disabled={sel.length === 0}
+                        onClick={() => advanceSurvey(surveyAnswers)}
+                      >
+                        {step + 1 === STEPS.length ? "결과 보기" : "다음"}{" "}
+                        <span aria-hidden="true">→</span>
+                      </button>
+                    )}
+                  </>
+                );
+              })()
+            )}
 
             {step > 0 && (
               <button type="button" className={styles.backLink} onClick={back}>

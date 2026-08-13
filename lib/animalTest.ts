@@ -346,6 +346,62 @@ export const QUESTIONS: Question[] = [
   },
 ];
 
+/* ── 비채점 설문 문항(뉴스레터 설문판) ────────────────────────────────────────
+   결과 산출 로직에 영향 없음 — 통계 수집 전용. 플로우 내 위치:
+   [0]=테스트 맨 앞, [1]=맨 뒤에서 두 번째, [2]=마지막. */
+export interface SurveyQuestion {
+  id: "field" | "aware" | "interests";
+  q: string;
+  /** 선택 안내(예: 복수선택) — 없으면 표시 안 함 */
+  hint: string | null;
+  /** 복수선택 여부 */
+  multi: boolean;
+  /** 최대 선택 수 */
+  max: number;
+  options: string[];
+}
+
+export const SURVEY_QUESTIONS: SurveyQuestion[] = [
+  {
+    id: "field",
+    q: "어떤 분야의 디자이너이신가요?",
+    hint: "복수선택",
+    multi: true,
+    max: 7,
+    options: [
+      "패키지",
+      "편집",
+      "굿즈(MD)",
+      "브랜드",
+      "텍스타일(패턴)",
+      "광고",
+      "타이포그래피",
+    ],
+  },
+  {
+    id: "aware",
+    q: '이번 K-PRINT 전시회 행사와 동시에 진행되는 "디자인 썸머 일산"에 대해 알고 계신가요?',
+    hint: null,
+    multi: false,
+    max: 1,
+    options: ["예", "아니오"],
+  },
+  {
+    id: "interests",
+    q: "앞으로 K-PRINT 전시회에 어떤 분야를 더 많이 보고싶으신가요?",
+    hint: "최대 3개 선택가능",
+    multi: true,
+    max: 3,
+    options: [
+      "종이 / 특수지 / 특수 소재 샘플 라이브러리",
+      "후가공 / 특수인쇄 체험",
+      "소량 / 주문제작(POD) 굿즈",
+      "AI 디자인 소프트웨어 / 컬러매니지먼트",
+      "친환경 / 지속가능 패키지 소재",
+    ],
+  },
+];
+
 const SCORED_IDS: ScoredAnimalId[] = [
   "alpaca",
   "sloth",
