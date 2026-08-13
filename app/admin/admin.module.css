@@ -354,3 +354,67 @@
   font-size: 12px;
   color: #c00;
 }
+
+/* ── 데이터 표(쿠폰 응모자 등) — 가독성 위주. 좁은 화면은 가로 스크롤. */
+.tableWrap {
+  margin-top: 6px;
+  overflow-x: auto;
+  border: 1px solid var(--line, rgba(26, 19, 16, 0.12));
+  border-radius: 12px;
+  background: #fff;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-kr, inherit);
+  font-size: 14px;
+  white-space: nowrap;
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 12px 14px;
+  background: #faf6f1;
+  border-bottom: 1px solid rgba(26, 19, 16, 0.14);
+  font-weight: 800;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  color: #6b5a4a;
+  text-align: left;
+}
+.table tbody td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(26, 19, 16, 0.07);
+  color: #1a1310;
+  vertical-align: middle;
+}
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+.table tbody tr:nth-child(even) {
+  background: rgba(26, 19, 16, 0.018);
+}
+.table tbody tr:hover {
+  background: rgba(232, 74, 32, 0.06);
+}
+/* 번호 열 — 좁게, 흐리게. */
+.thNum {
+  width: 56px;
+  text-align: right !important;
+  color: #9a8676;
+  font-variant-numeric: tabular-nums;
+}
+.tdName {
+  font-weight: 700;
+}
+/* 휴대폰·시각 — 자릿수 정렬되게 고정폭 숫자. */
+.tdPhone,
+.tdTime {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.01em;
+}
+.tdTime {
+  color: #6b5a4a;
+  font-size: 13px;
+}

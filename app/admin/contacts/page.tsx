@@ -75,6 +75,19 @@ export default async function ContactsPage() {
       <header className={styles.head}>
         <h1 className={styles.title}>Design Summer · 쿠폰 응모자</h1>
         <div style={{ display: "flex", gap: 10 }}>
+          {rows.length > 0 && (
+            <a
+              className={styles.logout}
+              href="/api/admin/contacts-csv"
+              style={{
+                background: "#1a1310",
+                color: "#fff",
+                borderColor: "#1a1310",
+              }}
+            >
+              CSV 내려받기 ↓
+            </a>
+          )}
           <Link className={styles.logout} href="/admin/stats">
             ← 테스트 통계
           </Link>
@@ -101,33 +114,31 @@ export default async function ContactsPage() {
         {rows.length === 0 ? (
           <p className={styles.note}>아직 응모자가 없습니다.</p>
         ) : (
-          <div className={styles.qList}>
-            {rows.map((r, i) => (
-              <div
-                key={r.id}
-                className={styles.barRow}
-                style={{ gap: 14, alignItems: "baseline" }}
-              >
-                <span className={styles.barNum} style={{ width: 44 }}>
-                  {i + 1}
-                </span>
-                <span
-                  className={styles.barName}
-                  style={{ width: 120, fontWeight: 700 }}
-                >
-                  {r.name}
-                </span>
-                <span className={styles.barName} style={{ width: 150 }}>
-                  {r.phone}
-                </span>
-                <span className={styles.barName} style={{ flex: 1 }}>
-                  {animalName(r.animalId)}
-                </span>
-                <span className={styles.barNum} style={{ width: 130 }}>
-                  {r.at}
-                </span>
-              </div>
-            ))}
+          <div className={styles.tableWrap}>
+            <table className={styles.table}>
+              <thead>
+                <tr>
+                  <th className={styles.thNum} scope="col">
+                    #
+                  </th>
+                  <th scope="col">이름</th>
+                  <th scope="col">휴대폰</th>
+                  <th scope="col">결과 유형</th>
+                  <th scope="col">응모 시각</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rows.map((r, i) => (
+                  <tr key={r.id}>
+                    <td className={styles.thNum}>{i + 1}</td>
+                    <td className={styles.tdName}>{r.name}</td>
+                    <td className={styles.tdPhone}>{r.phone}</td>
+                    <td>{animalName(r.animalId)}</td>
+                    <td className={styles.tdTime}>{r.at}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         )}
       </section>
