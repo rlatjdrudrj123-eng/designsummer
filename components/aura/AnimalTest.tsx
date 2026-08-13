@@ -113,8 +113,9 @@ export default function AnimalTest({
             {variant === "page" && (
               <>
                 <p className={styles.pageLead}>
-                  질문에 답하면 나의 작업 온도와 동물상이 나옵니다. 지금까지
-                  참여한 디자이너들의 실제 응답과도 비교해 보세요.
+                  내 작업 스타일은 어떤 동물과 닮았을까? 간단한 테스트로 나의
+                  &lsquo;크리에이티브 온도&rsquo;를 알아보고, 다른 디자이너들의
+                  리얼한 속마음도 엿보세요!
                 </p>
               </>
             )}
@@ -145,10 +146,10 @@ export default function AnimalTest({
             </span>
             <div className={styles.couponText}>
               <p className={styles.couponHead}>
-                끝까지 참여하면 <b>커피 쿠폰</b>을 드립니다
+                테스트를 끝까지 마친 분들께는 시원한 <b>커피 쿠폰</b>을 쏩니다!
               </p>
               <p className={styles.couponSub}>
-                마지막에 남겨주신 연락처로 순차 발송됩니다
+                결과 페이지에 남겨주신 연락처로 순차 발송해 드려요
               </p>
             </div>
           </div>
