@@ -60,13 +60,15 @@ type QuizStep =
   | { kind: "scored"; qi: number }
   | { kind: "survey"; si: number }
   | { kind: "contact" };
-const STEPS: QuizStep[] = [
+const BASE_STEPS: QuizStep[] = [
   { kind: "survey", si: 0 },
   ...QUESTIONS.map((_, qi): QuizStep => ({ kind: "scored", qi })),
   { kind: "survey", si: 1 },
   { kind: "survey", si: 2 },
-  { kind: "contact" },
 ];
+/* 연락처(커피 쿠폰) 스텝은 뉴스레터 랜딩(/survey)에서만. 홈은 쿠폰 대상이 아니라
+   개인정보를 받지 않는다. */
+const STEPS_PAGE: QuizStep[] = [...BASE_STEPS, { kind: "contact" }];
 
 const PRIVACY_URL = "https://kprint.kr/ko/term/personal";
 
@@ -204,7 +206,7 @@ export default function AnimalTest({
         )}
       </Reveal>
 
-      {open && <TestModal onClose={closeModal} />}
+      {open && <TestModal onClose={closeModal} variant={variant} />}
     </section>
   );
 }
@@ -212,7 +214,15 @@ export default function AnimalTest({
 /* ============================================================================
  * TestModal — 오버레이에서 테스트 실행. 포털로 body 직속에 렌더.
  * ========================================================================== */
-function TestModal({ onClose }: { onClose: () => void }) {
+function TestModal({
+  onClose,
+  variant,
+}: {
+  onClose: () => void;
+  variant: "section" | "page";
+}) {
+  // 쿠폰(연락처) 스텝은 /survey 에서만 — 홈은 채점 문항 + 설문까지.
+  const STEPS = variant === "page" ? STEPS_PAGE : BASE_STEPS;
   const [mounted, setMounted] = useState(false);
 
   const [phase, setPhase] = useState<Phase>("quiz");
@@ -334,9 +344,10 @@ function TestModal({ onClose }: { onClose: () => void }) {
     setStep(step + 1);
   };
 
-  // 설문 다음 — 설문 뒤엔 항상 연락처 스텝이 있어 여기서 finish 하지 않는다.
-  const advanceSurvey = (_sv: number[][]) => {
+  // 설문 다음 — 연락처 스텝이 없는 홈(section)에선 여기서 바로 결과로.
+  const advanceSurvey = (sv: number[][]) => {
     if (step + 1 < STEPS.length) setStep(step + 1);
+    else finish(sv, answers, null);
   };
 
   /* 휴대폰 입력 — 숫자만 받고 010-1234-5678 형태로 자동 하이픈. */
@@ -827,16 +838,24 @@ function TestModal({ onClose }: { onClose: () => void }) {
               </div>
             </div>
 
-            {/* "부족한 1%" — 쿠폰 조건(참관등록)을 앞세우고 결핍 문구는 아래로. */}
+            {/* "부족한 1%" — /survey 는 쿠폰 조건을 앞세우고, 홈은 기존 결핍 서사. */}
             <div className={styles.gapBlock}>
-              <p className={styles.gapTitle}>
-                <span aria-hidden="true">☕</span> 커피 쿠폰, 마지막 단계가
-                남았어요
-              </p>
-              <p className={styles.gapLead}>
-                K-PRINT 전시회 참관등록까지 마치셔야 기프티콘이 발송됩니다.
-                <b> 방금 남겨주신 번호와 같은 번호</b>로 등록해 주세요.
-              </p>
+              {variant === "page" ? (
+                <>
+                  <p className={styles.gapTitle}>
+                    <span aria-hidden="true">☕</span> 커피 쿠폰, 마지막 단계가
+                    남았어요
+                  </p>
+                  <p className={styles.gapLead}>
+                    K-PRINT 전시회 참관등록까지 마치셔야 기프티콘이 발송됩니다.
+                    <b> 방금 남겨주신 번호와 같은 번호</b>로 등록해 주세요.
+                  </p>
+                </>
+              ) : (
+                <p className={styles.gapTitle}>
+                  <span aria-hidden="true">🎟️</span> {TEST_COPY.gapTitle}
+                </p>
+              )}
               <a
                 className={styles.gapCta}
                 href={KPRINT_REGISTER_URL}
@@ -849,7 +868,9 @@ function TestModal({ onClose }: { onClose: () => void }) {
                 <span aria-hidden="true">→</span>
               </a>
               <p className={styles.gapText}>
-                <b>{TEST_COPY.gapTitle}</b> — {result.gap}
+                {variant === "page" && <b>{TEST_COPY.gapTitle}</b>}
+                {variant === "page" && " — "}
+                {result.gap}
               </p>
             </div>
 
