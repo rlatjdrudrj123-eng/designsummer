@@ -384,7 +384,7 @@ export const SURVEY_QUESTIONS: SurveyQuestion[] = [
   },
   {
     id: "aware",
-    q: '내 크리에이티브 온도를 확 높여줄 오프라인 충전소! 이번 K-PRINT 전시회와 동시 개최되는 "디자인 썸머 일산"을 알고 계셨나요?',
+    q: '내 온도를 확 높여줄 오프라인 충전소! K-PRINT 전시회와 동시 개최되는 "디자인 썸머 일산"을 알고 계셨나요?',
     hint: null,
     multi: false,
     max: 1,
