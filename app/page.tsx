@@ -41,7 +41,7 @@ const offersFor = (url: string) => [
     name: "얼리버드 (1일권)",
     price: "20000",
     priceCurrency: "KRW",
-    availability: "https://schema.org/InStock",
+    availability: "https://schema.org/SoldOut",
     url,
   },
   {
@@ -49,7 +49,7 @@ const offersFor = (url: string) => [
     name: "정상가 (1일권)",
     price: "50000",
     priceCurrency: "KRW",
-    availability: "https://schema.org/InStock",
+    availability: "https://schema.org/SoldOut",
     url,
   },
 ];
