@@ -114,8 +114,8 @@ export default function AnimalTest({
               <>
                 <p className={styles.pageLead}>
                   내 작업 스타일은 어떤 동물과 닮았을까? 간단한 테스트로 나의
-                  &lsquo;크리에이티브 온도&rsquo;를 알아보고, 다른 디자이너들의
-                  리얼한 속마음도 엿보세요!
+                  &lsquo;크리에이티브 온도&rsquo;를 측정하고, 다른 디자이너들의
+                  리얼한 속마음도 알아보세요!
                 </p>
               </>
             )}
