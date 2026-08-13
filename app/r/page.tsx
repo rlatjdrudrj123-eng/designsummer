@@ -14,6 +14,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   ANIMALS,
+  KPRINT_REGISTER_URL,
   SECTIONS,
   SWAN,
   TEST_COPY,
@@ -22,7 +23,6 @@ import {
 } from "@/lib/animalTest";
 import { auraSpeakersByDayWith } from "@/lib/auraContent";
 import { getAuraOverrides } from "@/lib/auraOverrides";
-import { siteContent } from "@/lib/content";
 import CtaStrip from "./CtaStrip";
 import styles from "./page.module.css";
 
@@ -175,7 +175,7 @@ export default async function ResultPage({
             <p className={styles.gapText}>{animal.gap}</p>
             <CtaStrip
               className={styles.gapCta}
-              href={siteContent.applyUrl}
+              href={KPRINT_REGISTER_URL}
               animalId={animal.id}
               section="K"
             >

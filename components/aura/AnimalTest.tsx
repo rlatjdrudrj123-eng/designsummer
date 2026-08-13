@@ -17,8 +17,8 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import styles from "./AnimalTest.module.css";
 import Reveal from "@/components/develop/Reveal";
-import { siteContent } from "@/lib/content";
 import {
+  KPRINT_REGISTER_URL,
   QUESTIONS,
   scoreTest,
   SURVEY_QUESTIONS,
@@ -755,7 +755,7 @@ function TestModal({ onClose }: { onClose: () => void }) {
               <p className={styles.gapText}>{result.gap}</p>
               <a
                 className={styles.gapCta}
-                href={siteContent.applyUrl}
+                href={KPRINT_REGISTER_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 // 외부 이동이라 sendBeacon 우선(track 내부) — fire-and-forget.

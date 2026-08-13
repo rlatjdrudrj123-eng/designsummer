@@ -24,6 +24,10 @@ export type ScoredAnimalId = Exclude<AnimalId, "swan">;
    각 동물은 자신의 '추천 섹션'(section)을 가진다 — 그 동물의 결핍을 채워줄 곳.
    결과 CTA는 이 추천 섹션으로 바로 보낸다("부족한 1%"를 채우는 컨셉).
    백조도 section 을 가져 동일 패턴. */
+/** K-PRINT 2026 참관 사전등록 — 결과 CTA·전용 페이지 하단 버튼 공용. */
+export const KPRINT_REGISTER_URL =
+  "https://kprint.kr/ko/visitor/pre-registration/step1?utm_source=designsummer&utm_medium=button&utm_campaign=5bzr1r_46247_register";
+
 export const SECTIONS = {
   A: {
     key: "section A",

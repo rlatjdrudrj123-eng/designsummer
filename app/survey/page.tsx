@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import AnimalTest from "@/components/aura/AnimalTest";
 import { getTeaserPolls } from "@/lib/testStats";
-import { siteContent } from "@/lib/content";
+import { KPRINT_REGISTER_URL } from "@/lib/animalTest";
 import styles from "./page.module.css";
 
 /* /survey — 동물상 테스트 전용 페이지(뉴스레터 랜딩).
@@ -38,7 +38,7 @@ export default async function SurveyPage() {
           디자인 썸머 일산 바로가기 <span aria-hidden="true">→</span>
         </Link>
         <a
-          href={siteContent.applyUrl}
+          href={KPRINT_REGISTER_URL}
           target="_blank"
           rel="noopener noreferrer"
           className={`${styles.footBtn} ${styles.footBtnAlt}`}
