@@ -115,8 +115,29 @@
   font-weight: 800;
   color: var(--heat-core);
 }
+/* 이벤트 참여 방법 — 번호 매긴 2단계. */
+.couponSteps {
+  margin: 10px 0 0;
+  padding-left: 1.15em;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.35vw, 17px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--t-ink);
+}
+.couponSteps li::marker {
+  color: var(--heat-main);
+  font-weight: 800;
+}
+.couponSteps a {
+  color: var(--heat-core);
+  text-underline-offset: 3px;
+}
 .couponSub {
-  margin: 5px 0 0;
+  margin: 10px 0 0;
   font-family: var(--font-kr);
   font-size: clamp(12px, 1.15vw, 14px);
   font-weight: 500;
@@ -1411,4 +1432,35 @@
   .result {
     animation: none;
   }
+}
+
+/* 휴대폰 입력 아래 안내 — 참관등록 시 동일 번호 사용 요청. */
+.contactNote {
+  margin: -4px 0 2px;
+  font-family: var(--font-kr);
+  font-size: clamp(12px, 1.1vw, 13.5px);
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: -0.01em;
+  color: var(--t-muted);
+  word-break: keep-all;
+}
+.contactInput[aria-invalid="true"] {
+  border-color: var(--heat-core);
+}
+
+/* 결과 CTA 블록 — 쿠폰 조건 리드(참관등록 앞). */
+.gapLead {
+  margin: 8px 0 0;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.3vw, 16px);
+  font-weight: 500;
+  line-height: 1.55;
+  letter-spacing: -0.02em;
+  color: var(--t-body);
+  word-break: keep-all;
+}
+.gapLead b {
+  font-weight: 800;
+  color: var(--heat-core);
 }

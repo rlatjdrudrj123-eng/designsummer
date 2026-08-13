@@ -138,7 +138,7 @@ export default function AnimalTest({
           </div>
         </div>
 
-        {/* ── 커피 쿠폰 배너(전용 페이지) — 참여 유인을 크게. ─────────────── */}
+        {/* ── 이벤트 참여 방법(전용 페이지) — 쿠폰 조건 2단계. ─────────────── */}
         {variant === "page" && (
           <div className={styles.couponBanner}>
             <span className={styles.couponIcon} aria-hidden="true">
@@ -146,10 +146,24 @@ export default function AnimalTest({
             </span>
             <div className={styles.couponText}>
               <p className={styles.couponHead}>
-                테스트를 끝까지 마친 분들께는 시원한 <b>커피 쿠폰</b>을 쏩니다!
+                이벤트 참여 방법 — 두 단계를 모두 마치면 <b>커피 쿠폰</b>을
+                쏩니다!
               </p>
+              <ol className={styles.couponSteps}>
+                <li>나의 크리에이티브 온도 측정하기</li>
+                <li>
+                  <a
+                    href={KPRINT_REGISTER_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    K-PRINT 전시회 사전등록하기
+                  </a>
+                </li>
+              </ol>
               <p className={styles.couponSub}>
-                결과 페이지에 남겨주신 연락처로 순차 발송해 드려요
+                테스트에 남겨주신 번호와 <b>같은 번호</b>로 참관등록하시면
+                순차 발송해 드려요
               </p>
             </div>
           </div>
@@ -325,11 +339,21 @@ function TestModal({ onClose }: { onClose: () => void }) {
     if (step + 1 < STEPS.length) setStep(step + 1);
   };
 
+  /* 휴대폰 입력 — 숫자만 받고 010-1234-5678 형태로 자동 하이픈. */
+  const formatPhone = (raw: string) => {
+    const d = raw.replace(/\D/g, "").slice(0, 11);
+    if (d.length < 4) return d;
+    if (d.length < 8) return `${d.slice(0, 3)}-${d.slice(3)}`;
+    // 10자리(011-123-4567) / 11자리(010-1234-5678) 모두 대응
+    if (d.length === 10) return `${d.slice(0, 3)}-${d.slice(3, 6)}-${d.slice(6)}`;
+    return `${d.slice(0, 3)}-${d.slice(3, 7)}-${d.slice(7)}`;
+  };
+  // 한국 휴대폰 번호(010/011/016/017/018/019).
+  const PHONE_RE = /^01[016789]-\d{3,4}-\d{4}$/;
+  const phoneValid = PHONE_RE.test(contactPhone);
+
   // 연락처 제출(마지막 스텝) — 이름·휴대폰·동의 모두 유효할 때만.
-  const contactValid =
-    contactName.trim().length > 0 &&
-    contactPhone.replace(/\D/g, "").length >= 9 &&
-    consent;
+  const contactValid = contactName.trim().length > 0 && phoneValid && consent;
   const submitContact = () => {
     if (!contactValid) return;
     finish(surveyAnswers, answers, {
@@ -521,11 +545,17 @@ function TestModal({ onClose }: { onClose: () => void }) {
                   <input
                     className={styles.contactInput}
                     type="tel"
-                    placeholder="휴대폰번호"
+                    inputMode="numeric"
+                    autoComplete="tel"
+                    placeholder="휴대폰번호 (숫자만 입력)"
                     value={contactPhone}
-                    onChange={(e) => setContactPhone(e.target.value)}
-                    maxLength={20}
+                    onChange={(e) => setContactPhone(formatPhone(e.target.value))}
+                    maxLength={13}
+                    aria-invalid={contactPhone.length > 0 && !phoneValid}
                   />
+                  <p className={styles.contactNote}>
+                    K-PRINT 전시회 참관등록 시 같은 휴대폰 번호를 입력해주세요
+                  </p>
                   <label className={styles.consentRow}>
                     <input
                       type="checkbox"
@@ -797,12 +827,16 @@ function TestModal({ onClose }: { onClose: () => void }) {
               </div>
             </div>
 
-            {/* "부족한 1%" — 결핍 문구 + K-PRINT 전시 참관 유도(세미나 신청 마감). */}
+            {/* "부족한 1%" — 쿠폰 조건(참관등록)을 앞세우고 결핍 문구는 아래로. */}
             <div className={styles.gapBlock}>
               <p className={styles.gapTitle}>
-                <span aria-hidden="true">🎟️</span> {TEST_COPY.gapTitle}
+                <span aria-hidden="true">☕</span> 커피 쿠폰, 마지막 단계가
+                남았어요
               </p>
-              <p className={styles.gapText}>{result.gap}</p>
+              <p className={styles.gapLead}>
+                K-PRINT 전시회 참관등록까지 마치셔야 기프티콘이 발송됩니다.
+                <b> 방금 남겨주신 번호와 같은 번호</b>로 등록해 주세요.
+              </p>
               <a
                 className={styles.gapCta}
                 href={KPRINT_REGISTER_URL}
@@ -814,6 +848,9 @@ function TestModal({ onClose }: { onClose: () => void }) {
                 8.19–8.22 KINTEX · K-PRINT 2026 참관등록 바로가기{" "}
                 <span aria-hidden="true">→</span>
               </a>
+              <p className={styles.gapText}>
+                <b>{TEST_COPY.gapTitle}</b> — {result.gap}
+              </p>
             </div>
 
             {toast && (
