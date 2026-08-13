@@ -118,9 +118,7 @@ export default function AnimalTest({
         <div className={styles.entry}>
           <div className={styles.entryText}>
             {variant === "page" && (
-              <p className={styles.pageKicker}>
-                디자인 썸머 일산 · 크리에이티브 성향 분석
-              </p>
+              <p className={styles.pageKicker}>디자이너 동물상 테스트</p>
             )}
             <h2 id="animaltest-heading" className={styles.title}>
               당신의 크리에이티브, 지금 몇 도?
@@ -129,9 +127,8 @@ export default function AnimalTest({
             {variant === "page" && (
               <>
                 <p className={styles.pageLead}>
-                  동물상으로 알아보는 내 작업온도.
-                  <br />
-                  현직 디자이너들이 증명한 리얼 데이터 기반 성향 테스트입니다.
+                  질문에 답하면 나의 작업 온도와 동물상이 나옵니다. 지금까지
+                  참여한 디자이너들의 실제 응답과도 비교해 보세요.
                 </p>
                 <p className={styles.coupon}>
                   <span aria-hidden="true">☕</span> 참여하고 <b>커피 쿠폰</b>{" "}

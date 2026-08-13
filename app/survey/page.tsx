@@ -26,7 +26,6 @@ export default async function SurveyPage() {
         <Link href="/" className={styles.brand}>
           디자인 썸머 일산
         </Link>
-        <span className={styles.eyebrow}>creative thermometer</span>
       </header>
 
       <div className={styles.body}>
@@ -34,9 +33,11 @@ export default async function SurveyPage() {
       </div>
 
       <footer className={styles.foot}>
-        <span>K-PRINT 2026 · 디자인 썸머 일산</span>
+        <p className={styles.footText}>
+          디자인 썸머 일산은 2026 K-PRINT와 함께 열렸습니다.
+        </p>
         <Link href="/" className={styles.footLink}>
-          행사 페이지 보기 →
+          행사 다시 보기 →
         </Link>
       </footer>
     </main>

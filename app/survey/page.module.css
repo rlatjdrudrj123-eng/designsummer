@@ -8,12 +8,7 @@
 }
 
 .head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 16px;
   padding: clamp(20px, 3vh, 34px) clamp(20px, 5vw, 64px);
-  border-bottom: 1px solid var(--t-line);
 }
 .brand {
   font-family: "omnigothic", var(--font-kr);
@@ -22,14 +17,6 @@
   letter-spacing: -0.02em;
   color: var(--t-ink);
   text-decoration: none;
-}
-.eyebrow {
-  font-family: var(--font-en, var(--font-kr));
-  font-size: clamp(11px, 1.1vw, 13px);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--heat-main);
 }
 
 /* AnimalTest 섹션이 자체 패딩을 가지므로 여기선 세로 중앙 정렬만. */
@@ -40,24 +27,34 @@
   justify-content: center;
 }
 
+/* 하단 — 우하단에 링크만 붙이지 않고, 한 문장 + 링크를 좌측에 나란히. */
 .foot {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  align-items: baseline;
+  gap: clamp(10px, 1.6vw, 18px);
   flex-wrap: wrap;
-  padding: clamp(18px, 2.5vh, 28px) clamp(20px, 5vw, 64px);
+  padding: clamp(24px, 4vh, 44px) clamp(20px, 5vw, 64px)
+    clamp(30px, 5vh, 56px);
   border-top: 1px solid var(--t-line);
+}
+.footText {
+  margin: 0;
   font-family: var(--font-kr);
-  font-size: clamp(12px, 1.15vw, 14px);
-  color: var(--t-muted);
+  font-size: clamp(14px, 1.35vw, 17px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--t-body);
+  word-break: keep-all;
 }
 .footLink {
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.35vw, 17px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--heat-main);
-  font-weight: 700;
   text-decoration: none;
 }
 .footLink:hover {
   text-decoration: underline;
-  text-underline-offset: 3px;
+  text-underline-offset: 4px;
 }
