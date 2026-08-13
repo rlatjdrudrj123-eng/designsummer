@@ -19,6 +19,7 @@ import styles from "./AnimalTest.module.css";
 import Reveal from "@/components/develop/Reveal";
 import { siteContent } from "@/lib/content";
 import {
+  ANIMALS,
   QUESTIONS,
   scoreTest,
   SURVEY_QUESTIONS,
@@ -70,6 +71,16 @@ const STEPS: QuizStep[] = [
 
 const PRIVACY_URL = "https://kprint.kr/ko/term/personal";
 
+/* 전용 페이지 9종 미리보기 — 온도 오름차순. 이름은 마지막 단어(동물명)만 짧게. */
+const ANIMAL_PREVIEW = Object.values(ANIMALS)
+  .slice()
+  .sort((a, b) => a.temp - b.temp)
+  .map((a) => ({
+    id: a.id,
+    tempLabel: a.tempLabel,
+    short: a.name.split(" ").slice(-1)[0],
+  }));
+
 /* 진입부 미리보기 폴 — 서버(lib/testStats)가 Firestore 응답 분포에서 산출해 내려줌.
    문항·보기 텍스트는 테스트 원문 그대로, 응답률(%)만 라이브. 참여자 수는 비노출. */
 export type TeaserPoll = {
@@ -79,8 +90,11 @@ export type TeaserPoll = {
 
 export default function AnimalTest({
   polls = null,
+  variant = "section",
 }: {
   polls?: TeaserPoll[] | null;
+  /** section = 홈 섹션(기본), page = /survey 전용 페이지 히어로 */
+  variant?: "section" | "page";
 }) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -103,9 +117,29 @@ export default function AnimalTest({
         {/* ── 진입 요소: 텍스트(좌) + 끓는 열덩이(우) ─────────────────────── */}
         <div className={styles.entry}>
           <div className={styles.entryText}>
+            {variant === "page" && (
+              <p className={styles.pageKicker}>
+                디자인 썸머 일산 · 크리에이티브 성향 분석
+              </p>
+            )}
             <h2 id="animaltest-heading" className={styles.title}>
               당신의 크리에이티브, 지금 몇 도?
             </h2>
+
+            {variant === "page" && (
+              <>
+                <p className={styles.pageLead}>
+                  동물상으로 알아보는 내 작업온도.
+                  <br />
+                  현직 디자이너들이 증명한 리얼 데이터 기반 성향 테스트입니다.
+                </p>
+                <p className={styles.coupon}>
+                  <span aria-hidden="true">☕</span> 참여하고 <b>커피 쿠폰</b>{" "}
+                  받아가세요
+                </p>
+              </>
+            )}
+
             <button
               ref={triggerRef}
               type="button"
@@ -114,6 +148,12 @@ export default function AnimalTest({
             >
               내 온도 알아보기 <span aria-hidden="true">→</span>
             </button>
+
+            {variant === "page" && (
+              <p className={styles.pageMeta}>
+                총 {STEPS.length}문항 · 1분이면 끝 · 결과는 바로 확인
+              </p>
+            )}
           </div>
 
           <div className={styles.entryVisual} aria-hidden="true">
@@ -122,6 +162,37 @@ export default function AnimalTest({
             </span>
           </div>
         </div>
+
+        {/* ── 9종 미리보기(전용 페이지) — "나는 뭐가 나올까" 궁금증 유발 ──── */}
+        {variant === "page" && (
+          <div className={styles.lineup}>
+            <p className={styles.lineupTitle}>
+              9가지 디자이너 유형 <span>+ 히든 1종</span>
+            </p>
+            <ul className={styles.lineupGrid}>
+              {ANIMAL_PREVIEW.map((a) => (
+                <li key={a.id} className={styles.lineupItem}>
+                  <Image
+                    src={`/animals/${a.id}.png`}
+                    alt=""
+                    width={120}
+                    height={120}
+                    className={styles.lineupImg}
+                  />
+                  <span className={styles.lineupName}>{a.short}</span>
+                  <span className={styles.lineupTemp}>{a.tempLabel}°C</span>
+                </li>
+              ))}
+              <li className={`${styles.lineupItem} ${styles.lineupHidden}`}>
+                <span className={styles.lineupQ} aria-hidden="true">
+                  ?
+                </span>
+                <span className={styles.lineupName}>히든 유형</span>
+                <span className={styles.lineupTemp}>???</span>
+              </li>
+            </ul>
+          </div>
+        )}
 
         {/* ── 미리보기 폴 — 실제 문항 + 실시간 응답률(숫자만 라이브) ────────── */}
         {polls && polls.length > 0 && (

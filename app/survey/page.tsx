@@ -30,7 +30,7 @@ export default async function SurveyPage() {
       </header>
 
       <div className={styles.body}>
-        <AnimalTest polls={polls} />
+        <AnimalTest polls={polls} variant="page" />
       </div>
 
       <footer className={styles.foot}>
