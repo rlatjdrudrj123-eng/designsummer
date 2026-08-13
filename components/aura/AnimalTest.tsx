@@ -374,12 +374,9 @@ function TestModal({ onClose }: { onClose: () => void }) {
   if (!mounted) return null;
 
   return createPortal(
-    <div
-      className={styles.scrim}
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
+    // 배경(스크림) 클릭으로는 닫지 않는다 — 13스텝 진행 중 실수 클릭 한 번에
+    // 답이 날아가는 사고 방지. 닫기는 X 버튼·ESC 로만.
+    <div className={styles.scrim}>
       <div
         ref={dialogRef}
         className={styles.dialog}
