@@ -493,15 +493,19 @@
 }
 .question {
   margin: 0;
-  font-family: "omnigothic", var(--font-kr);
+  /* 본문 서체(Pretendard) 고정 — 디스플레이 서체(omnigothic)는 Typekit JS 로
+     비동기 로드라 문항이 1~2초 뒤 바뀌는 폰트 스왑이 보였다. 문항은 본문 성격. */
+  font-family: var(--font-kr);
   /* 설문 문항처럼 긴 질문도 있으므로 줄바꿈을 허용한다(nowrap 금지 — 모달을
      밀어내 가로 스크롤이 생겼던 원인). 어절 단위로만 끊기게 keep-all. */
   font-size: clamp(16px, 1.9vw, 21px);
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.4;
   word-break: keep-all;
   overflow-wrap: anywhere;
+  /* 문항 텍스트의 \n 을 줄바꿈으로 살린다(설문 문항 가독성). */
+  white-space: pre-line;
   color: var(--t-ink);
 }
 .choices {
