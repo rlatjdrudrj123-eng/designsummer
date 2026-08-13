@@ -2,6 +2,7 @@ import styles from "./Timetable.module.css";
 import Reveal from "@/components/develop/Reveal";
 import { conference } from "@/lib/conference";
 import { type Speaker } from "@/lib/content";
+import { KPRINT_REGISTER_URL } from "@/lib/animalTest";
 
 /* 타임테이블 (Aura 전용 포크) — 하나의 통합 표.
    (forked from components/aura1/Timetable.tsx — independent of /aura1.)
@@ -28,10 +29,6 @@ export default function Timetable({
     sp ? [sp.name, sp.role].filter(Boolean).join(" ") : "";
   // 컬럼 헤더 컨셉 라벨(개요와 동일 소스): "creative day" / "craft day".
   const [ov1, ov2] = conference.overview.days;
-  // 일자별 사전등록 URL(히어로 register 와 동일 소스).
-  const reg = conference.hero.register;
-  const url1 = reg.find((r) => r.day === 1)?.url ?? reg[0].url;
-  const url2 = reg.find((r) => r.day === 2)?.url ?? reg[1].url;
 
   // 두 날의 rows 는 동일한 time 슬롯을 공유한다 → time 기준으로 병합.
   // 중간 브레이크(14:40-14:50) 행은 표에서 숨긴다(클라이언트 요청). 데이터는 유지.
@@ -142,27 +139,20 @@ export default function Timetable({
             );
           })}
 
-          {/* 표 맨 아래 CTA 행 — 일자별 신청하기(day1·day2 컬럼에 각각). */}
+          {/* 표 맨 아래 CTA 행 — 세미나 사전등록 마감. K-PRINT 참관등록으로 유도. */}
           <div className={`${styles.row} ${styles.ctaRow}`} role="row">
             <span className={styles.time} role="cell" aria-hidden="true" />
             <span className={styles.ctaCell} role="cell">
-              <a
-                className={styles.cta}
-                href={url1}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span>section A 신청하기</span>
-              </a>
+              <span className={styles.ctaClosed}>사전등록 마감</span>
             </span>
             <span className={styles.ctaCell} role="cell">
               <a
                 className={styles.cta}
-                href={url2}
+                href={KPRINT_REGISTER_URL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <span>section B 신청하기</span>
+                <span>K-PRINT 2026 참관등록</span>
               </a>
             </span>
           </div>

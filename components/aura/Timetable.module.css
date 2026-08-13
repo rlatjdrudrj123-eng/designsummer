@@ -319,3 +319,14 @@
 @media (prefers-reduced-motion: reduce) {
   /* 정적 표 — 별도 모션 없음. */
 }
+
+/* 표 하단 CTA 행 — 마감된 섹션 자리(비활성 텍스트). */
+.ctaClosed {
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.15vw, 16px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: color-mix(in srgb, var(--ink) 45%, transparent);
+}

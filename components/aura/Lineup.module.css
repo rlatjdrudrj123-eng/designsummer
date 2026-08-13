@@ -626,3 +626,20 @@
     transform: none;
   }
 }
+
+/* 세미나 사전등록 마감 안내 — 섹션별 CTA 위 보조 문구. */
+.dayClosed {
+  position: relative;
+  z-index: 1;
+  margin: clamp(22px, 3.2vh, 34px) 0 0;
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.25vw, 16px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: color-mix(in srgb, var(--ink) 58%, transparent);
+  word-break: keep-all;
+}
+/* 마감 안내 바로 아래 오는 CTA 는 위 여백을 줄여 한 덩어리로 읽히게. */
+.dayClosed + .dayCtaLink {
+  margin-top: clamp(8px, 1.2vh, 12px);
+}

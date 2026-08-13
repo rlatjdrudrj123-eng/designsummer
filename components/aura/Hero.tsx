@@ -2,8 +2,8 @@ import styles from "./Hero.module.css";
 import HeatBlob from "@/components/develop/HeatBlob";
 import { sairaCondensed } from "@/components/develop/developFont";
 import { type Lang } from "@/components/develop/developEn";
-import { conference } from "@/components/develop/conference";
 import { imageUrl } from "@/lib/images";
+import { KPRINT_REGISTER_URL } from "@/lib/animalTest";
 
 /* 히어로 메타 고정값 — KV 우-중앙 클러스터의 날짜·장소 두 줄.
    메인 `/` 히어로(components/aura/Hero.tsx)의 .venueMeta/.metaLine 트리트먼트를
@@ -34,10 +34,7 @@ const HERO_VENUE = "KINTEX 제2전시장";
    유지: 아령 HeatBlob · 페이퍼 그레인 · 좌측 소문자 태그라인 · 따뜻한 솔리드 CTA. */
 export default function Hero({ lang = "ko" }: { lang?: Lang }) {
   const en = lang === "en";
-  const { register } = conference.hero;
   const logoSrc = imageUrl("kprint-logo");
-  // 사전등록 라벨에서 " (8.20 목)" / " (8.21 금)" 괄호(날짜·요일) 제거.
-  const stripParen = (label: string) => label.replace(/\s*\(.*?\)\s*$/, "");
 
   return (
     <section id="top" className={styles.hero}>
@@ -101,20 +98,17 @@ export default function Hero({ lang = "ko" }: { lang?: Lang }) {
             <span className={styles.metaLine}>{HERO_VENUE}</span>
           </p>
 
-          {/* 일자별 사전등록 2버튼 — 타이틀 클러스터 흐름 안(날짜·장소 바로 아래),
-              우측 정렬. 히어로 맨 아래 절대배치였던 걸 클러스터로 끌어올림. */}
+          {/* 세미나 사전등록은 마감 — 마감 안내 + K-PRINT 참관등록으로 유도. */}
           <div className={styles.register}>
-            {register.map((r) => (
-              <a
-                key={r.day}
-                className={styles.regBtn}
-                href={r.url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span>{stripParen(r.label)}</span>
-              </a>
-            ))}
+            <p className={styles.closed}>세미나 사전등록이 마감되었습니다</p>
+            <a
+              className={styles.regBtn}
+              href={KPRINT_REGISTER_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span>K-PRINT 2026 참관등록</span>
+            </a>
           </div>
         </div>
       </div>

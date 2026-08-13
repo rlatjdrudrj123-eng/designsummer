@@ -285,10 +285,21 @@
      하단 절대배치라 너무 아래에 떨어져 있었음). */
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: flex-end;
   gap: clamp(10px, 1vw, 14px);
   /* 날짜·장소와 버튼 사이 간격을 더 키워 버튼을 조금 더 아래로. */
   margin-top: clamp(52px, 7.5vh, 96px);
+}
+/* 세미나 사전등록 마감 안내 — 참관등록 버튼 옆 보조 문구. */
+.closed {
+  margin: 0;
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.15vw, 15px);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+  word-break: keep-all;
 }
 .regBtn {
   display: inline-flex;

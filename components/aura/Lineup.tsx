@@ -29,6 +29,7 @@ import Reveal from "@/components/develop/Reveal";
 import { type Speaker } from "@/lib/content";
 import { imageUrl, workImages, type ImageMap } from "@/lib/images";
 import { conference } from "@/lib/conference";
+import { KPRINT_REGISTER_URL } from "@/lib/animalTest";
 
 type LightboxState = { src: string; alt: string } | null;
 
@@ -253,10 +254,6 @@ export default function Lineup({
   const aud = day === 1 ? conference.audience.day1 : conference.audience.day2;
   // 머리말 라벨: "section A" — creative/craft 컨셉 폐기, 섹션 표기만(클라이언트 요청).
   const section = day === 1 ? "A" : "B";
-  // 그 날의 사전등록 URL(히어로 register 와 동일 소스).
-  const dayUrl =
-    conference.hero.register.find((r) => r.day === day)?.url ??
-    conference.hero.register[0].url;
   // 추천 대상 항목 — "역할 : 설명" 형식이면 첫 ' : ' 로 분리해 역할을 소제목처럼.
   const audItems = (aud.items as ReadonlyArray<string>).map((raw) => {
     const idx = raw.indexOf(" : ");
@@ -298,14 +295,17 @@ export default function Lineup({
           </ul>
         </div>
 
-        {/* 신청 — 박스 없이 좌정렬 텍스트 링크, 연사 카드 위(클라이언트 요청). */}
+        {/* 세미나 사전등록 마감 — 안내 후 K-PRINT 참관등록으로 유도. */}
+        <p className={styles.dayClosed}>
+          section {section} 사전등록이 마감되었습니다
+        </p>
         <a
           className={styles.dayCtaLink}
-          href={dayUrl}
+          href={KPRINT_REGISTER_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
-          section {section} 신청하기
+          K-PRINT 2026 참관등록
           <span aria-hidden="true" className={styles.dayCtaArrow}>
             ↗
           </span>
@@ -324,11 +324,11 @@ export default function Lineup({
       <div className={styles.dayCtaBottom}>
         <a
           className={styles.dayCtaLink}
-          href={dayUrl}
+          href={KPRINT_REGISTER_URL}
           target="_blank"
           rel="noopener noreferrer"
         >
-          section {section} 신청하기
+          K-PRINT 2026 참관등록
           <span aria-hidden="true" className={styles.dayCtaArrow}>
             ↗
           </span>
