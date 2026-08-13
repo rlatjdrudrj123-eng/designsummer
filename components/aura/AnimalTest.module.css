@@ -82,68 +82,110 @@
   word-break: keep-all;
 }
 
-/* ── 커피 쿠폰 배너(전용 페이지) — 참여 유인을 크게. ── */
-.couponBanner {
-  margin-top: clamp(26px, 4.5vh, 46px);
+/* ── 이벤트 참여 방법(전용 페이지) — 미션 2개 카드 ────────────────────── */
+.mission {
+  margin-top: clamp(28px, 4.5vh, 48px);
+  padding: clamp(22px, 3vw, 32px) clamp(22px, 3vw, 34px);
+  border-radius: 18px;
+  border: 1px solid color-mix(in srgb, var(--heat-main) 26%, transparent);
+  background: color-mix(in srgb, var(--heat-main) 5%, transparent);
+}
+.missionHead {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: clamp(12px, 1.6vw, 18px);
-  padding: clamp(16px, 2.2vw, 24px) clamp(18px, 2.6vw, 28px);
-  border-radius: 16px;
-  border: 1px solid color-mix(in srgb, var(--heat-main) 34%, transparent);
-  background: color-mix(in srgb, var(--heat-main) 7%, transparent);
-  color: var(--t-ink);
+  gap: clamp(10px, 1.4vw, 14px);
 }
-.couponIcon {
-  font-size: clamp(22px, 2.4vw, 30px);
-  line-height: 1;
+.missionBadge {
   flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--heat-main);
+  color: #fff3e8;
+  font-family: var(--font-kr);
+  font-size: clamp(12px, 1.1vw, 14px);
+  font-weight: 800;
+  letter-spacing: -0.01em;
 }
-.couponText {
-  min-width: 0;
-}
-.couponHead {
+.missionTitle {
   margin: 0;
   font-family: var(--font-kr);
-  font-size: clamp(15px, 1.5vw, 19px);
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.4;
+  font-size: clamp(16px, 1.7vw, 21px);
+  font-weight: 700;
+  letter-spacing: -0.025em;
+  color: var(--t-ink);
   word-break: keep-all;
 }
-.couponHead b {
+.missionTitle b {
   font-weight: 800;
   color: var(--heat-core);
 }
-/* 이벤트 참여 방법 — 번호 매긴 2단계. */
-.couponSteps {
-  margin: 10px 0 0;
-  padding-left: 1.15em;
+
+/* 미션 2개 — 데스크톱 가로 2단, 모바일 세로. */
+.missionList {
+  margin: clamp(16px, 2.4vh, 22px) 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(10px, 1.4vw, 16px);
+}
+.missionItem {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  gap: clamp(10px, 1.2vw, 14px);
+  padding: clamp(14px, 1.8vw, 20px) clamp(14px, 1.8vw, 20px);
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid color-mix(in srgb, var(--heat-main) 16%, transparent);
+}
+.missionNo {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: clamp(28px, 2.6vw, 34px);
+  height: clamp(28px, 2.6vw, 34px);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--heat-main) 14%, transparent);
+  color: var(--heat-core);
   font-family: var(--font-kr);
-  font-size: clamp(14px, 1.35vw, 17px);
+  font-size: clamp(14px, 1.3vw, 17px);
+  font-weight: 800;
+}
+.missionLabel {
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.4vw, 17px);
   font-weight: 700;
   letter-spacing: -0.02em;
+  line-height: 1.4;
   color: var(--t-ink);
+  word-break: keep-all;
+  text-decoration: none;
 }
-.couponSteps li::marker {
-  color: var(--heat-main);
-  font-weight: 800;
-}
-.couponSteps a {
+.missionLink {
   color: var(--heat-core);
+}
+.missionLink:hover {
+  text-decoration: underline;
   text-underline-offset: 3px;
 }
-.couponSub {
-  margin: 10px 0 0;
+
+/* 동일 번호 안내 — 구분선 아래 한 줄. */
+.missionNote {
+  margin: clamp(14px, 2vh, 18px) 0 0;
+  padding-top: clamp(12px, 1.8vh, 16px);
+  border-top: 1px solid color-mix(in srgb, var(--ink) 10%, transparent);
   font-family: var(--font-kr);
-  font-size: clamp(12px, 1.15vw, 14px);
+  font-size: clamp(13px, 1.2vw, 15px);
   font-weight: 500;
+  line-height: 1.5;
   letter-spacing: -0.02em;
-  color: var(--t-muted);
+  color: var(--t-body);
   word-break: keep-all;
+}
+.missionNote b {
+  font-weight: 800;
+  color: var(--heat-core);
 }
 
 /* ── 미리보기 폴(진입부 아래) — 실제 문항 + 실시간 응답률 ── */
@@ -1317,8 +1359,8 @@
     order: 1;
     align-self: flex-start;
   }
-  .couponBanner {
-    align-items: flex-start;
+  .missionList {
+    grid-template-columns: 1fr;
   }
   .entryVisual {
     order: 2;
@@ -1434,16 +1476,40 @@
   }
 }
 
-/* 휴대폰 입력 아래 안내 — 참관등록 시 동일 번호 사용 요청. */
+/* 휴대폰 입력 아래 안내 — 쿠폰 발송 조건이라 눈에 띄게 강조. */
 .contactNote {
-  margin: -4px 0 2px;
+  margin: 2px 0 4px;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: clamp(11px, 1.4vw, 14px) clamp(12px, 1.5vw, 16px);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--heat-main) 9%, transparent);
   font-family: var(--font-kr);
-  font-size: clamp(12px, 1.1vw, 13.5px);
-  font-weight: 500;
-  line-height: 1.45;
-  letter-spacing: -0.01em;
-  color: var(--t-muted);
+  font-size: clamp(13.5px, 1.3vw, 16px);
+  font-weight: 600;
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+  color: var(--t-ink);
   word-break: keep-all;
+}
+.contactNote b {
+  font-weight: 800;
+  color: var(--heat-core);
+}
+.contactNoteIcon {
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  border-radius: 50%;
+  background: var(--heat-main);
+  color: #fff3e8;
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1;
 }
 .contactInput[aria-invalid="true"] {
   border-color: var(--heat-core);

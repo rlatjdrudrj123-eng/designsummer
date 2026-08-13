@@ -140,35 +140,46 @@ export default function AnimalTest({
           </div>
         </div>
 
-        {/* ── 이벤트 참여 방법(전용 페이지) — 쿠폰 조건 2단계. ─────────────── */}
+        {/* ── 이벤트 참여 방법(전용 페이지) — 미션 2개를 카드로 명확하게. ──── */}
         {variant === "page" && (
-          <div className={styles.couponBanner}>
-            <span className={styles.couponIcon} aria-hidden="true">
-              ☕
-            </span>
-            <div className={styles.couponText}>
-              <p className={styles.couponHead}>
-                이벤트 참여 방법 — 두 단계를 모두 마치면 <b>커피 쿠폰</b>을
-                쏩니다!
+          <section className={styles.mission} aria-label="이벤트 참여 방법">
+            <header className={styles.missionHead}>
+              <span className={styles.missionBadge}>이벤트 참여 방법</span>
+              <p className={styles.missionTitle}>
+                두 가지 미션을 완료하고 <b>커피 쿠폰</b> 받기!
               </p>
-              <ol className={styles.couponSteps}>
-                <li>나의 크리에이티브 온도 측정하기</li>
-                <li>
-                  <a
-                    href={KPRINT_REGISTER_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    K-PRINT 전시회 사전등록하기
-                  </a>
-                </li>
-              </ol>
-              <p className={styles.couponSub}>
-                테스트에 남겨주신 번호와 <b>같은 번호</b>로 참관등록하시면
-                순차 발송해 드려요
-              </p>
-            </div>
-          </div>
+            </header>
+
+            <ol className={styles.missionList}>
+              <li className={styles.missionItem}>
+                <span className={styles.missionNo} aria-hidden="true">
+                  1
+                </span>
+                <span className={styles.missionLabel}>
+                  나의 크리에이티브 온도 측정하기
+                </span>
+              </li>
+              <li className={styles.missionItem}>
+                <span className={styles.missionNo} aria-hidden="true">
+                  2
+                </span>
+                <a
+                  className={`${styles.missionLabel} ${styles.missionLink}`}
+                  href={KPRINT_REGISTER_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  K-PRINT 전시회 사전등록하기
+                  <span aria-hidden="true"> →</span>
+                </a>
+              </li>
+            </ol>
+
+            <p className={styles.missionNote}>
+              테스트와 사전등록 시 <b>동일한 휴대폰 번호</b>를 입력하셔야 쿠폰이
+              발송됩니다.
+            </p>
+          </section>
         )}
 
         {/* ── 미리보기 폴 — 실제 문항 + 실시간 응답률(숫자만 라이브) ────────── */}
@@ -565,7 +576,11 @@ function TestModal({
                     aria-invalid={contactPhone.length > 0 && !phoneValid}
                   />
                   <p className={styles.contactNote}>
-                    K-PRINT 전시회 참관등록 시 같은 휴대폰 번호를 입력해주세요
+                    <span className={styles.contactNoteIcon} aria-hidden="true">
+                      !
+                    </span>
+                    원활한 쿠폰 발송을 위해 <b>K-PRINT 사전등록 시와 동일한
+                    휴대폰 번호</b>를 입력해 주세요.
                   </p>
                   <label className={styles.consentRow}>
                     <input
