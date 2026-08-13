@@ -507,6 +507,55 @@
   vertical-align: middle;
   white-space: nowrap;
 }
+/* ── 연락처 스텝(커피 쿠폰) ── */
+.contactForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.contactInput {
+  width: 100%;
+  padding: clamp(13px, 1.7vh, 17px) clamp(15px, 1.9vw, 20px);
+  border-radius: 14px;
+  border: 1px solid var(--t-line);
+  background: color-mix(in srgb, #fff 55%, transparent);
+  font-family: var(--font-kr);
+  font-size: clamp(14px, 1.3vw, 16px);
+  color: var(--t-ink);
+  transition: border-color 0.18s ease;
+}
+.contactInput::placeholder {
+  color: var(--t-muted);
+}
+.contactInput:focus {
+  outline: none;
+  border-color: var(--heat-main);
+}
+.consentRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-family: var(--font-kr);
+  font-size: clamp(13px, 1.15vw, 15px);
+  line-height: 1.5;
+  color: var(--t-body);
+  cursor: pointer;
+}
+.consentRow input {
+  margin-top: 3px;
+  width: 17px;
+  height: 17px;
+  accent-color: var(--heat-main);
+  flex-shrink: 0;
+  cursor: pointer;
+}
+.consentRow a {
+  color: var(--heat-main);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* 공유(메인 CTA) — 결과 화면의 1순위 액션(신청 마감 이후). */
 .sharePrimary {
   display: inline-flex;

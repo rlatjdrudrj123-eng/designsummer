@@ -1,0 +1,63 @@
+/* /survey — 테스트 전용 페이지. 따뜻한 크림 그라운드 위에 진입 요소만 크게. */
+.page {
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  background: var(--surface, #fff3e8);
+  color: var(--t-ink);
+}
+
+.head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: clamp(20px, 3vh, 34px) clamp(20px, 5vw, 64px);
+  border-bottom: 1px solid var(--t-line);
+}
+.brand {
+  font-family: "omnigothic", var(--font-kr);
+  font-size: clamp(17px, 2vw, 22px);
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--t-ink);
+  text-decoration: none;
+}
+.eyebrow {
+  font-family: var(--font-en, var(--font-kr));
+  font-size: clamp(11px, 1.1vw, 13px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--heat-main);
+}
+
+/* AnimalTest 섹션이 자체 패딩을 가지므로 여기선 세로 중앙 정렬만. */
+.body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding: clamp(18px, 2.5vh, 28px) clamp(20px, 5vw, 64px);
+  border-top: 1px solid var(--t-line);
+  font-family: var(--font-kr);
+  font-size: clamp(12px, 1.15vw, 14px);
+  color: var(--t-muted);
+}
+.footLink {
+  color: var(--heat-main);
+  font-weight: 700;
+  text-decoration: none;
+}
+.footLink:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

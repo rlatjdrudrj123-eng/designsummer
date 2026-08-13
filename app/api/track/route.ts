@@ -38,6 +38,8 @@ type TrackBody = {
   section?: unknown;
   /* 비채점 설문(뉴스레터 설문판) — { field: number[], aware: number|null, interests: number[] } */
   survey?: unknown;
+  /* 커피 쿠폰 응모 — { name, phone, agreed } (동의 시에만 저장) */
+  contact?: unknown;
 };
 
 /* 설문 답 검증 — 옵션 범위 내 정수, 중복 제거, 최대 선택 수 캡. */
@@ -81,6 +83,8 @@ export async function POST(req: Request): Promise<Response> {
 
     // 응답 원본 1건(complete 시) — 교차 분석(예: 분야별 응답)용 responses 컬렉션.
     let responseDoc: Record<string, unknown> | null = null;
+    // 커피 쿠폰 응모자 — 개인정보라 통계 문서와 분리해 contacts 컬렉션에 저장.
+    let contactDoc: Record<string, unknown> | null = null;
 
     // v2 = 설문 개편(설문 3문항 추가) 이후 수집분 — 기존 루트 카운터(누적 전체)와
     // 같은 구조로 미러 저장해, 대시보드에서 개편 전/후를 구분해 본다.
@@ -191,6 +195,29 @@ export async function POST(req: Request): Promise<Response> {
             },
           };
         }
+
+        // 커피 쿠폰 응모 — 동의(agreed=true) + 이름·번호가 있을 때만 저장.
+        {
+          const c = body.contact as
+            | { name?: unknown; phone?: unknown; agreed?: unknown }
+            | null
+            | undefined;
+          if (c && typeof c === "object" && c.agreed === true) {
+            const name = typeof c.name === "string" ? c.name.trim().slice(0, 40) : "";
+            const phone =
+              typeof c.phone === "string" ? c.phone.trim().slice(0, 20) : "";
+            if (name && phone.replace(/\D/g, "").length >= 9) {
+              contactDoc = {
+                t: FieldValue.serverTimestamp(),
+                name,
+                phone,
+                agreed: true,
+                animalId: animalId ?? null,
+              };
+              updates.contacts = inc(); // 응모 수 카운터(개인정보 아님)
+            }
+          }
+        }
         break;
       }
       case "share": {
@@ -223,6 +250,9 @@ export async function POST(req: Request): Promise<Response> {
     ];
     if (responseDoc) {
       writes.push(db.collection("responses").add(responseDoc).catch(() => {}));
+    }
+    if (contactDoc) {
+      writes.push(db.collection("contacts").add(contactDoc).catch(() => {}));
     }
     await Promise.all(writes);
   } catch {

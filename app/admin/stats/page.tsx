@@ -197,9 +197,14 @@ export default async function StatsPage({
     <div className={styles.wrap}>
       <header className={styles.head}>
         <h1 className={styles.title}>Design Summer · 테스트 통계</h1>
-        <Link className={styles.logout} href="/admin">
-          ← 이미지 관리
-        </Link>
+        <div style={{ display: "flex", gap: 10 }}>
+          <Link className={styles.logout} href="/admin/contacts">
+            쿠폰 응모자 →
+          </Link>
+          <Link className={styles.logout} href="/admin">
+            ← 이미지 관리
+          </Link>
+        </div>
       </header>
 
       {!available ? (

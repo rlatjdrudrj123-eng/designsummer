@@ -54,15 +54,21 @@ const CRACKS_TO_BREAK = 10; // 열구 깨는 데 필요한 탭 횟수
 // 탭마다 방사형으로 튀는 스파크 각도(도) — 균등 분포 + 살짝 흐트러뜨려 자연스럽게.
 const SPARKS = [8, 52, 96, 140, 184, 228, 272, 316];
 
-/* 퀴즈 플로우 스텝 — 설문[0](분야) → 채점 10문항 → 설문[1](인지) → 설문[2](관심).
-   설문은 결과 산출에 영향 없음(SURVEY_QUESTIONS 참조). */
-type QuizStep = { kind: "scored"; qi: number } | { kind: "survey"; si: number };
+/* 퀴즈 플로우 스텝 — 설문[0](분야) → 채점 10문항 → 설문[1](인지) → 설문[2](관심)
+   → 연락처(커피 쿠폰). 설문·연락처는 결과 산출에 영향 없음. */
+type QuizStep =
+  | { kind: "scored"; qi: number }
+  | { kind: "survey"; si: number }
+  | { kind: "contact" };
 const STEPS: QuizStep[] = [
   { kind: "survey", si: 0 },
   ...QUESTIONS.map((_, qi): QuizStep => ({ kind: "scored", qi })),
   { kind: "survey", si: 1 },
   { kind: "survey", si: 2 },
+  { kind: "contact" },
 ];
+
+const PRIVACY_URL = "https://kprint.kr/ko/term/personal";
 
 /* 진입부 미리보기 폴 — 서버(lib/testStats)가 Firestore 응답 분포에서 산출해 내려줌.
    문항·보기 텍스트는 테스트 원문 그대로, 응답률(%)만 라이브. 참여자 수는 비노출. */
@@ -86,13 +92,6 @@ export default function AnimalTest({
     triggerRef.current?.focus();
   }, []);
 
-  // 뉴스레터 랜딩(/survey → /?survey=1): 진입 즉시 테스트 모달 자동 오픈.
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    if (new URLSearchParams(window.location.search).get("survey") === "1") {
-      setOpen(true);
-    }
-  }, []);
 
   return (
     <section
@@ -175,6 +174,10 @@ function TestModal({ onClose }: { onClose: () => void }) {
   const [answers, setAnswers] = useState<number[]>([]); // 채점 문항(qi 인덱스) 답
   // 설문 답(문항별 선택 인덱스 배열 — 단일 선택은 길이 1)
   const [surveyAnswers, setSurveyAnswers] = useState<number[][]>([[], [], []]);
+  // 연락처(커피 쿠폰) — 이름/휴대폰 + 개인정보처리방침 동의
+  const [contactName, setContactName] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [consent, setConsent] = useState(false);
   const [result, setResult] = useState<Animal | null>(null);
 
   // reveal(열구) 상태
@@ -247,11 +250,15 @@ function TestModal({ onClose }: { onClose: () => void }) {
     dialogRef.current?.focus();
   }, [phase, step, mounted]);
 
-  // 마지막 스텝(설문[2]) 통과 → 결과 산출 + 완료 계측 + 열구 리빌.
-  const finish = (sv: number[][], scoredAnswers: number[]) => {
+  // 마지막 스텝(연락처) 통과 → 결과 산출 + 완료 계측 + 열구 리빌.
+  const finish = (
+    sv: number[][],
+    scoredAnswers: number[],
+    contact: { name: string; phone: string } | null,
+  ) => {
     const scored = scoreTest(scoredAnswers);
     setResult(scored);
-    // 완료 계측 — 채점 answers + 결과 동물 + 비채점 설문 답.
+    // 완료 계측 — 채점 answers + 결과 동물 + 비채점 설문 답 + 연락처(동의 시).
     track("complete", {
       answers: scoredAnswers,
       animalId: scored.id,
@@ -260,6 +267,7 @@ function TestModal({ onClose }: { onClose: () => void }) {
         aware: sv[1][0] ?? null,
         interests: sv[2],
       },
+      contact: contact ? { ...contact, agreed: true } : null,
     });
     setTaps(0);
     setPulse(0);
@@ -278,10 +286,22 @@ function TestModal({ onClose }: { onClose: () => void }) {
     setStep(step + 1);
   };
 
-  // 설문 다음/완료 — 마지막 스텝이면 finish.
-  const advanceSurvey = (sv: number[][]) => {
+  // 설문 다음 — 설문 뒤엔 항상 연락처 스텝이 있어 여기서 finish 하지 않는다.
+  const advanceSurvey = (_sv: number[][]) => {
     if (step + 1 < STEPS.length) setStep(step + 1);
-    else finish(sv, answers);
+  };
+
+  // 연락처 제출(마지막 스텝) — 이름·휴대폰·동의 모두 유효할 때만.
+  const contactValid =
+    contactName.trim().length > 0 &&
+    contactPhone.replace(/\D/g, "").length >= 9 &&
+    consent;
+  const submitContact = () => {
+    if (!contactValid) return;
+    finish(surveyAnswers, answers, {
+      name: contactName.trim(),
+      phone: contactPhone.trim(),
+    });
   };
 
   // 설문 선택 — 복수는 토글(max 캡), 단일은 선택 즉시 다음으로.
@@ -331,6 +351,9 @@ function TestModal({ onClose }: { onClose: () => void }) {
     setStep(0);
     setAnswers([]);
     setSurveyAnswers([[], [], []]);
+    setContactName("");
+    setContactPhone("");
+    setConsent(false);
     setResult(null);
     setTaps(0);
     setPulse(0);
@@ -430,6 +453,55 @@ function TestModal({ onClose }: { onClose: () => void }) {
                   ))}
                 </ul>
               </>
+            ) : stepDef.kind === "contact" ? (
+              <>
+                <h3 className={styles.question}>
+                  ☕ 커피 쿠폰을 받으실 정보를 남겨주세요
+                </h3>
+                <div className={styles.contactForm}>
+                  <input
+                    className={styles.contactInput}
+                    type="text"
+                    placeholder="이름"
+                    value={contactName}
+                    onChange={(e) => setContactName(e.target.value)}
+                    maxLength={40}
+                  />
+                  <input
+                    className={styles.contactInput}
+                    type="tel"
+                    placeholder="휴대폰번호"
+                    value={contactPhone}
+                    onChange={(e) => setContactPhone(e.target.value)}
+                    maxLength={20}
+                  />
+                  <label className={styles.consentRow}>
+                    <input
+                      type="checkbox"
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                    />
+                    <span>
+                      개인정보처리방침에 동의합니다{" "}
+                      <a
+                        href={PRIVACY_URL}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        자세히 보기
+                      </a>
+                    </span>
+                  </label>
+                  <button
+                    type="button"
+                    className={styles.surveyNext}
+                    disabled={!contactValid}
+                    onClick={submitContact}
+                  >
+                    결과 보기 <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </>
             ) : (
               (() => {
                 const sq = SURVEY_QUESTIONS[stepDef.si];
@@ -465,8 +537,7 @@ function TestModal({ onClose }: { onClose: () => void }) {
                         disabled={sel.length === 0}
                         onClick={() => advanceSurvey(surveyAnswers)}
                       >
-                        {step + 1 === STEPS.length ? "결과 보기" : "다음"}{" "}
-                        <span aria-hidden="true">→</span>
+                        다음 <span aria-hidden="true">→</span>
                       </button>
                     )}
                   </>

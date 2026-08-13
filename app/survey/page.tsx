@@ -1,7 +1,44 @@
-import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import Link from "next/link";
+import AnimalTest from "@/components/aura/AnimalTest";
+import { getTeaserPolls } from "@/lib/testStats";
+import styles from "./page.module.css";
 
-/* /survey — 뉴스레터 랜딩용 짧은 URL.
-   홈(/?survey=1)으로 보내면 AnimalTest 가 진입 즉시 테스트 모달을 자동 오픈한다. */
-export default function SurveyPage() {
-  redirect("/?survey=1");
+/* /survey — 동물상 테스트 전용 페이지(뉴스레터 랜딩).
+   행사 종료로 홈(통스크롤)이 아닌 테스트만 있는 단독 페이지로 분리.
+   진입 화면에서 "내 온도 알아보기"를 눌러야 모달이 열린다(자동 오픈 X). */
+
+export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "디자이너 동물상 테스트 · 디자인 썸머 일산",
+  description:
+    "동물상으로 알아보는 내 작업온도. 현직 디자이너들이 증명한 리얼 데이터 기반 성향 테스트.",
+  alternates: { canonical: "/survey" },
+};
+
+export default async function SurveyPage() {
+  const polls = await getTeaserPolls();
+
+  return (
+    <main className={styles.page}>
+      <header className={styles.head}>
+        <Link href="/" className={styles.brand}>
+          디자인 썸머 일산
+        </Link>
+        <span className={styles.eyebrow}>creative thermometer</span>
+      </header>
+
+      <div className={styles.body}>
+        <AnimalTest polls={polls} />
+      </div>
+
+      <footer className={styles.foot}>
+        <span>K-PRINT 2026 · 디자인 썸머 일산</span>
+        <Link href="/" className={styles.footLink}>
+          행사 페이지 보기 →
+        </Link>
+      </footer>
+    </main>
+  );
 }
