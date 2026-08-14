@@ -418,11 +418,31 @@ const SCORED_IDS: ScoredAnimalId[] = [
   "tiger",
 ];
 
+/* ── 보기 인기 편차 보정 가중치 ────────────────────────────────────────────
+   문항 보기의 선택률이 동물마다 크게 달라(예: 나무늘보 보기들은 각 문항 1~2위,
+   여우 보기들은 죄다 소수) 단순 합산으로는 특정 동물만 몰리고 여우·호랑이는
+   아예 안 나왔다. 라이브 응답 111건의 '동물별 1인 평균 획득점수'로 역가중치를
+   산출해 곱한다 — 문항·보기 카피와 매핑은 그대로 두고 집계만 공평하게. */
+const WEIGHT: Record<ScoredAnimalId, number> = {
+  fox: 1.6,
+  alpaca: 1.4,
+  tiger: 1.2,
+  dog: 1.1,
+  owl: 1.1,
+  chameleon: 0.9,
+  otter: 0.8,
+  cat: 0.8,
+  sloth: 0.7,
+};
+
+/** 백조 판정 허용 오차 — 가중치로 점수가 실수가 되므로 '거의 동점'을 잡는다. */
+const SWAN_EPSILON = 0.3;
+
 /**
  * 결정론 집계.
  * - answers[i] = 질문 i 에서 고른 선택지 인덱스(미응답이면 -1/undefined 무시).
- * - 점수 내림차순, 동점이면 tieOrder 오름차순(온도 낮은 동물 우선).
- * - 백조 히든: (1위-2위) <= 1 && 1점 이상 득점 동물 >= 6 → swan.
+ * - 점수 = Σ(선택지 점수 × 동물 가중치), 동점이면 tieOrder 내림차순(뜨거운 쪽).
+ * - 백조 히든: (1위-2위) <= SWAN_EPSILON && 1점 이상 득점 동물 >= 7 → swan.
  */
 export function scoreTest(answers: number[]): Animal {
   const scores: Record<ScoredAnimalId, number> = {
@@ -442,7 +462,7 @@ export function scoreTest(answers: number[]): Animal {
     if (choiceIndex === undefined || choiceIndex < 0) return;
     const choice = question.choices[choiceIndex];
     if (!choice) return;
-    scores[choice.animal] += choice.points;
+    scores[choice.animal] += choice.points * WEIGHT[choice.animal];
   });
 
   const sorted = [...SCORED_IDS].sort((a, b) => {
@@ -456,10 +476,13 @@ export function scoreTest(answers: number[]): Animal {
   const second = sorted[1];
   const scoredCount = SCORED_IDS.filter((id) => scores[id] >= 1).length;
 
-  // 백조: 1·2위가 '정확히' 동점 + 득점 동물 7종 이상(넓게 퍼진 동점)일 때만.
-  // ≥6이던 것을 강화 — 라이브 분포에서 백조가 26%(1위)로 남발되고, 동점을 백조가
-  // 가로채는 바람에 뜨거운 동물(호랑이·여우)이 1%대로 말라붙는 문제를 바로잡는다.
-  if (second && scores[top] - scores[second] === 0 && scoredCount >= 7) {
+  // 백조: 1·2위가 '거의 동점'(가중치로 실수 점수가 되므로 SWAN_EPSILON 이내)
+  // + 득점 동물 7종 이상(넓게 퍼진 동점)일 때만.
+  if (
+    second &&
+    scores[top] - scores[second] <= SWAN_EPSILON &&
+    scoredCount >= 7
+  ) {
     return SWAN;
   }
   return ANIMALS[top];
